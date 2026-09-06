@@ -1076,12 +1076,7 @@
     }
     var off=s.dbOffset||0;
     var drops=songDrops(s);
-    // Show enough of the grid to cover a whole track (~6 min), never fewer than
-    // 8 steps. Long grids need fewer steps to reach the same time, so the 32-bar
-    // view stays as short as it always was.
-    var stepSec=barSec(bpm)*grid;
-    var ahead=Math.max(8, Math.ceil(360/stepSec));
-    var last=Math.max(drops.length?drops[drops.length-1]+stepSec:0, off+stepSec*ahead);
+    var last=Math.max(drops.length?drops[drops.length-1]+barSec(bpm)*grid:0, off+barSec(bpm)*grid*8);
     var times=phraseTimes(bpm,off,grid,last);
     if(times.length>40)times=times.slice(0,40);
     el.innerHTML=times.map(function(t,i){

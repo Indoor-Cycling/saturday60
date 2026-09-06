@@ -12,7 +12,7 @@ nothing uploaded.
 | `selector.html` | Song BPM Selector |
 | `buildsheet.html` | MOWL-style Build Sheet |
 | `drops.html` | Drops Library Editor |
-| `app.js` | Shared shell: registers the offline worker, adds the back bar |
+| `app.js` | Shared shell: offline worker, back bar, the **Save to…** buttons |
 | `sw.js` | Service worker — stores the app so it opens with no signal |
 | `manifest.webmanifest` | Tells the phone the name, icon and colours to install with |
 | `icons/` | App icons |
@@ -41,3 +41,15 @@ The browser stores each tool's data against the *web address*, so:
   the old file, press **Backup**, then press **Restore** in the tool here.
 - Deleting the installed app from your home screen can clear that storage on
   some phones. Press **Backup** now and then and keep the file somewhere safe.
+
+## Backup and Save to…
+
+**Backup** downloads the file the way it always has — straight to the browser's
+downloads folder.
+
+**Save to…** sits next to it and lets you choose the destination instead. On a
+phone it opens the system share sheet (Drive, Files, mail, anywhere), which is
+the way around Chrome for Android not offering a download folder on handsets
+with no SD card. On a desktop it reads **Save as…** and opens the normal save
+dialog. On a browser that supports neither, the button is simply not added.
+

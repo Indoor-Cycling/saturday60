@@ -20,17 +20,22 @@
       reg = r;
       document.dispatchEvent(new CustomEvent('s60:sw-ready', { detail: r }));
 
+      // A new version may ALREADY be sitting there from an earlier visit —
+      // in that case no updatefound event is ever coming, so check directly.
+      if (r.waiting && navigator.serviceWorker.controller) offerUpdate(r.waiting);
+      if (r.installing) watch(r.installing);
+
       r.addEventListener('updatefound', function () {
-        var sw = r.installing;
-        if (!sw) return;
-        sw.addEventListener('statechange', function () {
-          // A new version is waiting, and an old one is already running.
-          if (sw.state === 'installed' && navigator.serviceWorker.controller) offerUpdate(sw);
-        });
+        if (r.installing) watch(r.installing);
       });
 
-      // Look for a newer upload each time the app is opened.
+      // Look for a newer upload each time the app is opened…
       r.update().catch(function () {});
+
+      // …and again whenever it comes back to the foreground.
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) r.update().catch(function () {});
+      });
     }).catch(function (e) {
       console.warn('[s60] service worker did not register:', e);
     });
@@ -43,7 +48,37 @@
     });
   }
 
+  function watch(sw) {
+    if (sw.state === 'installed' && navigator.serviceWorker.controller) return offerUpdate(sw);
+    sw.addEventListener('statechange', function () {
+      if (sw.state === 'installed' && navigator.serviceWorker.controller) offerUpdate(sw);
+    });
+  }
+
+  /* Ask the running worker which version it is. */
+  function runningVersion(cb) {
+    var sw = navigator.serviceWorker && navigator.serviceWorker.controller;
+    if (!sw || typeof MessageChannel !== 'function') return cb(null);
+    var ch = new MessageChannel(), done = false;
+    ch.port1.onmessage = function (e) { done = true; cb(e.data && e.data.version); };
+    try { sw.postMessage('VERSION', [ch.port2]); } catch (e) { return cb(null); }
+    setTimeout(function () { if (!done) cb(null); }, 1200);
+  }
+  window.S60 = window.S60 || {};
+  window.S60.runningVersion = runningVersion;
+  window.S60.checkForUpdate = function (cb) {
+    if (!reg) return cb && cb('no-sw');
+    reg.update().then(function () {
+      if (reg.waiting && navigator.serviceWorker.controller) { offerUpdate(reg.waiting); return cb && cb('found'); }
+      if (reg.installing) { watch(reg.installing); return cb && cb('found'); }
+      cb && cb('current');
+    }).catch(function () { cb && cb('error'); });
+  };
+
+  var offered = false;
   function offerUpdate(sw) {
+    if (offered) return;
+    offered = true;
     var bar = document.createElement('div');
     bar.className = 's60-update';
     bar.innerHTML = '<span>A newer version is ready.</span><button type="button">Update now</button>' +

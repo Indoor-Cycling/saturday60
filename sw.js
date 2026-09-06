@@ -1,7 +1,7 @@
 /* Saturday 60 — service worker
    Bump VERSION whenever you upload changed files. That forces every
    installed copy to re-download the whole app on its next launch. */
-var VERSION = 's60-v3';
+var VERSION = 's60-v4';
 var CACHE = 'saturday60-' + VERSION;
 
 var ASSETS = [
@@ -47,6 +47,9 @@ self.addEventListener('activate', function (e) {
 
 self.addEventListener('message', function (e) {
   if (e.data === 'SKIP_WAITING') self.skipWaiting();
+  if (e.data === 'VERSION' && e.ports && e.ports[0]) {
+    e.ports[0].postMessage({ version: VERSION });
+  }
 });
 
 self.addEventListener('fetch', function (e) {

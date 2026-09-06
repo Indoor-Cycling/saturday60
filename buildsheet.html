@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saturday 60 · MOWL-Style Build Sheet Template</title>
+<style>
+  :root{
+    --ink:#1a1d23; --muted:#5a6472; --line:#c9ced6; --paper:#f4f5f7; --bg:#ffffff;
+    --warm:#0e7fb8; --seg1:#1e8e5a; --seg2:#c07a10; --seg3:#c03a3a; --seg4:#a63a8f; --bridge:#7a828e; --cool:#5b5fc7;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:#e9ebee;color:var(--ink);font-family:var(--sans);font-size:13px;}
+  .page{max-width:900px;margin:0 auto;background:var(--bg);padding:28px 30px 40px;min-height:100vh;}
+  h1{font-size:22px;margin:0 0 2px;letter-spacing:-.01em;}
+  .sub{font-size:11px;color:var(--muted);margin:0 0 14px;line-height:1.5;}
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .toolbar button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer;}
+  .toolbar button.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .toolbar button:active{transform:scale(.98);}
+  .drift-ctl{font-size:11.5px;color:var(--muted);align-self:center;display:inline-flex;align-items:center;gap:5px;}
+  .drift-ctl input{width:44px;border:1px solid var(--line);border-radius:7px;padding:6px 4px;font-family:var(--mono);font-size:12px;text-align:center;color:var(--ink);}
+  .status{font-size:11px;color:var(--muted);align-self:center;margin-left:auto;}
+
+  /* zones */
+  .zones{width:100%;border-collapse:collapse;margin-bottom:6px;}
+  .zones th,.zones td{border:1px solid var(--line);padding:4px 7px;font-size:11px;text-align:left;}
+  .zones th{background:var(--paper);font-weight:700;}
+  .dose{font-size:10.5px;color:var(--muted);margin:4px 0 16px;line-height:1.5;}
+
+  /* segment blocks */
+  .seg{margin-bottom:18px;}
+  .seg-head{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:6px 10px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;letter-spacing:.03em;}
+  .seg-head .time{font-family:var(--mono);font-size:11px;font-weight:600;}
+  .seg-note{font-size:10.5px;color:var(--muted);padding:5px 2px 7px;line-height:1.45;}
+  table.slots{width:100%;border-collapse:collapse;}
+  .slots th,.slots td{border:1px solid var(--line);padding:3px 4px;vertical-align:top;font-size:11px;}
+  .slots th{background:var(--paper);font-weight:700;font-size:10px;letter-spacing:.03em;text-align:left;padding:5px 5px;}
+  .slots input[type=text],.slots select{width:100%;border:none;background:transparent;font-family:var(--sans);font-size:11.5px;color:var(--ink);padding:3px 2px;outline:none;}
+  .slots textarea{width:100%;border:none;background:transparent;font-family:var(--sans);font-size:11.5px;color:var(--ink);padding:3px 2px;outline:none;resize:none;overflow:hidden;line-height:1.35;display:block;min-height:19px;}
+  .slots textarea.drops{font-family:var(--mono);font-size:11px;}
+  .slots textarea:focus{background:#eef4fb;border-radius:4px;}
+  .slots textarea::placeholder{color:#a6adb8;font-style:italic;}
+  /* section library */
+  .lib-panel{margin-top:22px;border-top:1px solid var(--line);padding-top:12px;}
+  .lib-panel h2{font-size:14px;margin:0 0 3px;}
+  .lib-sub{font-size:11px;color:var(--muted);margin:0 0 10px;line-height:1.5;}
+  .lib-item{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-bottom:6px;}
+  .lib-item .ln{font-size:12px;font-weight:700;}
+  .lib-item .lm{font-size:10.5px;color:var(--muted);}
+  .lib-item select{border:1px solid var(--line);border-radius:7px;font-size:11px;padding:5px;background:#fff;}
+  .lib-item button{border:1px solid var(--line);background:#fff;border-radius:7px;font-size:11px;font-weight:600;padding:5px 10px;cursor:pointer;color:var(--ink);}
+  .lib-item button.del{color:#b6534f;}
+  .lib-empty{font-size:11.5px;color:var(--muted);background:var(--paper);border:1px dashed var(--line);border-radius:9px;padding:10px 12px;}
+  .smv{border:none;background:rgba(255,255,255,.22);color:#fff;border-radius:4px;font-size:9px;cursor:pointer;padding:2px 6px;margin-right:5px;line-height:1;vertical-align:middle;}
+  .smv:hover{background:rgba(255,255,255,.38);}
+  .secpos{border:none;background:rgba(255,255,255,.22);color:#fff;border-radius:4px;font-size:10px;font-weight:700;padding:2px 3px;margin-right:6px;cursor:pointer;vertical-align:middle;font-family:var(--sans);}
+  .secpos option{color:var(--ink);background:#fff;}
+  .slots input.bpm{font-family:var(--mono);text-align:center;width:100%;}
+  .slots input.drops{font-family:var(--mono);}
+  .slots input:focus,.slots select:focus{background:#eef4fb;border-radius:4px;}
+  .slots select{padding-left:1px;padding-right:0;text-overflow:clip;}
+  .slots td:nth-child(5) select,.slots td:nth-child(7) select{font-size:11px;}
+  .slots input::placeholder{color:#a6adb8;font-style:italic;}
+  .rpm-cell{font-family:var(--mono);text-align:center;font-weight:700;white-space:nowrap;}
+  .rm-cell{width:26px;text-align:center;}
+  .rm-cell button{border:none;background:none;color:#b6534f;font-size:14px;cursor:pointer;padding:2px 5px;}
+  .addrow{margin-top:5px;}
+  .addrow button{border:1px dashed var(--line);background:none;color:var(--muted);border-radius:7px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;}
+  .addrow button:hover{color:var(--ink);border-color:var(--muted);}
+
+  .rules{font-size:10.5px;color:var(--muted);border-top:1px solid var(--line);margin-top:20px;padding-top:10px;line-height:1.6;}
+  .rules b{color:var(--ink);}
+
+  /* column widths */
+  col.c-slot{width:24px;} col.c-song{width:138px;} col.c-len{width:44px;} col.c-bpm{width:40px;} col.c-mode{width:58px;}
+  col.c-rpm{width:38px;} col.c-pos{width:66px;} col.c-int{width:122px;} col.c-pow{width:86px;}
+  col.c-hr{width:52px;} col.c-drops{width:70px;} col.c-sum{width:46px;} col.c-rm{width:56px;}
+
+  .jump{width:100%;font-size:9.5px;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--muted);margin-top:2px;padding:2px 0;font-family:var(--sans);}
+  .dm-list{max-height:300px;overflow-y:auto;margin:4px 0 10px;}
+  .grid-pick{display:flex;align-items:center;gap:5px;}
+  .gbtn{background:var(--paper);border:1px solid var(--line);color:var(--muted);border-radius:7px;
+    font-family:var(--mono);font-size:12px;font-weight:700;padding:4px 10px;cursor:pointer;}
+  .gbtn.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .pm-song{border-bottom:1px solid var(--line);padding:8px 0;}
+  .pm-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
+  .pm-head .n{font-size:12.5px;font-weight:700;}
+  .pm-head .meta{font-family:var(--mono);font-size:10.5px;color:var(--muted);}
+  .pm-head input{width:52px;font-family:var(--mono);font-size:11px;text-align:center;
+    border:1px solid var(--line);border-radius:6px;padding:3px;margin-left:auto;}
+  .pm-times{display:flex;flex-wrap:wrap;gap:4px;}
+  .pm-t{font-family:var(--mono);font-size:11px;background:var(--paper);border:1px solid var(--line);
+    border-radius:6px;padding:3px 6px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .pm-t.big{color:var(--ink);border-color:var(--muted);font-weight:700;}
+  .pm-t.drop{border-color:#c07a10;color:#c07a10;}
+  .dm-row{display:flex;gap:6px;align-items:center;margin-bottom:5px;}
+  .dm-row select{width:96px;font-size:11px;border:1px solid var(--line);border-radius:6px;padding:5px 3px;background:#fff;}
+  .dm-row input{flex:1;font-size:11.5px;border:1px solid var(--line);border-radius:6px;padding:6px 7px;font-family:var(--sans);}
+  .dm-row button{border:1px solid var(--line);background:#fff;color:#b6534f;border-radius:6px;font-size:13px;padding:4px 8px;cursor:pointer;line-height:1;}
+  .int-preset{width:100%;font-size:9px;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--muted);margin-top:2px;padding:2px 0;font-family:var(--sans);}
+
+  .ridedrops{font-family:var(--mono);font-size:9px;color:var(--muted);padding:0 2px 2px;line-height:1.3;font-variant-numeric:tabular-nums;}
+  .barpos{font-family:var(--mono);font-size:9px;color:var(--dim);padding:0 2px 2px;line-height:1.3;font-variant-numeric:tabular-nums;}
+  .slots input.len{font-family:var(--mono);text-align:center;}
+  .sum-cell{font-family:var(--mono);text-align:center;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .seg-head .segsum{font-family:var(--mono);font-size:10.5px;font-weight:600;opacity:.9;margin-right:10px;}
+  .mv{border:none;background:none;color:var(--muted);cursor:pointer;font-size:11px;padding:1px 3px;line-height:1;}
+  .mv:hover{color:var(--ink);}
+  .grand{margin:4px 0 0;padding:8px 10px;background:var(--paper);border:1px solid var(--line);border-radius:8px;font-size:12px;font-weight:600;display:flex;justify-content:space-between;font-variant-numeric:tabular-nums;}
+  .grand .delta.over{color:#c03a3a;} .grand .delta.under{color:#1e8e5a;}
+
+  /* spotify import overlay */
+  .imp-back{position:fixed;inset:0;background:rgba(20,22,26,.5);display:none;align-items:center;justify-content:center;z-index:60;padding:16px;}
+  .imp-back.open{display:flex;}
+  .imp-card{background:#fff;border:1px solid var(--line);border-radius:14px;max-width:560px;width:100%;padding:18px 18px 16px;box-shadow:0 18px 50px -20px rgba(0,0,0,.45);}
+  .imp-card h3{margin:0 0 4px;font-size:15px;}
+  .imp-card p{margin:0 0 10px;font-size:11.5px;color:var(--muted);line-height:1.5;}
+  .imp-card textarea{width:100%;height:130px;border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:11px;padding:8px;resize:vertical;}
+  .imp-row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+  .imp-row input[type=file]{font-size:11px;}
+  .imp-row .grow{flex:1;}
+  .imp-row button{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;}
+  .imp-row button.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  /* print */
+  @media print{
+    body{background:#fff;}
+    .page{max-width:none;padding:0;}
+    .toolbar,.rm-cell,.addrow,.status,.mv,.smv,.secpos,.drift-ctl,.lib-panel,.int-preset{display:none!important;}
+    .slots textarea{border:none;background:transparent;overflow:hidden;}
+    .seg{break-inside:avoid;}
+    .slots input,.slots select{border:none;appearance:none;-webkit-appearance:none;background:transparent;}
+    .seg-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .slots th{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    @page{margin:14mm;}
+  }
+</style>
+
+<!-- Saturday 60 app shell -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sat 60">
+<meta name="theme-color" content="#e9ebee">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="page">
+  <h1>THE SATURDAY 60 — MOWL-Style Build Sheet</h1>
+  <p class="sub">Fill-in template · Keiser M3 · Rider: FTP 158 W · Max HR 164 bpm · RPM always beat-locked (1:1 or half-beat) · Universal cap 110 RPM · PLAYLIST FIRST — MUSIC LEADS<br>
+  Type songs, BPMs and drop times; pick ride mode &amp; position from the dropdowns. RPM computes itself. Everything autosaves on this device.</p>
+
+  <div class="toolbar">
+    <button class="primary" id="printBtn">Print / Save as PDF</button>
+    <button id="importBtn" title="Fills matching slots by block role">Import ← Selector</button>
+    <button id="dropsBtn" title="Merges ONLY drop times, matching songs by title">Import drops only</button>
+    <button id="spotifyBtn">Import Spotify export</button>
+    <button id="dlViewBtn" title="See and manage every song whose drops you have stored">Drops library</button>
+    <input type="file" id="dlFile" accept="application/json,.json" style="display:none">
+    <button id="bkBtn" title="Download the whole sheet as a .json file">Backup</button>
+    <button id="rsBtn" title="Restore from a .json backup file">Restore</button>
+    <input type="file" id="rsFile" accept="application/json,.json" style="display:none">
+    <button id="sendSheetBtn" title="For another Build Sheet only">Send → Build Sheet</button>
+    <button id="importSheetBtn" title="Paste a code from another Build Sheet">Import ← Build Sheet</button>
+    <button id="toSelectorBtn" title="Sends songs, BPMs and drops to the phone Selector">Send → Selector</button>
+    <button id="phraseBtn" title="Every song’s 8/16/32-bar boundaries on the ride clock">Phrase map</button>
+    <button id="excelBtn">Export for Excel</button>
+    <button id="resetBtn">Reset to defaults</button>
+    <button id="clearSongsBtn">Clear songs &amp; drops only</button>
+    <span class="drift-ctl">Drift <input id="driftIn" inputmode="decimal" title="Average fractional seconds each song runs past its whole-second length. Applied to ◉ ride times only; Σ stays matched to MOWL."> s/song</span>
+    <span class="status" id="status"></span>
+  </div>
+
+  <table class="zones">
+    <tr><th>Zone</th><th>Power</th><th>Heart rate</th><th>Feel</th></tr>
+    <tr><td>Z1 Recovery</td><td>&lt; 87 W</td><td>&lt; 98 bpm</td><td>easy spin, conversation pace</td></tr>
+    <tr><td>Z2 Endurance</td><td>88–118 W</td><td>98–115</td><td>all-day aerobic</td></tr>
+    <tr><td>Z3 Tempo</td><td>120–142 W</td><td>115–131</td><td>comfortably hard</td></tr>
+    <tr><td>Sweet Spot</td><td>139–148 W</td><td>125–138</td><td>just under threshold</td></tr>
+    <tr><td>Z4 Threshold</td><td>150–166 W</td><td>131–148</td><td>1-hour max feel</td></tr>
+    <tr><td>Z5 VO2 / Sprint</td><td>167 W +</td><td>148–164</td><td>short surges only</td></tr>
+  </table>
+  <p class="dose">Ride dose target: ~65–70 TSS (MOWL medium-to-hard band for 60 min). Largest component aerobic, low end of lactate threshold.</p>
+
+  <div id="sheet"></div>
+
+  <div class="lib-panel">
+    <h2>Section library</h2>
+    <p class="lib-sub">Build a section whenever inspiration strikes, tap its header's <b>Save</b> button to shelve it as a named block, then assemble a ride here later: pick a destination section and <b>Replace</b> its rows (or <b>Append</b> to them). The library lives on this device and travels inside sheet codes.</p>
+    <div id="libList"></div>
+  </div>
+
+  <p class="rules"><b>Rules that never bend:</b> RPM is on-beat or half-beat only · 110 RPM hard ceiling on every interval · songs faster than 110 BPM ride half-beat or get capped · music leads, clock follows on work segments · warm-up, bridges &amp; cool-down keep clean clock time.<br>
+  <b>Session Designer:</b> build the Spotify playlist first in ride order (crossfade 10 s, gapless, Automix off), auto-import intervals per song, set counts from the Intervals column, nudge boundaries to the Drop times.</p>
+</div>
+
+<div class="imp-back" id="impBack">
+  <div class="imp-card">
+    <h3>Import a Spotify playlist export</h3>
+    <p>Best source: <b>Chosic's Playlist Analyzer</b> (chosic.com/spotify-playlist-analyzer — paste the playlist link, then download the CSV) because its export <b>includes each song's BPM</b>, which fills in automatically. <b>Exportify</b> (exportify.app) and Chosic's plain exporter also work but carry titles only. Upload the file or paste its contents below. Songs fill the sheet <b>in ride order</b>, top to bottom. Sanity-check imported BPMs that look doubled or halved — the tap-tester settles any argument.</p>
+    <textarea id="impText" placeholder="Paste CSV or one song per line…"></textarea>
+    <div class="imp-row">
+      <input type="file" id="impFile" accept=".csv,.txt,text/csv,text/plain">
+      <span class="grow"></span>
+      <button id="impCancel">Cancel</button>
+      <button class="primary" id="impGo">Import</button>
+    </div>
+  </div>
+</div>
+
+<div class="imp-back" id="pmBack">
+  <div class="imp-card" style="max-width:640px">
+    <div class="modal-h" style="display:flex;justify-content:space-between;align-items:baseline">
+      <h3 style="margin:0">Phrase map · ride clock</h3>
+      <span class="grid-pick">
+        <button class="gbtn" data-pgrid="8">8</button>
+        <button class="gbtn" data-pgrid="16">16</button>
+        <button class="gbtn" data-pgrid="32">32</button>
+        <span style="font-size:10.5px;color:var(--muted)">bars</span>
+      </span>
+    </div>
+    <div class="modal-h" style="display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-top:6px">
+      <span style="font-size:10.5px;color:var(--muted)">clock</span>
+      <span class="grid-pick">
+        <button class="gbtn" data-pclock="mowl">match MOWL</button>
+        <button class="gbtn" data-pclock="audio">real audio</button>
+      </span>
+    </div>
+    <p>Where each song’s phrase boundaries fall in the class, so an interval in Session Designer can start and end on the music. Times use the same crossfade and drift maths as the ◉ ride column. Set an offset if a track opens with an intro before bar 1.</p>
+    <p id="pmHint" style="font-size:11px;font-weight:600;margin:2px 0 8px"></p>
+    <div id="pmList" style="max-height:50vh;overflow-y:auto;margin-bottom:10px"></div>
+    <div class="imp-row">
+      <button id="pmCopy">Copy as text</button>
+      <span class="grow"></span>
+      <button class="primary" id="pmDone">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="imp-back" id="dlBack">
+  <div class="imp-card">
+    <h3>Drops library</h3>
+    <p id="dlCount">-</p>
+    <div class="dm-list" id="dlList"></div>
+    <div class="imp-row">
+      <button id="dlAdd">Add this sheet’s drops</button>
+      <button id="dlExport">Export file</button>
+      <button id="dlImport">Import file</button>
+      <span class="grow"></span>
+      <button class="primary" id="dlDone">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="imp-back" id="codeBack">
+  <div class="imp-card">
+    <h3>Paste sheet code</h3>
+    <p>Paste the whole code below — line breaks and spaces from email wrapping are fine; they're cleaned automatically. <b>CAUTION:</b> importing replaces this device's ENTIRE sheet (every section, song, length, drop, and the drift setting). Both devices should run the same template version.</p>
+    <textarea id="codeText" placeholder="S60B…"></textarea>
+    <div class="imp-row">
+      <span class="grow"></span>
+      <button id="codeCancel">Cancel</button>
+      <button class="primary" id="codeGo">Import</button>
+    </div>
+  </div>
+</div>
+
+<div class="imp-back" id="drillBack">
+  <div class="imp-card">
+    <h3>Manage drills</h3>
+    <p>Edit the wording, change a drill's group, or remove it. Changes save on this device and appear in every Intervals dropdown. <b>Restore built-ins</b> adds back any of the original drills you've deleted, keeping your own.</p>
+    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:2px 0 5px">Groups</div>
+    <div id="dmGroups" style="margin-bottom:10px"></div>
+    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:8px 0 5px">Drills</div>
+    <div class="dm-list" id="dmList"></div>
+    <div class="imp-row">
+      <button id="dmAddGroup">＋ Add group</button>
+      <button id="dmAdd">＋ Add drill</button>
+      <button id="dmRestore">Restore built-ins</button>
+      <span class="grow"></span>
+      <button class="primary" id="dmDone">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var CAP=110, KEY='s60_mowl_template_v1';
+  var POS=['Seat','Stand','S-St'];
+  var MODES=[['beat','1:1'],['half','½']];
+
+  var DEFAULTS=[
+    {id:'warmup',color:'var(--warm)',title:'WARM-UP — fixed clock',time:'0:00 – 10:00',
+     note:'Clean clock block. 2–3 songs, 95–110 BPM, ridden on the beat. Build resistance gently; two 30-second pickups in the final song.',
+     rows:[
+       {role:'warmup',song:'',ph:'e.g. Paint The Town Red',bpm:'100',mode:'beat',pos:'Seat',intervals:'1 × steady base (whole song)',power:'Z1→Z2 · 80–110 W',hr:'< 110',drops:''},
+       {role:'warmup',song:'',ph:'e.g. Espresso',bpm:'104',mode:'beat',pos:'Seat',intervals:'2 × 0:30 pickups on chorus, rest base',power:'Z2 · 100–118 W',hr:'105–120',drops:''}
+     ]},
+    {id:'seg1',color:'var(--seg1)',title:'SEGMENT 1 — ROLLING OPENER (endurance · mixed, aerobic-heavy)',time:'10:00 – ~24:00',
+     note:'≈14 min, 3–4 songs. Work efforts split on drops/choruses; segment ends when its last song ends. The aerobic engine of the ride.',
+     rows:[
+       {role:'tempo',song:'',ph:'tempo opener',bpm:'105',mode:'beat',pos:'Seat',intervals:'1 × steady tempo, add gear each verse',power:'Z3 · 120–135 W',hr:'115–128',drops:''},
+       {role:'climb',song:'',ph:'climb · e.g. Titanium',bpm:'126',mode:'half',pos:'S-St',intervals:'3 × climb efforts, one per chorus; stand final chorus',power:'SS · 135–150 W',hr:'125–138',drops:''},
+       {role:'tempo',song:'',ph:'tempo flush',bpm:'105',mode:'beat',pos:'Seat',intervals:'1 × steady, ease gear off after 1st chorus',power:'Z2–Z3 · 110–130 W',hr:'115–125',drops:''}
+     ]},
+    {id:'br1',color:'var(--bridge)',title:'RECOVERY BRIDGE',time:'~24:00 – 26:00 (2:00 fixed)',
+     note:'One mellow track, 80–100 BPM on the beat, light gear. Shake out, drink, reset. HR drifts toward Z1–Z2.',
+     rows:[
+       {role:'bridge',song:'',ph:'mellow bridge track',bpm:'90',mode:'beat',pos:'Seat',intervals:'1 × light spin (2:00)',power:'Z1 · < 87 W',hr:'falling',drops:''}
+     ]},
+    {id:'seg2',color:'var(--seg2)',title:'SEGMENT 2 — THE GRINDER (climb · strength interleave)',time:'26:00 – ~40:00',
+     note:'≈14 min, 3–4 songs. Climb–sprint–climb inside one arc: the MOWL signature. Resistance steps up each chorus; sprint surges fire on the drops.',
+     rows:[
+       {role:'climb',song:'',ph:'climb · e.g. Abracadabra',bpm:'126',mode:'half',pos:'Seat',intervals:'3 × gear step-ups, one per chorus',power:'SS · 135–150 W',hr:'125–138',drops:''},
+       {role:'sprint',song:'',ph:'sprint · e.g. Bangarang',bpm:'110',mode:'beat',pos:'Seat',intervals:'3–4 × 0:15–0:20 surges on drops, easy between',power:'Z5 bursts · 167 W +',hr:'to 148+',drops:''},
+       {role:'climb',song:'',ph:'long climb',bpm:'125',mode:'half',pos:'S-St',intervals:'2 × long climb efforts; STAND final chorus',power:'SS→Z4 · 140–158 W',hr:'131–145',drops:''}
+     ]},
+    {id:'br2',color:'var(--bridge)',title:'RECOVERY BRIDGE',time:'~40:00 – 42:00 (2:00 fixed)',
+     note:'Same recipe as Bridge 1. Full spin-down — Segment 3 needs fresh legs.',
+     rows:[
+       {role:'bridge',song:'',ph:'mellow bridge track',bpm:'90',mode:'beat',pos:'Seat',intervals:'1 × light spin (2:00)',power:'Z1 · < 87 W',hr:'falling',drops:''}
+     ]},
+    {id:'seg3',color:'var(--seg3)',title:'SEGMENT 3 — THE CHALLENGE (high-intensity sprint)',time:'42:00 – ~50:00',
+     note:'≈8 min. Sprint-forward. Every effort fires on a drop.',
+     rows:[
+       {role:'sprint',song:'',ph:'sprint pyramid track',bpm:'105',mode:'beat',pos:'Seat',intervals:'0:15 / 0:20 / 0:30 / 0:20 / 0:15 on successive drops',power:'Z5 · 167–190 W',hr:'to 150+',drops:''},
+       {role:'climb',song:'',ph:'punchy climb',bpm:'125',mode:'half',pos:'Stand',intervals:'2 × 1:00 standing climb, chorus-timed',power:'Z4 · 150–166 W',hr:'135–148',drops:''},
+       {role:'sprint',song:'',ph:'final sprint track',bpm:'108',mode:'beat',pos:'Seat',intervals:'Best effort on the LAST drop — empty the tank',power:'Z5+ · max safe',hr:'peak',drops:''}
+     ]},
+    {id:'seg4',color:'var(--seg4)',title:'SEGMENT 4 — FINISHER (victory lap)',time:'~50:00 – ~56:00',
+     note:'The closing arc before the cool-down: rolling surges on the drops, nothing above the cap. Music decides the exact length — watch the Σ.',
+     rows:[
+       {role:'sprint',song:'',ph:'finisher opener',bpm:'104',mode:'beat',pos:'Seat',intervals:'2 × 0:20 surges on drops',power:'Z4 · 150–166 W',hr:'135–148',drops:''},
+       {role:'sprint',song:'',ph:'rolling push',bpm:'108',mode:'beat',pos:'S-St',intervals:'0:30 push on each chorus',power:'Z4–Z5 · 155–175 W',hr:'140–150',drops:''},
+       {role:'climb',song:'',ph:'standing push',bpm:'122',mode:'half',pos:'Stand',intervals:'2 × 1:00 standing, chorus-timed',power:'Z4 · 150–166 W',hr:'138–150',drops:''},
+       {role:'sprint',song:'',ph:'last surge',bpm:'106',mode:'beat',pos:'Seat',intervals:'Best effort on the LAST drop',power:'Z5 · max safe',hr:'peak',drops:''}
+     ]},
+    {id:'cool',color:'var(--cool)',title:'COOL-DOWN — fixed clock',time:'56:00 – 60:00',
+     note:'Clean clock. Songs stepping 100 → 80 BPM, ridden on the beat down the staircase. Light gear; stretch cue in final minute.',
+     rows:[
+       {role:'cool',song:'',ph:'step-down track',bpm:'100',mode:'beat',pos:'Seat',intervals:'1 × easy spin, gear off',power:'Z1–Z2 · < 100 W',hr:'falling',drops:''},
+       {role:'cool',song:'',ph:'landing track',bpm:'80',mode:'beat',pos:'Seat',intervals:'1 × recovery spin + stretch cue',power:'Z1 · < 87 W',hr:'< 110',drops:''}
+     ]}
+  ];
+
+  function deep(o){return JSON.parse(JSON.stringify(o));}
+  var data=load();
+  function load(){
+    try{var r=localStorage.getItem(KEY); if(!r)return deep(DEFAULTS);
+      var d=JSON.parse(r);
+      return (Array.isArray(d)&&d.length)?d:deep(DEFAULTS);
+    }catch(e){return deep(DEFAULTS);}
+  }
+  // Migration: sheets saved before Segment 4 existed get it inserted before the
+  // cool-down, seeded with the first 4 songs currently sitting in the cool-down.
+  (function(){
+    if(data.some(function(g){return g.id==='seg4';}))return;
+    var defS4=DEFAULTS.filter(function(g){return g.id==='seg4';})[0];
+    var s4=deep(defS4);
+    var coolIdx=-1;
+    data.forEach(function(g,i){if(g.id==='cool')coolIdx=i;});
+    if(coolIdx>=0){
+      var cool=data[coolIdx], moved=[], kept=[];
+      cool.rows.forEach(function(r){
+        if(moved.length<4 && r.song && r.song.trim())moved.push(r);
+        else kept.push(r);
+      });
+      if(moved.length){
+        moved.forEach(function(r){r.role='sprint';});
+        s4.rows=moved;
+        cool.rows=kept.length?kept:deep(DEFAULTS.filter(function(g){return g.id==='cool';})[0].rows);
+      }
+      data.forEach(function(g){
+        if(g.id==='seg3')g.time='42:00 – ~50:00';
+        if(g.id==='cool')g.time='56:00 – 60:00';
+      });
+      data.splice(coolIdx,0,s4);
+    } else {
+      data.push(s4);
+    }
+    try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}
+  })();
+
+  // Backfill role tags onto rows saved before roles existed
+  (function(){
+    var defsById={};
+    DEFAULTS.forEach(function(d){defsById[d.id]=d;});
+    // titles/notes/colors aren't user-editable, so refresh them from the file's
+    // definitions on every load; times are NOT synced (swaps keep them positional)
+    data.forEach(function(seg){
+      var d=defsById[seg.id];
+      if(d){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
+    });
+    var defRoles={};
+    DEFAULTS.forEach(function(seg){defRoles[seg.id]=seg.rows.map(function(r){return r.role;});});
+    data.forEach(function(seg){
+      var dr=defRoles[seg.id]||[];
+      seg.rows.forEach(function(row,i){
+        if(!row.role) row.role = dr[i] || dr[dr.length-1] || 'tempo';
+        if(row.len===undefined) row.len='';
+      });
+    });
+  })();
+  var saveT=null, statusEl=document.getElementById('status');
+  function save(){
+    try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}
+    statusEl.textContent='Saved ✓';
+    clearTimeout(saveT); saveT=setTimeout(function(){statusEl.textContent='';},1400);
+  }
+
+  function rpmFor(row){
+    var b=parseInt(row.bpm,10); if(isNaN(b))return '—';
+    var r=row.mode==='half'?Math.round(b/2):b;
+    return Math.min(r,CAP);
+  }
+
+  var sheet=document.getElementById('sheet');
+  function esc(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  /* ---- song length helpers ---- */
+  var TARGET=3600; // 60:00 in seconds
+  function parseLen(str){
+    str=(str||'').trim(); if(!str)return 0;
+    if(str.indexOf(':')>=0){var p=str.split(':');var mm=parseInt(p[0],10),ss=parseInt(p[1],10);
+      if(isNaN(mm)||isNaN(ss))return 0; return mm*60+ss;}
+    var n=parseInt(str.replace(/[^0-9]/g,''),10); return isNaN(n)?0:n;
+  }
+  function fmtLen(sec){sec=Math.max(0,Math.round(sec));var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0'+s:s);}
+
+  /* ---- fractional drift correction (applied to ◉ ride times only) ---- */
+  var DRIFTKEY='s60_drift_v1';
+  var driftIn=document.getElementById('driftIn');
+  function getDrift(){var v=parseFloat(driftIn.value); return isNaN(v)?0:Math.max(0,Math.min(3,v));}
+  (function(){var v='0';try{v=localStorage.getItem(DRIFTKEY)||'0';}catch(e){} driftIn.value=v;})();
+  driftIn.addEventListener('input',function(){
+    var c=driftIn.value.replace(/[^0-9.]/g,''); if(c!==driftIn.value)driftIn.value=c;
+    try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}
+    updateSums();
+  });
+
+  /* ---- whole-sheet transfer code (desktop ↔ phone) ---- */
+  var sendSheetBtn=document.getElementById('sendSheetBtn'),
+      importSheetBtn=document.getElementById('importSheetBtn');
+  function sheetStatus(msg){statusEl.textContent=msg;clearTimeout(saveT);saveT=setTimeout(function(){statusEl.textContent='';},2200);}
+  function sheetCopy(text,msg){
+    msg=msg||'Sheet code copied ✓';
+    function ok(){sheetStatus(msg);}
+    function ko(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');ok();}catch(e){sheetStatus('Copy failed');}
+      document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,ko);}else ko();
+  }
+  /* ---- phrase map: every song's boundaries on the ride clock ---- */
+  var PGRID=8, PCLOCK='mowl';   // 'mowl' ignores drift; 'audio' applies it
+  function songStarts(){
+    // mirrors updateSums: crossfade-aware, drift-corrected, in ride order
+    var XF=10, drift=(PCLOCK==='audio'?getDrift():0), run=0, counted=0, out=[], n=0;
+    data.forEach(function(seg,si){
+      seg.rows.forEach(function(row,ri){
+        var L=parseLen(row.len);
+        var title=(row.song||'').trim();
+        if(L<=0){ if(title)n++; return; }
+        var prev=counted;
+        run += (counted===0 ? L : L-XF);
+        counted++;
+        n++;
+        if(!title)return;
+        out.push({num:n, title:title, si:si, ri:ri, row:row,
+                  start:run-L+drift*prev, len:L, bpm:parseInt(row.bpm,10)});
+      });
+    });
+    return out;
+  }
+  function renderPhraseMap(){
+    var el=document.getElementById('pmList'); if(!el)return;
+    document.querySelectorAll('[data-pgrid]').forEach(function(b){
+      b.classList.toggle('on', +b.getAttribute('data-pgrid')===PGRID);
+    });
+    document.querySelectorAll('[data-pclock]').forEach(function(b){
+      b.classList.toggle('on', b.getAttribute('data-pclock')===PCLOCK);
+    });
+    var hint=document.getElementById('pmHint');
+    if(hint){
+      hint.textContent = PCLOCK==='mowl'
+        ? 'Matching MOWL: drift is ignored, so these times line up with Session Designer.'
+        : 'Real audio: drift of '+(getDrift().toFixed(2))+' s per song is applied, so these times match what the room hears \u2014 they will run later than MOWL\u2019s clock.';
+      hint.style.color = PCLOCK==='mowl' ? '#1d6f42' : '#c07a10';
+    }
+    var list=songStarts().filter(function(x){return !isNaN(x.bpm)&&x.bpm>0;});
+    if(!list.length){ el.innerHTML='<p>Add song lengths and BPMs first — the map needs both.</p>'; return; }
+    el.innerHTML=list.map(function(x){
+      var barLen=240/x.bpm, step=barLen*PGRID;
+      var off=parseLen(x.row.db||'')||0;
+      var drops=[];
+      String(x.row.drops||'').split(/[,;]+/).forEach(function(t){
+        t=t.trim(); if(!t)return; var v=parseLen(t); if(v>0||t==='0:00')drops.push(v);
+      });
+      var chips=[], k=0;
+      for(var t=off; t<=x.len+0.01; t+=step, k++){
+        var big=(PGRID===8)&&(k%4===0);
+        var near=drops.some(function(d){return Math.abs(d-t)<barLen*1.5;});
+        chips.push('<span class="pm-t'+(big?' big':'')+(near?' drop':'')+'">'+fmtSec(x.start+t)+'</span>');
+        if(chips.length>60)break;
+      }
+      return '<div class="pm-song"><div class="pm-head">'+
+        '<span class="n">'+x.num+') '+esc(x.title)+'</span>'+
+        '<span class="meta">starts '+fmtSec(x.start)+' \u00b7 '+x.bpm+' BPM \u00b7 '+
+          (step<60?step.toFixed(1)+'s':fmtSec(step))+' per '+PGRID+'</span>'+
+        '<input type="text" data-pmdb="'+x.si+'_'+x.ri+'" value="'+esc(x.row.db||'')+'" placeholder="0:00" title="First downbeat inside the song">'+
+        '</div><div class="pm-times">'+chips.join('')+'</div></div>';
+    }).join('');
+    el.querySelectorAll('[data-pmdb]').forEach(function(inp){
+      inp.addEventListener('change',function(){
+        var q=inp.getAttribute('data-pmdb').split('_');
+        data[+q[0]].rows[+q[1]].db=inp.value.trim();
+        save(); renderPhraseMap();
+      });
+    });
+  }
+  var pmBack=document.getElementById('pmBack');
+  document.getElementById('phraseBtn').addEventListener('click',function(){ renderPhraseMap(); pmBack.classList.add('open'); });
+  document.getElementById('pmDone').addEventListener('click',function(){ pmBack.classList.remove('open'); });
+  pmBack.addEventListener('click',function(e){ if(e.target===pmBack)pmBack.classList.remove('open'); });
+  document.querySelectorAll('[data-pgrid]').forEach(function(b){
+    b.addEventListener('click',function(){ PGRID=+b.getAttribute('data-pgrid'); renderPhraseMap(); });
+  });
+  document.querySelectorAll('[data-pclock]').forEach(function(b){
+    b.addEventListener('click',function(){ PCLOCK=b.getAttribute('data-pclock'); renderPhraseMap(); });
+  });
+  document.getElementById('pmCopy').addEventListener('click',function(){
+    var lines=['THE SATURDAY 60 \u2014 phrase map ('+PGRID+'-bar boundaries, '+(PCLOCK==='mowl'?'MOWL clock':'real audio, drift '+getDrift().toFixed(2)+' s/song')+')',''];
+    songStarts().filter(function(x){return !isNaN(x.bpm)&&x.bpm>0;}).forEach(function(x){
+      var step=(240/x.bpm)*PGRID, off=parseLen(x.row.db||'')||0, t=[], k=0;
+      for(var v=off; v<=x.len+0.01; v+=step){ t.push(fmtSec(x.start+v)); if(++k>60)break; }
+      lines.push(x.num+') '+x.title+'  \u2014 starts '+fmtSec(x.start)+', '+x.bpm+' BPM');
+      lines.push('   '+t.join('  '));
+    });
+    sheetCopy(lines.join('\n'),'Phrase map copied \u2713');
+  });
+
+  /* ---- drops library: same file format as the Selector ---- */
+  function dateStamp(){
+    var d=new Date(), p=function(n){return (n<10?'0':'')+n;};
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  }
+
+  var DLKEY='s60_drops_lib_v1';
+  var dlFile=document.getElementById('dlFile');
+
+  function dropsToSecs(txt){
+    var out=[];
+    String(txt||'').split(/[,;]+/).forEach(function(tok){
+      tok=tok.trim(); if(!tok)return;
+      var v=parseLen(tok);
+      if(v>0||tok==='0:00')out.push(v);
+    });
+    return out;
+  }
+  function dlLoad(){
+    try{var r=localStorage.getItem(DLKEY); var o=r?JSON.parse(r):{}; return (o&&typeof o==='object')?o:{};}
+    catch(e){return {};}
+  }
+  function dlSave(o){try{localStorage.setItem(DLKEY,JSON.stringify(o));}catch(e){}}
+
+  var dlBack=document.getElementById('dlBack'),
+      dlList=document.getElementById('dlList'),
+      dlCount=document.getElementById('dlCount'),
+      dlSaveBtn=document.getElementById('dlExport'),
+      dlLoadBtn=document.getElementById('dlImport');
+
+  function renderDropsLib(){
+    var lib=dlLoad();
+    var keys=Object.keys(lib).sort(function(a,b){
+      return String(lib[a].title||'').toLowerCase().localeCompare(String(lib[b].title||'').toLowerCase());
+    });
+    dlCount.textContent = keys.length
+      ? keys.length+' song'+(keys.length===1?'':'s')+' stored \u2014 drop times and drills, filled in automatically whenever a matching song appears on the sheet.'
+      : 'Empty. Mark some drops, then tap \u201cAdd this sheet’s drops\u201d.';
+    dlList.innerHTML = keys.length ? keys.map(function(k){
+      var e=lib[k];
+      var times=(e.drops||[]).map(fmtSec).join(', ');
+      var drill=e.intervals?('<div style="font-size:10px;color:var(--muted);font-style:italic;padding-left:2px">'+esc(e.intervals)+'</div>'):'';
+      return '<div style="border-bottom:1px solid var(--line);padding:5px 0">'+
+             '<div class="dm-row" style="margin-bottom:2px"><input type="text" value="'+esc(e.title||k)+'" readonly>'+
+             '<span style="font-family:var(--mono);font-size:11px;min-width:110px">'+esc(times)+'</span>'+
+             '<button data-dlrm="'+esc(k)+'" title="Remove">\u00d7</button></div>'+drill+'</div>';
+    }).join('') : '';
+    dlList.querySelectorAll('[data-dlrm]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var k=btn.getAttribute('data-dlrm'), l=dlLoad();
+        if(confirm('Remove \u201c'+(l[k]&&l[k].title||k)+'\u201d from the drops library?')){
+          delete l[k]; dlSave(l); renderDropsLib();
+        }
+      });
+    });
+  }
+  document.getElementById('dlViewBtn').addEventListener('click',function(){ renderDropsLib(); dlBack.classList.add('open'); });
+  document.getElementById('dlDone').addEventListener('click',function(){ dlBack.classList.remove('open'); });
+  dlBack.addEventListener('click',function(e){ if(e.target===dlBack)dlBack.classList.remove('open'); });
+  document.getElementById('dlAdd').addEventListener('click',function(){
+    var lib=dlLoad(), n=0;
+    data.forEach(function(seg){seg.rows.forEach(function(row){
+      var d=dropsToSecs(row.drops); if(!d.length)return;
+      var k=normTitle(row.song); if(!k)return;
+      lib[k]={title:row.song, bpm:row.bpm, drops:d, intervals:(row.intervals||'')};
+      var dbv=parseLen(row.db||''); if(dbv>0)lib[k].db=dbv;
+      n++;
+    });});
+    dlSave(lib); renderDropsLib();
+    sheetStatus(n?('Added '+n+' song'+(n===1?'':'s')):'No drops on this sheet');
+  });
+
+  dlSaveBtn.addEventListener('click',function(){
+    var lib=dlLoad(), n=0;
+    data.forEach(function(seg){seg.rows.forEach(function(row){
+      var d=dropsToSecs(row.drops);
+      if(!d.length)return;
+      var k=normTitle(row.song); if(!k)return;
+      lib[k]={title:row.song, bpm:row.bpm, drops:d, intervals:(row.intervals||'')};
+      var dbv=parseLen(row.db||''); if(dbv>0)lib[k].db=dbv;
+      n++;
+    });});
+    if(!n && !Object.keys(lib).length){sheetStatus('No drops to save');return;}
+    dlSave(lib);
+    try{
+      var blob=new Blob([JSON.stringify({kind:'s60-drops',v:1,saved:new Date().toISOString(),songs:lib},null,2)],
+                        {type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download='Saturday60-Drops-'+dateStamp()+'.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
+      sheetStatus('Drops library saved \u2713 ('+Object.keys(lib).length+' songs)');
+    }catch(e){sheetStatus('Save failed');}
+  });
+
+  dlLoadBtn.addEventListener('click',function(){ dlFile.value=''; dlFile.click(); });
+  dlFile.addEventListener('change',function(){
+    var f=dlFile.files&&dlFile.files[0]; if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      var p=null;
+      try{p=JSON.parse(String(rd.result||''));}catch(e){alert('That file could not be read.');return;}
+      if(!p||p.kind!=='s60-drops'||!p.songs){alert('That file is not a drops library.');return;}
+      var lib=dlLoad(), added=0;
+      Object.keys(p.songs).forEach(function(k){
+        if(!lib[k]){lib[k]=p.songs[k]; added++;}
+        else if((p.songs[k].drops||[]).length>(lib[k].drops||[]).length){lib[k]=p.songs[k];}
+      });
+      dlSave(lib);
+      var filled=0, already=0;
+      data.forEach(function(seg){seg.rows.forEach(function(row){
+        var e=lib[normTitle(row.song)];
+        if(!e||!e.drops||!e.drops.length)return;
+        var got=false;
+        if(!(row.drops||'').trim()){ row.drops=e.drops.map(fmtSec).join(', '); got=true; }
+        if(e.intervals && !(row.intervals||'').trim()){ row.intervals=e.intervals; got=true; }
+        if(e.db && !(row.db||'').trim()){ row.db=fmtSec(e.db); got=true; }
+        if(got)filled++; else already++;
+      });});
+      save(); render();
+      alert('Drops library now holds '+Object.keys(lib).length+' songs ('+added+' new).\n\n'+
+            'Filled '+filled+' song'+(filled===1?'':'s')+' on this sheet'+
+            (already?('; '+already+' already had drops and were left alone.'):'.'));
+    };
+    rd.readAsText(f);
+  });
+
+  /* ---- backup to / restore from a .json file ---- */
+  var bkBtn=document.getElementById('bkBtn'),
+      rsBtn=document.getElementById('rsBtn'),
+      rsFile=document.getElementById('rsFile');
+
+  bkBtn.addEventListener('click',function(){
+    var payload={kind:'s60-sheet-backup', v:1, saved:new Date().toISOString(),
+                 drift:driftIn.value||'0', data:data, lib:lib, drills:drills, dgroups:DRILL_GROUPS};
+    try{
+      var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download='Saturday60-BuildSheet-Backup-'+dateStamp()+'.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
+      sheetStatus('Backup saved ✓');
+    }catch(e){ sheetStatus('Backup failed'); }
+  });
+
+  rsBtn.addEventListener('click',function(){ rsFile.value=''; rsFile.click(); });
+  rsFile.addEventListener('change',function(){
+    var f=rsFile.files&&rsFile.files[0]; if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      var p=null;
+      try{ p=JSON.parse(String(rd.result||'')); }
+      catch(e){ alert('That file could not be read as a backup.'); return; }
+      if(p && p.kind==='s60-selector-backup'){
+        alert('That is a Selector backup — open it in the Song BPM Selector\u2019s Restore instead.');
+        return;
+      }
+      if(!p || !Array.isArray(p.data) || !p.data.length){
+        alert('That file does not contain a Build Sheet backup.');
+        return;
+      }
+      var when=p.saved?(' saved '+String(p.saved).slice(0,10)):'';
+      if(!confirm('Restore this Build Sheet'+when+'?\n\nThis replaces the ENTIRE sheet on this device. '+
+                  'The Section Library and drill catalog are merged, not wiped.'))return;
+      data=p.data;
+      var defsById={}; DEFAULTS.forEach(function(d){defsById[d.id]=d;});
+      data.forEach(function(seg){
+        var d=defsById[seg.id];
+        if(d){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
+        var dr=d?d.rows.map(function(x){return x.role;}):[];
+        seg.rows=Array.isArray(seg.rows)?seg.rows:[];
+        seg.rows.forEach(function(row,i){
+          if(!row.role)row.role=dr[i]||dr[dr.length-1]||'tempo';
+          if(row.len===undefined)row.len='';
+        });
+      });
+      if(p.drift!==undefined){driftIn.value=String(p.drift); try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}}
+      if(Array.isArray(p.lib)){
+        var have={}; lib.forEach(function(e){have[e.id]=true;});
+        p.lib.forEach(function(e){ if(e&&e.id&&!have[e.id])lib.push(e); });
+        saveLib();
+      }
+      if(Array.isArray(p.dgroups)){
+      p.dgroups.forEach(function(g){ if(g&&DRILL_GROUPS.indexOf(g)<0)DRILL_GROUPS.push(g); });
+      saveGroups();
+    }
+    if(Array.isArray(p.drills)){
+        var haveD={}; drills.forEach(function(d2){haveD[d2.t]=true;});
+        var added=0;
+        p.drills.forEach(function(d2){ if(d2&&d2.t&&!haveD[d2.t]){drills.push(d2); haveD[d2.t]=true; added++;} });
+        if(added)saveDrills();
+      }
+      save(); render();
+      sheetStatus('Sheet restored ✓');
+    };
+    rd.readAsText(f);
+  });
+
+  sendSheetBtn.addEventListener('click',function(){
+    var payload={v:1,kind:'s60sheet',t:Date.now(),drift:driftIn.value||'0',data:data,lib:lib,drills:drills,dgroups:DRILL_GROUPS};
+    sheetCopy('S60B'+btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
+  });
+
+  /* ---- export to Spin Class Pro workbook · My Playlist sheet ---- */
+  document.getElementById('excelBtn').addEventListener('click',function(){
+    function pad2(n){return (n<10?'0':'')+n;}
+    function padLen(s){
+      var t=parseLen(s); if(!t)return '';
+      return pad2(Math.floor(t/60))+':'+pad2(t%60);
+    }
+    function xlSegment(seg,row){
+      if(seg.id==='warmup')return 'Warm-up';
+      switch(row.role){
+        case 'bridge': return 'Recovery';
+        case 'cool':   return 'Cool-down';
+        case 'climb':  return (row.pos==='Seat')?'Seated-Climb':'Standing-Climb';
+        case 'sprint': return (row.pos==='Stand')?'Standing-Attack':'Sprint';
+        default:       return 'Fast-Flat';
+      }
+    }
+    var lines=[], r=2;   // Excel row 2 is the first data row
+    data.forEach(function(seg){
+      seg.rows.forEach(function(row){
+        var t=(row.song||'').trim(); if(!t)return;
+        var bpm=parseInt(row.bpm,10);
+        var rpm = isNaN(bpm) ? '' : Math.min(row.mode==='half'?Math.round(bpm/2):bpm, CAP);
+        var cue=(row.intervals||'').trim();
+        if((row.drops||'').trim())cue += (cue?'  |  ':'')+'drops '+row.drops.trim();
+        // Paste block B:J — Song | Artist | Runtime | Elapsed | RPM | Gear M3 | Gear M3i | Segment | Cue.
+        // Pointers (K) are yours and are never pasted over.
+        var parts=t.split(' \u2014 ');
+        var song=parts[0].trim();
+        var artist=parts.length>1 ? parts.slice(1).join(' \u2014 ').trim() : '';
+        var eF='=IF(M'+r+'=0,,SUM($M$2:M'+r+'))';   // M = _TimeValue (hidden)
+        lines.push([song, artist, padLen(row.len), eF, rpm, '', '', xlSegment(seg,row), cue].join('\t'));
+        r++;
+      });
+    });
+    if(!lines.length){sheetStatus('No songs to export');return;}
+    sheetCopy(lines.join('\n'),'Excel rows copied ✓ ('+(r-2)+') — paste at B2');
+  });
+
+  /* ---- send the sheet's playlist to the BPM Selector ---- */
+  document.getElementById('toSelectorBtn').addEventListener('click',function(){
+    var ROLE2BLOCK={warmup:'warmup',tempo:'endurance',climb:'climb',sprint:'sprints',bridge:'cooldown',cool:'cooldown'};
+    var songs=[];
+    data.forEach(function(seg){
+      seg.rows.forEach(function(row){
+        var t=(row.song||'').trim(); if(!t)return;
+        var bpm=parseInt(row.bpm,10);
+        var block = seg.id==='seg4' ? 'finisher' : (ROLE2BLOCK[row.role]||'endurance');
+        var drops=[];
+        String(row.drops||'').split(/[,;]+/).forEach(function(tok){
+          tok=tok.trim(); if(!tok)return;
+          var s=parseLen(tok);
+          if(s>0||tok==='0:00')drops.push(s);
+        });
+        var dbv=parseLen(row.db||'');
+        songs.push({title:t,bpm:isNaN(bpm)?null:bpm,block:block,mode:(row.mode==='half'?'half':'beat'),db:(dbv>0?dbv:undefined),drops:drops});
+      });
+    });
+    if(!songs.length){sheetStatus('No songs on the sheet');return;}
+    var payload={t:Date.now(),songs:songs};
+    sheetCopy('S60'+btoa(unescape(encodeURIComponent(JSON.stringify(payload)))),'Selector code copied ✓ ('+songs.length+' songs)');
+  });
+  var codeBack=document.getElementById('codeBack'),
+      codeText=document.getElementById('codeText'),
+      codeGo=document.getElementById('codeGo'),
+      codeCancel=document.getElementById('codeCancel');
+  importSheetBtn.addEventListener('click',function(){
+    codeText.value=''; codeBack.classList.add('open'); codeText.focus();
+  });
+  codeCancel.addEventListener('click',function(){codeBack.classList.remove('open');});
+  codeBack.addEventListener('click',function(e){if(e.target===codeBack)codeBack.classList.remove('open');});
+  codeGo.addEventListener('click',function(){
+    var code=(codeText.value||'').replace(/\s+/g,'');   // strip ALL whitespace/newlines from wrapping
+    if(!code)return;
+    var p=null;
+    try{
+      if(code.slice(0,4)==='S60B')code=code.slice(4);
+      else if(code.slice(0,3)==='S60'){alert('That looks like a Selector code \u2014 use "Import from Selector" for those.');return;}
+      p=JSON.parse(decodeURIComponent(escape(atob(code))));
+    }catch(e){alert('That code could not be read \u2014 most often the tail got cut off in transit. Re-copy it on the other device (Send sheet code again) and make sure the WHOLE block is selected when copying and pasting; a plain-text note app preserves it best.');return;}
+    if(!p||p.kind!=='s60sheet'||!Array.isArray(p.data)||!p.data.length){alert('That code does not contain a Build Sheet.');return;}
+    if(!confirm('Replace this device\u2019s entire sheet with the one in the code? This cannot be undone.'))return;
+    data=p.data;
+    // same hygiene as load: refresh titles/notes/colors, backfill roles/lens
+    var defsById={}; DEFAULTS.forEach(function(d){defsById[d.id]=d;});
+    data.forEach(function(seg){
+      var d=defsById[seg.id];
+      if(d){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
+      var dr=d?d.rows.map(function(r){return r.role;}):[];
+      seg.rows=Array.isArray(seg.rows)?seg.rows:[];
+      seg.rows.forEach(function(row,i){
+        if(!row.role)row.role=dr[i]||dr[dr.length-1]||'tempo';
+        if(row.len===undefined)row.len='';
+      });
+    });
+    if(p.drift!==undefined){driftIn.value=String(p.drift); try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}}
+    if(Array.isArray(p.lib)){
+      var have={}; lib.forEach(function(e){have[e.id]=true;});
+      p.lib.forEach(function(e){ if(e&&e.id&&!have[e.id])lib.push(e); });
+      saveLib();
+    }
+    if(Array.isArray(p.dgroups)){
+      p.dgroups.forEach(function(g){ if(g&&DRILL_GROUPS.indexOf(g)<0)DRILL_GROUPS.push(g); });
+      saveGroups();
+    }
+    if(Array.isArray(p.drills)){
+      var haveD={}; drills.forEach(function(d){haveD[d.t]=true;});
+      var addedD=0;
+      p.drills.forEach(function(d){ if(d&&d.t&&!haveD[d.t]){drills.push(d); haveD[d.t]=true; addedD++;} });
+      if(addedD)saveDrills();
+    }
+    save(); render();
+    codeBack.classList.remove('open');
+    sheetStatus('Sheet imported ✓');
+  });
+
+  /* ---- section library ---- */
+  var LIBKEY='s60_library_v1';
+  var lib=loadLib();
+  function loadLib(){try{var r=localStorage.getItem(LIBKEY);var a=r?JSON.parse(r):[];return Array.isArray(a)?a:[];}catch(e){return [];}}
+  function saveLib(){try{localStorage.setItem(LIBKEY,JSON.stringify(lib));}catch(e){}}
+  function libSongCount(entry){return entry.rows.filter(function(r){return (r.song&&r.song.trim())||r.len;}).length;}
+
+  function saveSectionToLib(si){
+    var seg=data[si];
+    var defName=shortName(seg,si)+' block · '+new Date().toLocaleDateString();
+    var name=prompt('Name this block for the library:',defName);
+    if(!name)return;
+    lib.push({id:Date.now()+''+Math.floor(Math.random()*1000),name:name.trim(),secId:seg.id,
+              when:new Date().toISOString().slice(0,10),rows:deep(seg.rows)});
+    saveLib(); renderLib(); sheetStatus('Saved to library ✓');
+  }
+
+  var libList=document.getElementById('libList');
+  function renderLib(){
+    if(!lib.length){libList.innerHTML='<div class="lib-empty">Nothing shelved yet. Build any section above and tap its header\u2019s Save button.</div>';return;}
+    var destOpts=data.map(function(g,gi){return '<option value="'+gi+'">'+(gi+1)+' · '+esc(shortName(g,gi))+'</option>';}).join('');
+    libList.innerHTML=lib.map(function(e){
+      return '<div class="lib-item"><span class="ln">'+esc(e.name)+'</span>'+
+        '<span class="lm">'+libSongCount(e)+' songs · saved '+esc(e.when||'')+'</span>'+
+        '<select data-libdest="'+e.id+'">'+destOpts+'</select>'+
+        '<button data-librep="'+e.id+'">Replace</button>'+
+        '<button data-libapp="'+e.id+'">Append</button>'+
+        '<button class="del" data-libdel="'+e.id+'">Delete</button></div>';
+    }).join('');
+    function entry(id){return lib.filter(function(e){return e.id===id;})[0];}
+    function destFor(id){var sel=libList.querySelector('select[data-libdest="'+id+'"]');return sel?+sel.value:0;}
+    libList.querySelectorAll('[data-librep]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var e=entry(btn.getAttribute('data-librep')); if(!e)return;
+        var dest=destFor(e.id);
+        if(!confirm('Replace all songs in section '+(dest+1)+' ('+shortName(data[dest],dest)+') with "'+e.name+'"?'))return;
+        data[dest].rows=deep(e.rows);
+        save(); render(); sheetStatus('Block loaded ✓');
+      });
+    });
+    libList.querySelectorAll('[data-libapp]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var e=entry(btn.getAttribute('data-libapp')); if(!e)return;
+        var dest=destFor(e.id);
+        data[dest].rows=data[dest].rows.concat(deep(e.rows));
+        save(); render(); sheetStatus('Block appended ✓');
+      });
+    });
+    libList.querySelectorAll('[data-libdel]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var e=entry(btn.getAttribute('data-libdel')); if(!e)return;
+        if(!confirm('Delete "'+e.name+'" from the library?'))return;
+        lib=lib.filter(function(x){return x.id!==e.id;});
+        saveLib(); renderLib();
+      });
+    });
+  }
+
+  /* ---- drill manager ---- */
+  var drillBack=document.getElementById('drillBack'),
+      dmList=document.getElementById('dmList');
+  function renderGroupEditor(){
+    var el=document.getElementById('dmGroups'); if(!el)return;
+    el.innerHTML=DRILL_GROUPS.map(function(g,i){
+      var n=drills.filter(function(d){return d.g===g;}).length;
+      return '<div class="dm-row"><input type="text" data-gname="'+i+'" value="'+esc(g)+'">'+
+             '<span style="font-size:10.5px;color:var(--muted);min-width:58px">'+n+' drill'+(n===1?'':'s')+'</span>'+
+             '<button data-gup="'+i+'" title="Move up" style="color:var(--muted)">\u25b2</button>'+
+             '<button data-grm="'+i+'" title="Remove group">\u00d7</button></div>';
+    }).join('');
+    el.querySelectorAll('[data-gname]').forEach(function(inp){
+      inp.addEventListener('change',function(){
+        var i=+inp.getAttribute('data-gname'), was=DRILL_GROUPS[i], now=inp.value.trim();
+        if(!now||now===was){inp.value=was;return;}
+        if(DRILL_GROUPS.indexOf(now)>=0){alert('There is already a group called \u201c'+now+'\u201d.');inp.value=was;return;}
+        DRILL_GROUPS[i]=now;
+        drills.forEach(function(d){ if(d.g===was)d.g=now; });   // carry the drills across
+        saveGroups(); saveDrills(); renderDrillManager();
+      });
+    });
+    el.querySelectorAll('[data-gup]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var i=+b.getAttribute('data-gup'); if(i<1)return;
+        var t=DRILL_GROUPS[i-1]; DRILL_GROUPS[i-1]=DRILL_GROUPS[i]; DRILL_GROUPS[i]=t;
+        saveGroups(); renderDrillManager();
+      });
+    });
+    el.querySelectorAll('[data-grm]').forEach(function(b){
+      b.addEventListener('click',function(){
+        var i=+b.getAttribute('data-grm');
+        if(DRILL_GROUPS.length<2){alert('Keep at least one group.');return;}
+        var g=DRILL_GROUPS[i], n=drills.filter(function(d){return d.g===g;}).length;
+        var dest=DRILL_GROUPS[i===0?1:0];
+        if(!confirm('Remove the group \u201c'+g+'\u201d?'+(n?('\n\nIts '+n+' drill'+(n===1?'':'s')+' will move to \u201c'+dest+'\u201d.'):'')))return;
+        drills.forEach(function(d){ if(d.g===g)d.g=dest; });
+        DRILL_GROUPS.splice(i,1);
+        saveGroups(); saveDrills(); renderDrillManager();
+      });
+    });
+  }
+
+  function renderDrillManager(){
+    renderGroupEditor();
+    if(!drills.length){dmList.innerHTML='<div class="chips-empty">No drills yet — use ＋ Add drill.</div>';return;}
+    dmList.innerHTML=drills.map(function(d,i){
+      var opts=DRILL_GROUPS.map(function(g){return '<option'+(g===d.g?' selected':'')+'>'+esc(g)+'</option>';}).join('');
+      return '<div class="dm-row"><select data-dg="'+i+'">'+opts+'</select>'+
+             '<input type="text" data-dt="'+i+'" value="'+esc(d.t)+'">'+
+             '<button data-dd="'+i+'" title="Delete">×</button></div>';
+    }).join('');
+    dmList.querySelectorAll('[data-dt]').forEach(function(inp){
+      inp.addEventListener('input',function(){drills[+inp.getAttribute('data-dt')].t=inp.value; saveDrills();});
+    });
+    dmList.querySelectorAll('[data-dg]').forEach(function(sel){
+      sel.addEventListener('change',function(){drills[+sel.getAttribute('data-dg')].g=sel.value; saveDrills(); renderDrillManager();});
+    });
+    dmList.querySelectorAll('[data-dd]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var i=+btn.getAttribute('data-dd');
+        if(confirm('Delete “'+drills[i].t+'” from the drill list?')){drills.splice(i,1); saveDrills(); renderDrillManager();}
+      });
+    });
+  }
+  function openDrillManager(){renderDrillManager(); drillBack.classList.add('open');}
+  document.getElementById('dmAddGroup').addEventListener('click',function(){
+    var n=prompt('Name the new group:','New group');
+    if(!n)return; n=n.trim(); if(!n)return;
+    if(DRILL_GROUPS.indexOf(n)>=0){alert('That group already exists.');return;}
+    DRILL_GROUPS.push(n); saveGroups(); renderDrillManager();
+  });
+  document.getElementById('dmAdd').addEventListener('click',function(){
+    drills.push({g:DRILL_GROUPS[DRILL_GROUPS.length-1],t:'New drill — type the wording here'}); saveDrills(); renderDrillManager();
+    var last=dmList.querySelector('.dm-row:last-child input'); if(last){last.focus(); last.select();}
+  });
+  document.getElementById('dmRestore').addEventListener('click',function(){
+    var have={}; drills.forEach(function(d){have[d.t]=true;});
+    var added=0;
+    DEFAULT_GROUPS.forEach(function(g){ if(DRILL_GROUPS.indexOf(g)<0)DRILL_GROUPS.push(g); });
+    seedDrills().forEach(function(d){ if(!have[d.t]){drills.push(d); added++;} });
+    saveGroups(); saveDrills(); renderDrillManager();
+    sheetStatus(added?('Restored '+added+' built-in drill'+(added===1?'':'s')):'All built-ins already present');
+  });
+  document.getElementById('dmDone').addEventListener('click',function(){
+    drills=drills.filter(function(d){return (d.t||'').trim();});
+    saveDrills(); drillBack.classList.remove('open'); render();
+  });
+  drillBack.addEventListener('click',function(e){if(e.target===drillBack)document.getElementById('dmDone').click();});
+
+  function updateSums(){
+    var XF=10; // seconds of crossfade overlap per transition
+    var drift=getDrift();
+    var run=0, counted=0, missingAll=0, tracksAll=0;
+    data.forEach(function(seg,si){
+      var segStart=run, segTracks=0, segMiss=0;
+      seg.rows.forEach(function(row,ri){
+        var L=parseLen(row.len);
+        var isTrack=(row.song&&row.song.trim())||L>0;
+        var cell=document.getElementById('sum_'+si+'_'+ri);
+        if(L>0){
+          run += (counted===0 ? L : L-XF);
+          counted++;
+          if(cell)cell.textContent=fmtLen(run);
+          // ride-clock drops: song starts at run − L, shifted by accumulated drift
+          var rd=document.getElementById('rided_'+si+'_'+ri);
+          if(rd){
+            var start=run-L+drift*(counted-1), times=[];
+            String(row.drops||'').split(/[,;]+/).forEach(function(tok){
+              tok=tok.trim(); if(!tok)return;
+              var off=parseLen(tok);
+              if(off>0||tok==='0:00')times.push(fmtLen(Math.round(start+off)));
+            });
+            rd.textContent = times.length ? '◉ ride '+times.join(' · ') : '';
+            var bp=document.getElementById('barp_'+si+'_'+ri);
+            if(bp){
+              // nearest 8-bar phrase boundary: where a drill can naturally start
+              var bpm=parseInt(row.bpm,10), snaps=[];
+              if(!isNaN(bpm)&&bpm>0){
+                var phrase=(240/bpm)*8;
+                String(row.drops||'').split(/[,;]+/).forEach(function(tok){
+                  tok=tok.trim(); if(!tok)return;
+                  var off=parseLen(tok);
+                  if(!(off>0||tok==='0:00'))return;
+                  var at=Math.round(off/phrase)*phrase;
+                  var d=off-at;
+                  snaps.push(Math.abs(d)<0.25 ? fmtSec(at)+' on'
+                            : fmtSec(at)+(d>0?' +':' \u2212')+Math.abs(d).toFixed(1));
+                });
+              }
+              bp.textContent = snaps.length ? '\u266a 8-bar '+snaps.join(' · ') : '';
+            }
+          }
+        } else {
+          if(cell)cell.textContent='—';
+          var rd2=document.getElementById('rided_'+si+'_'+ri);
+          if(rd2)rd2.textContent='';
+          if(isTrack)segMiss++;
+        }
+        if(isTrack){segTracks++;tracksAll++;}
+      });
+      if(segMiss)missingAll+=segMiss;
+      var head=document.getElementById('segsum_'+si);
+      if(head){
+        var segLen=run-segStart, parts=[];
+        if(segTracks)parts.push(segTracks+(segTracks===1?' song':' songs'));
+        if(segLen>0)parts.push('Σ '+fmtLen(segLen));
+        if(segLen>0)parts.push('thru '+fmtLen(run));
+        if(segMiss)parts.push('+'+segMiss+'?');
+        head.textContent=parts.join(' · ');
+      }
+    });
+    var g=document.getElementById('grandTotal');
+    if(g){
+      var diff=run-TARGET, cls=diff>0?'over':'under';
+      var deltaTxt = counted===0 ? '' : (diff===0 ? 'exactly 60:00'
+        : (diff>0 ? fmtLen(diff)+' over 60:00' : fmtLen(-diff)+' under 60:00'));
+      g.innerHTML='<span>Playlist total: '+fmtLen(run)+
+        (counted>1?' <span style="color:var(--muted);font-weight:500">(incl. 10 s crossfades)</span>':'')+
+        (missingAll?' <span style="color:var(--muted);font-weight:500">· '+missingAll+' song'+(missingAll===1?'':'s')+' without a length</span>':'')+
+        '</span><span class="delta '+cls+'">'+deltaTxt+'</span>';
+    }
+  }
+
+  var SHORT={warmup:'W-Up',seg1:'Seg 1',br1:'Br 1',seg2:'Seg 2',br2:'Br 2',seg3:'Seg 3',seg4:'Seg 4',cool:'Cool'};
+  function shortName(seg,idx){return SHORT[seg.id]||('Sec '+(idx+1));}
+
+  var GKEY='s60_drillgroups_v1';
+  var DEFAULT_GROUPS=['Steady / tempo','Climb','Sprint','Recovery','My drills'];
+  var DRILL_GROUPS=loadGroups();
+  function loadGroups(){
+    try{var r=localStorage.getItem(GKEY); var a=r?JSON.parse(r):null;
+      if(Array.isArray(a)&&a.length)return a;}catch(e){}
+    return DEFAULT_GROUPS.slice();
+  }
+  function saveGroups(){try{localStorage.setItem(GKEY,JSON.stringify(DRILL_GROUPS));}catch(e){}}
+  var BUILTIN_DRILLS=[
+    ['Steady / tempo',[
+      '1 × steady base (whole song)',
+      '1 × steady tempo, add gear each verse',
+      '2 × 0:30 pickups on chorus, rest base',
+      'Negative split: easy first half, push after the mid-song drop',
+      '30/30s: 0:30 on / 0:30 off, on the beat'
+    ]],
+    ['Climb',[
+      '3 × climb efforts, one per chorus',
+      '3 × gear step-ups, one per chorus',
+      '2 × long climb efforts; STAND final chorus',
+      '2 × 1:00 standing climb, chorus-timed',
+      'Rolling hills: climb the verses, flat the choruses',
+      'Seated/standing alternation every 0:30, gear steady'
+    ]],
+    ['Sprint',[
+      '3–4 × 0:15–0:20 surges on drops, easy between',
+      'Sprint pyramid 0:15 / 0:20 / 0:30 / 0:20 / 0:15 on successive drops',
+      'Ladder 0:10 / 0:20 / 0:30 build, one rung per drop',
+      'Tabata 8 × 0:20 on / 0:10 off',
+      'Best effort on the LAST drop — empty the tank'
+    ]],
+    ['Recovery',[
+      '1 × light spin (2:00)',
+      '1 × easy spin, gear off',
+      '1 × recovery spin + stretch cue'
+    ]]
+  ];
+  function seedDrills(){
+    var out=[];
+    BUILTIN_DRILLS.forEach(function(g){g[1].forEach(function(t){out.push({g:g[0],t:t});});});
+    return out;
+  }
+  var DKEY2='s60_drills_v1';
+  var drills=loadDrills();
+  function loadDrills(){
+    try{var r=localStorage.getItem(DKEY2); if(r){var a=JSON.parse(r); if(Array.isArray(a))return a;}}catch(e){}
+    return seedDrills();
+  }
+  function saveDrills(){try{localStorage.setItem(DKEY2,JSON.stringify(drills));}catch(e){}}
+
+  function buildDrillOpts(){
+    var html='<option value="">⋯ drills</option>';
+    DRILL_GROUPS.forEach(function(g){
+      var items=drills.filter(function(d){return d.g===g;});
+      if(!items.length)return;
+      html+='<optgroup label="'+esc(g)+'">'+items.map(function(d){
+        return '<option value="'+esc(d.t)+'">'+esc(d.t)+'</option>';}).join('')+'</optgroup>';
+    });
+    html+='<optgroup label="—"><option value="__clear__">\u2014 clear this cell \u2014</option>'+
+          '<option value="__save__">＋ Save this row\u2019s text as a drill</option>'+
+          '<option value="__manage__">✎ Manage drills…</option></optgroup>';
+    return html;
+  }
+
+  function render(){
+    var html='';
+    var songNum=0, segOrd=0;
+    data.forEach(function(seg,si){
+      var dispTitle=seg.title;
+      if(/^SEGMENT\s+\d+/.test(dispTitle)){segOrd++; dispTitle=dispTitle.replace(/^SEGMENT\s+\d+/,'SEGMENT '+segOrd);}
+      var posOptsSec=data.map(function(_,gi){return '<option value="'+gi+'"'+(gi===si?' selected':'')+'>'+(gi+1)+'</option>';}).join('');
+      var secArrows='<select class="secpos" data-secpos="'+si+'" title="Section position (1–'+data.length+')">'+posOptsSec+'</select>'+
+                    (si>0?'<button class="smv" data-secup="'+si+'" title="Move section up">▲</button>':'')+
+                    (si<data.length-1?'<button class="smv" data-secdn="'+si+'" title="Move section down">▼</button>':'')+
+                    '<button class="smv" data-libsave="'+si+'" title="Save this section to the library">Save</button>'+
+                    (data.length>1?'<button class="smv" data-secdel="'+si+'" title="Remove this section">×</button>':'');
+      html+='<div class="seg">'+
+        '<div class="seg-head" style="background:'+seg.color+'"><span>'+secArrows+esc(dispTitle)+'</span><span><span class="segsum" id="segsum_'+si+'"></span><span class="time">'+esc(seg.time)+'</span></span></div>'+
+        '<div class="seg-note">'+esc(seg.note)+'</div>'+
+        '<table class="slots"><colgroup><col class="c-slot"><col class="c-song"><col class="c-len"><col class="c-bpm"><col class="c-mode"><col class="c-rpm"><col class="c-pos"><col class="c-int"><col class="c-pow"><col class="c-hr"><col class="c-drops"><col class="c-sum"><col class="c-rm"></colgroup>'+
+        '<tr><th>#</th><th>Song</th><th>Len</th><th>BPM</th><th>Ride</th><th>RPM</th><th>Pos</th><th>Intervals in song</th><th>Power target</th><th>HR guide</th><th>Drop times</th><th>Σ ride</th><th></th></tr>';
+      seg.rows.forEach(function(row,ri){
+        var modeOpts=MODES.map(function(m){return '<option value="'+m[0]+'"'+(row.mode===m[0]?' selected':'')+'>'+m[1]+'</option>';}).join('');
+        var posOpts=POS.map(function(p){return '<option'+(row.pos===p?' selected':'')+'>'+p+'</option>';}).join('');
+        var canUp = ri>0 || si>0;
+        var canDn = ri<seg.rows.length-1 || si<data.length-1;
+        var mv=(canUp?'<button class="mv" data-up="'+si+'_'+ri+'" title="Move up">▲</button>':'')+
+               (canDn?'<button class="mv" data-dn="'+si+'_'+ri+'" title="Move down">▼</button>':'');
+        var jumpOpts=data.map(function(g,gi){return '<option value="'+gi+'"'+(gi===si?' selected':'')+'>'+esc(shortName(g,gi))+'</option>';}).join('');
+        songNum++;
+        html+='<tr>'+
+          '<td>'+songNum+'</td>'+
+          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="song" placeholder="'+esc(row.ph||'song title')+'">'+esc(row.song)+'</textarea></td>'+
+          '<td><input type="text" class="len" data-s="'+si+'" data-r="'+ri+'" data-f="len" value="'+esc(row.len||'')+'" placeholder="3:41"></td>'+
+          '<td><input type="text" class="bpm" inputmode="numeric" data-s="'+si+'" data-r="'+ri+'" data-f="bpm" value="'+esc(row.bpm)+'"></td>'+
+          '<td><select data-s="'+si+'" data-r="'+ri+'" data-f="mode">'+modeOpts+'</select></td>'+
+          '<td class="rpm-cell" id="rpm_'+si+'_'+ri+'">'+rpmFor(row)+'</td>'+
+          '<td><select data-s="'+si+'" data-r="'+ri+'" data-f="pos">'+posOpts+'</select></td>'+
+          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="intervals">'+esc(row.intervals)+'</textarea>'+
+            '<select class="int-preset" data-ip="'+si+'_'+ri+'">'+buildDrillOpts()+'</select></td>'+
+          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="power">'+esc(row.power)+'</textarea></td>'+
+          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="hr">'+esc(row.hr)+'</textarea></td>'+
+          '<td><textarea rows="1" class="drops" data-s="'+si+'" data-r="'+ri+'" data-f="drops" placeholder="1:14, 2:40">'+esc(row.drops)+'</textarea><div class="ridedrops" id="rided_'+si+'_'+ri+'"></div><div class="barpos" id="barp_'+si+'_'+ri+'"></div></td>'+
+          '<td class="sum-cell" id="sum_'+si+'_'+ri+'">—</td>'+
+          '<td class="rm-cell">'+mv+(seg.rows.length>1?'<button data-del="'+si+'_'+ri+'" title="Remove song">×</button>':'')+
+            '<select class="jump" data-j="'+si+'_'+ri+'" title="Move to section">'+jumpOpts+'</select></td>'+
+        '</tr>';
+      });
+      html+='</table><div class="addrow"><button data-add="'+si+'">+ Add song to this section</button></div></div>';
+    });
+    html+='<div class="grand" id="grandTotal"></div>';
+    html+='<div class="addrow" style="margin-top:8px"><button data-addsec>＋ Add section</button></div>';
+    sheet.innerHTML=html;
+
+    function fit(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+    sheet.querySelectorAll('input,select,textarea').forEach(function(el){
+      if(!el.getAttribute('data-f'))return; // jump selects are handled separately
+      if(el.tagName==='TEXTAREA')fit(el);
+      el.addEventListener('input',function(){
+        var si=+el.getAttribute('data-s'), ri=+el.getAttribute('data-r'), f=el.getAttribute('data-f');
+        if(f==='bpm'){var c=el.value.replace(/[^0-9]/g,''); if(c!==el.value)el.value=c;}
+        if(f==='len'){var c2=el.value.replace(/[^0-9:]/g,''); if(c2!==el.value)el.value=c2;}
+        if(el.tagName==='TEXTAREA')fit(el);
+        data[si].rows[ri][f]=el.value;
+        if(f==='bpm'||f==='mode'){document.getElementById('rpm_'+si+'_'+ri).textContent=rpmFor(data[si].rows[ri]);}
+        if(f==='len'||f==='drops')updateSums();
+        save();
+      });
+      if(el.tagName==='SELECT'){el.addEventListener('change',function(){
+        var si=+el.getAttribute('data-s'), ri=+el.getAttribute('data-r'), f=el.getAttribute('data-f');
+        data[si].rows[ri][f]=el.value;
+        if(f==='mode'){document.getElementById('rpm_'+si+'_'+ri).textContent=rpmFor(data[si].rows[ri]);}
+        save();
+      });}
+    });
+    sheet.querySelectorAll('[data-add]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var si=+btn.getAttribute('data-add');
+        var last=data[si].rows[data[si].rows.length-1];
+        data[si].rows.push({song:'',ph:'song title',bpm:last.bpm,mode:last.mode,pos:last.pos,intervals:'',power:last.power,hr:last.hr,drops:'',len:'',role:last.role||'tempo'});
+        save(); render();
+      });
+    });
+    sheet.querySelectorAll('[data-del]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var p=btn.getAttribute('data-del').split('_'), si=+p[0], ri=+p[1];
+        if(confirm('Remove this song slot?')){data[si].rows.splice(ri,1); save(); render();}
+      });
+    });
+    function destRole(si){
+      var def=DEFAULTS.filter(function(g){return g.id===data[si].id;})[0];
+      return (def&&def.rows.length)?def.rows[def.rows.length-1].role:null;
+    }
+    sheet.querySelectorAll('[data-up]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var p=btn.getAttribute('data-up').split('_'), si=+p[0], ri=+p[1];
+        var rows=data[si].rows;
+        if(ri>0){ var t=rows[ri-1]; rows[ri-1]=rows[ri]; rows[ri]=t; }
+        else if(si>0){
+          var row=rows.splice(ri,1)[0];
+          var r=destRole(si-1); if(r)row.role=r;
+          data[si-1].rows.push(row);
+        }
+        save(); render();
+      });
+    });
+    sheet.querySelectorAll('[data-dn]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var p=btn.getAttribute('data-dn').split('_'), si=+p[0], ri=+p[1];
+        var rows=data[si].rows;
+        if(ri<rows.length-1){ var t=rows[ri+1]; rows[ri+1]=rows[ri]; rows[ri]=t; }
+        else if(si<data.length-1){
+          var row=rows.splice(ri,1)[0];
+          var r=destRole(si+1); if(r)row.role=r;
+          data[si+1].rows.unshift(row);
+        }
+        save(); render();
+      });
+    });
+    sheet.querySelectorAll('.int-preset').forEach(function(sel){
+      sel.addEventListener('change',function(){
+        if(!sel.value)return;
+        var p=sel.getAttribute('data-ip').split('_'), si=+p[0], ri=+p[1];
+        if(sel.value==='__manage__'){sel.selectedIndex=0; openDrillManager(); return;}
+        if(sel.value==='__clear__'){
+          sel.selectedIndex=0;
+          data[si].rows[ri].intervals='';
+          var ta0=sheet.querySelector('textarea[data-s="'+si+'"][data-r="'+ri+'"][data-f="intervals"]');
+          if(ta0){ta0.value=''; ta0.style.height='auto'; ta0.style.height=ta0.scrollHeight+'px';}
+          save();
+          return;
+        }
+        if(sel.value==='__save__'){
+          sel.selectedIndex=0;
+          var txt=(data[si].rows[ri].intervals||'').trim();
+          if(!txt){alert('Type the drill into this row\u2019s Intervals box first, then choose “Save this row\u2019s text as a drill”.');return;}
+          if(drills.some(function(d){return d.t===txt;})){sheetStatus('Already in the drill list');return;}
+          drills.push({g:DRILL_GROUPS[DRILL_GROUPS.length-1],t:txt}); saveDrills(); render();
+          sheetStatus('Drill saved ✓');
+          return;
+        }
+        data[si].rows[ri].intervals=sel.value;
+        var ta=sheet.querySelector('textarea[data-s="'+si+'"][data-r="'+ri+'"][data-f="intervals"]');
+        if(ta){ta.value=sel.value; ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px';}
+        sel.selectedIndex=0;
+        save();
+      });
+    });
+    sheet.querySelectorAll('.jump').forEach(function(sel){
+      sel.addEventListener('change',function(){
+        var p=sel.getAttribute('data-j').split('_'), si=+p[0], ri=+p[1];
+        var dest=+sel.value;
+        if(dest===si)return;
+        var row=data[si].rows.splice(ri,1)[0];
+        var r=destRole(dest); if(r)row.role=r;
+        data[dest].rows.push(row);
+        save(); render();
+      });
+    });
+    function swapSections(a,b){
+      // clock windows belong to the position in the ride, not the section content
+      var t=data[a].time; data[a].time=data[b].time; data[b].time=t;
+      var s=data[a]; data[a]=data[b]; data[b]=s;
+      save(); render();
+    }
+    sheet.querySelectorAll('[data-secup]').forEach(function(btn){
+      btn.addEventListener('click',function(){var si=+btn.getAttribute('data-secup'); if(si>0)swapSections(si,si-1);});
+    });
+    sheet.querySelectorAll('[data-secdn]').forEach(function(btn){
+      btn.addEventListener('click',function(){var si=+btn.getAttribute('data-secdn'); if(si<data.length-1)swapSections(si,si+1);});
+    });
+    sheet.querySelectorAll('.secpos').forEach(function(sel){
+      sel.addEventListener('change',function(){
+        var si=+sel.getAttribute('data-secpos'), dest=+sel.value;
+        if(dest===si)return;
+        // clock windows stay attached to positions
+        var times=data.map(function(g){return g.time;});
+        var seg=data.splice(si,1)[0];
+        data.splice(dest,0,seg);
+        data.forEach(function(g,i){g.time=times[i];});
+        save(); render();
+      });
+    });
+    var addSecBtn=sheet.querySelector('[data-addsec]');
+    if(addSecBtn)addSecBtn.addEventListener('click',function(){
+      var name=prompt('Name the new section (it numbers itself by position; move it anywhere with the position dropdown):','CUSTOM BLOCK');
+      if(!name)return;
+      var palette=['#0d8a80','#7a5cc7','#b0642d','#3b7bc4','#8a8f2a'];
+      var nCustom=data.filter(function(g){return (g.id||'').slice(0,7)==='custom_';}).length;
+      data.push({id:'custom_'+Date.now(),color:palette[nCustom%palette.length],
+        title:'SEGMENT 1 — '+name.trim().toUpperCase(),
+        time:'· flex ·',
+        note:'Custom section — music decides the length; watch the Σ.',
+        rows:[{role:'tempo',song:'',ph:'song title',bpm:'105',mode:'beat',pos:'Seat',intervals:'',power:'',hr:'',drops:'',len:''}]});
+      save(); render();
+    });
+    sheet.querySelectorAll('[data-secdel]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var si=+btn.getAttribute('data-secdel');
+        var seg=data[si];
+        var n=seg.rows.filter(function(r){return (r.song&&r.song.trim())||r.len;}).length;
+        var msg='Remove "'+shortName(seg,si)+'"'+(n?' and its '+n+' song'+(n===1?'':'s'):'')+'?'+
+          (n?'\n\nTip: tap Save on its header first if you might want it back — Reset to defaults also restores the factory sheet at any time.':'');
+        if(!confirm(msg))return;
+        data.splice(si,1);
+        save(); render();
+      });
+    });
+    sheet.querySelectorAll('[data-libsave]').forEach(function(btn){
+      btn.addEventListener('click',function(){saveSectionToLib(+btn.getAttribute('data-libsave'));});
+    });
+    updateSums();
+    renderLib();
+  }
+
+  document.getElementById('printBtn').addEventListener('click',function(){window.print();});
+
+  /* ---- Import a Spotify playlist export (Exportify / Chosic CSV or plain text) ---- */
+  var impBack=document.getElementById('impBack'),
+      impText=document.getElementById('impText'),
+      impFile=document.getElementById('impFile'),
+      impGo=document.getElementById('impGo'),
+      impCancel=document.getElementById('impCancel');
+
+  document.getElementById('spotifyBtn').addEventListener('click',function(){
+    impText.value=''; impFile.value=''; impBack.classList.add('open'); impText.focus();
+  });
+  impCancel.addEventListener('click',function(){impBack.classList.remove('open');});
+  impBack.addEventListener('click',function(e){if(e.target===impBack)impBack.classList.remove('open');});
+  impFile.addEventListener('change',function(){
+    var f=impFile.files&&impFile.files[0]; if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(){impText.value=String(rd.result||'');};
+    rd.readAsText(f);
+  });
+
+  // Minimal CSV parser (handles quoted fields with commas/newlines)
+  function parseCSV(text){
+    var rows=[],row=[],cur='',inQ=false;
+    for(var i=0;i<text.length;i++){
+      var c=text[i];
+      if(inQ){
+        if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else inQ=false; }
+        else cur+=c;
+      } else {
+        if(c==='"')inQ=true;
+        else if(c===','){row.push(cur);cur='';}
+        else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n')i++;
+          row.push(cur);cur=''; if(row.length>1||row[0]!=='')rows.push(row); row=[]; }
+        else cur+=c;
+      }
+    }
+    row.push(cur); if(row.length>1||row[0]!=='')rows.push(row);
+    return rows;
+  }
+
+  function parseSpotifyExport(text){
+    text=(text||'').replace(/^\uFEFF/,'').trim();
+    if(!text)return [];
+    if(/^https:\/\/open\.spotify\.com/m.test(text) && text.indexOf(',')<0){
+      alert('Those are Spotify links — they don\u2019t carry song titles. Use Exportify or Chosic to get a CSV/text export instead.');
+      return [];
+    }
+    var songs=[];
+    var firstLine=text.split(/\r?\n/)[0].toLowerCase();
+    var isCSV = text.indexOf(',')>=0 && (firstLine.indexOf('track')>=0||firstLine.indexOf('name')>=0||firstLine.indexOf('title')>=0||firstLine.indexOf('artist')>=0);
+    if(isCSV){
+      var rows=parseCSV(text);
+      if(!rows.length)return [];
+      var head=rows[0].map(function(h){return h.toLowerCase().trim();});
+      function col(){ for(var a=0;a<arguments.length;a++){var i=head.indexOf(arguments[a]); if(i>=0)return i;} 
+        for(var a2=0;a2<arguments.length;a2++){ for(var j=0;j<head.length;j++){ if(head[j].indexOf(arguments[a2])>=0)return j; } }
+        return -1; }
+      var ti=col('track name','song name','title','song','track','name');
+      var ai=col('artist name(s)','artist name','artists','artist');
+      var bi=col('bpm','tempo');
+      var di=col('duration (ms)','duration');
+      if(ti<0)return [];
+      for(var r=1;r<rows.length;r++){
+        var t=(rows[r][ti]||'').trim(); if(!t)continue;
+        var artist=ai>=0?(rows[r][ai]||'').trim():'';
+        var bpm=null;
+        if(bi>=0){var bv=parseFloat(rows[r][bi]); if(!isNaN(bv)&&bv>0)bpm=Math.round(bv);}
+        var len='';
+        if(di>=0){
+          var dv=(rows[r][di]||'').trim();
+          if(dv.indexOf(':')>=0){
+            var dp=dv.split(':');
+            if(dp.length===3){len=(parseInt(dp[0],10)*60+parseInt(dp[1],10))+':'+dp[2];}
+            else {len=parseInt(dp[0],10)+':'+dp[1];}
+          } else {
+            var ms=parseFloat(dv);
+            if(!isNaN(ms)&&ms>1000){var sec=Math.round(ms/1000);len=Math.floor(sec/60)+':'+((sec%60)<10?'0':'')+(sec%60);}
+          }
+        }
+        songs.push({title:(artist? t+' — '+artist : t), bpm:bpm, len:len});
+      }
+    } else {
+      text.split(/\r?\n/).forEach(function(line){
+        line=line.trim();
+        if(!line)return;
+        if(/^\d+[\.\)]\s*/.test(line))line=line.replace(/^\d+[\.\)]\s*/,'');
+        songs.push({title:line,bpm:null,len:''});
+      });
+    }
+    return songs;
+  }
+
+  impGo.addEventListener('click',function(){
+    var songs=parseSpotifyExport(impText.value);
+    if(!songs.length){alert('No songs found. Paste an Exportify/Chosic CSV or one song per line.');return;}
+    var withBpm=songs.filter(function(s){return s.bpm;}).length;
+    var bpmNote=withBpm? withBpm+' of them carry BPMs from the file — those fill in automatically.' : 'This export has no BPM column — fill BPMs with the lookup sites or the tap-tester.';
+    if(!confirm('Fill the sheet with '+songs.length+' song'+(songs.length===1?'':'s')+' in ride order (top to bottom, bridges included)?\n\n'+bpmNote+'\nDrop times are cleared; ride modes, positions and targets keep their defaults.'))return;
+    var q=songs.slice();
+    data.forEach(function(seg){seg.rows.forEach(function(row){
+      if(!q.length)return;
+      var s=q.shift();
+      row.song=s.title; row.bpm=s.bpm?String(s.bpm):''; row.len=s.len||''; row.drops='';
+      if(s.bpm&&s.bpm>CAP)row.mode='half';
+    });});
+    // extras become new rows in the cool-down section
+    if(q.length){
+      var seg=data.filter(function(g){return g.id==='cool';})[0];
+      q.forEach(function(s){
+        var last=seg.rows[seg.rows.length-1];
+        seg.rows.push({song:s.title,ph:'song title',bpm:s.bpm?String(s.bpm):'',len:s.len||'',mode:(s.bpm&&s.bpm>CAP)?'half':last.mode,pos:last.pos,intervals:'',power:last.power,hr:last.hr,drops:'',role:last.role||'cool'});
+      });
+    }
+    impBack.classList.remove('open');
+    save(); render();
+    statusEl.textContent='Imported '+songs.length+' songs'+(withBpm?' ('+withBpm+' with BPM)':'')+' ✓';
+    setTimeout(function(){statusEl.textContent='';},2500);
+  });
+
+  /* ---- Import from the Selector's playlist ---- */
+  var FEEDKEY='s60_feed_v1';
+  var BLOCK2ROLE={warmup:'warmup',endurance:'tempo',climb:'climb',sprints:'sprint',finisher:'sprint',cooldown:'cool'};
+  var HOME={warmup:'warmup',tempo:'seg1',climb:'seg2',sprint:'seg3',cool:'cool'};
+  function fmtSec(sec){sec=Math.max(0,Math.round(sec));var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0'+s:s);}
+  function applySong(row,s){
+    row.song=s.title||'';
+    row.bpm=String(s.bpm||row.bpm||'');
+    if(s.db>0 && !(row.db||'').trim()) row.db=fmtSec(s.db);
+    if(s.mode==='beat'||s.mode==='half'){
+      row.mode=s.mode;                       // the Selector's per-song override wins
+    } else {
+      var b=parseInt(row.bpm,10);
+      if(!isNaN(b)&&b>CAP)row.mode='half';   // otherwise fall back to the >110 rule
+    }
+    row.drops=(s.drops&&s.drops.length)?s.drops.map(fmtSec).join(', '):'';
+  }
+  function readFeed(){
+    try{var r=localStorage.getItem(FEEDKEY); if(r){var p=JSON.parse(r); if(p&&p.songs&&p.songs.length)return p;}}catch(e){}
+    return null;
+  }
+  function readCode(){
+    var code=prompt('No playlist found in this browser.\n\nOn the phone Selector, tap "Send to sheet" — it copies a transfer code to the clipboard. Get that code to this device (email, notes, messaging) and paste it here:');
+    if(!code)return null;
+    try{
+      code=code.replace(/\s+/g,''); if(code.slice(0,3)==='S60')code=code.slice(3);
+      var p=JSON.parse(decodeURIComponent(escape(atob(code))));
+      return (p&&p.songs&&p.songs.length)?p:null;
+    }catch(e){alert('That code could not be read. Copy it again from the Selector and retry.');return null;}
+  }
+  /* ---- drops-only merge: match by song title, touch nothing else ---- */
+  function normTitle(t){
+    return String(t||'')
+      .split(' \u2014 ')[0]                 // drop any " - Artist" suffix
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g,'');           // ignore punctuation and spacing
+  }
+  document.getElementById('dropsBtn').addEventListener('click',function(){
+    var payload=readFeed()||readCode();
+    if(!payload)return;
+    var incoming=(payload.songs||[]).filter(function(s){return s.drops&&s.drops.length;});
+    if(!incoming.length){alert('That playlist has no drop times to merge.');return;}
+    if(!confirm('Merge drop times for '+incoming.length+' song'+(incoming.length===1?'':'s')+
+                ' into matching songs on this sheet?\n\nOnly the Drop times column changes — BPM, ride mode, '+
+                'position, intervals and targets are left alone.'))return;
+
+    // index the sheet's rows by normalised title
+    var index={};
+    data.forEach(function(seg,si){
+      seg.rows.forEach(function(row,ri){
+        var key=normTitle(row.song);
+        if(key && !index[key]) index[key]={si:si,ri:ri};
+      });
+    });
+
+    var hit=0, miss=[];
+    incoming.forEach(function(s){
+      var slot=index[normTitle(s.title)];
+      if(!slot){ miss.push(s.title); return; }
+      data[slot.si].rows[slot.ri].drops = s.drops.map(fmtSec).join(', ');
+      hit++;
+    });
+
+    save(); render();
+    var msg='Drops merged into '+hit+' song'+(hit===1?'':'s')+'.';
+    if(miss.length) msg+='\n\nNo match on this sheet for:\n  \u2022 '+miss.slice(0,8).join('\n  \u2022 ')+
+                         (miss.length>8?('\n  \u2026 and '+(miss.length-8)+' more'):'');
+    alert(msg);
+    sheetStatus('Drops merged \u2713 ('+hit+')');
+  });
+
+  document.getElementById('importBtn').addEventListener('click',function(){
+    var payload=readFeed()||readCode();
+    if(!payload)return;
+    if(!confirm('Fill the sheet with '+payload.songs.length+' song'+(payload.songs.length===1?'':'s')+' from the Selector playlist?\n\nSong titles, BPMs and drop times in matching slots will be replaced; ride modes, positions and targets keep their defaults.'))return;
+    var queues={warmup:[],tempo:[],climb:[],sprint:[],cool:[]};
+    payload.songs.forEach(function(s){var role=BLOCK2ROLE[s.block]||'tempo'; queues[role].push(s);});
+    // 1) fill matching slots in ride order
+    data.forEach(function(seg){seg.rows.forEach(function(row){
+      if(row.role==='bridge')return;
+      var q=queues[row.role];
+      if(q&&q.length)applySong(row,q.shift());
+    });});
+    // 2) bridges take leftover cool-tempo tracks
+    data.forEach(function(seg){seg.rows.forEach(function(row){
+      if(row.role==='bridge'&&queues.cool.length)applySong(row,queues.cool.shift());
+    });});
+    // 3) any remaining songs become new rows in their home section
+    Object.keys(queues).forEach(function(role){
+      if(!queues[role].length)return;
+      var seg=data.filter(function(g){return g.id===HOME[role];})[0];
+      if(!seg)return;
+      queues[role].forEach(function(s){
+        var last=seg.rows[seg.rows.length-1];
+        var row={song:'',ph:'song title',bpm:'',mode:last.mode,pos:last.pos,intervals:'',power:last.power,hr:last.hr,drops:'',role:role};
+        applySong(row,s);
+        seg.rows.push(row);
+      });
+    });
+    save(); render();
+    statusEl.textContent='Imported ✓';
+    setTimeout(function(){statusEl.textContent='';},2000);
+  });
+
+  document.getElementById('resetBtn').addEventListener('click',function(){
+    if(confirm('Reset the whole template to the default Build Sheet? Your typed songs and drops will be lost.')){
+      data=deep(DEFAULTS); save(); render();
+    }
+  });
+  document.getElementById('clearSongsBtn').addEventListener('click',function(){
+    if(confirm('Clear song titles, lengths and drop times, keeping all other settings?')){
+      data.forEach(function(seg){seg.rows.forEach(function(r){r.song='';r.drops='';r.len='';});});
+      save(); render();
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "id": "./",
+  "name": "Saturday 60",
+  "short_name": "Sat 60",
+  "description": "Playlist, drops and MOWL build-sheet tools for the Saturday 60 spin class.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#14161a",
+  "theme_color": "#14161a",
+  "categories": ["fitness", "productivity", "music"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Song BPM Selector",
+      "short_name": "Selector",
+      "description": "Build the playlist and tap in drops",
+      "url": "selector.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "MOWL Build Sheet",
+      "short_name": "Build Sheet",
+      "description": "Lay out the ride and print the sheet",
+      "url": "buildsheet.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Drops Library Editor",
+      "short_name": "Drops",
+      "description": "Read and edit a drops library file",
+      "url": "drops.html",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

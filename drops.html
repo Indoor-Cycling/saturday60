@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#14161a">
+<title>Drops Library Editor · Saturday 60</title>
+<style>
+  :root{
+    --bg:#14161a; --surface:#1e2127; --surface-2:#252932; --line:#30343d;
+    --text:#f2f4f7; --muted:#9aa3af; --dim:#6b7280;
+    --accent:#38bdf8; --warn:#f59e0b; --bad:#ef4444; --good:#34d399;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Roboto Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);
+       min-height:100vh;padding:max(18px,env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
+       -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:0 0 4px;}
+  h1{font-size:22px;line-height:1.15;margin:0 0 4px;font-weight:700;letter-spacing:-.01em;}
+  .sub{font-size:12.5px;color:var(--muted);margin:0 0 18px;line-height:1.55;}
+
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+  button{border:1px solid var(--line);background:var(--surface-2);color:var(--text);
+         border-radius:9px;padding:9px 14px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--sans);}
+  button:hover{border-color:var(--dim);}
+  button:active{transform:scale(.98);}
+  button.primary{background:var(--text);color:var(--bg);border-color:var(--text);}
+  button.ghost{background:transparent;color:var(--muted);}
+  button:disabled{opacity:.4;cursor:default;transform:none;}
+  .count{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+  .search{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+          color:var(--text);font-size:14px;padding:11px 13px;margin-bottom:12px;font-family:var(--sans);}
+  .search:focus{outline:none;border-color:var(--dim);}
+  .search::placeholder{color:var(--dim);}
+
+  .empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;
+         padding:30px 22px;color:var(--muted);font-size:14px;line-height:1.6;text-align:center;}
+  .empty b{color:var(--text);}
+  .empty .hint{font-size:12.5px;margin-top:10px;color:var(--dim);}
+
+  .song{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);
+        border-radius:12px;padding:12px 14px;margin-bottom:9px;}
+  .song.bad{border-left-color:var(--bad);}
+  .row1{display:flex;gap:9px;align-items:center;margin-bottom:7px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  @media(max-width:620px){ .row2{grid-template-columns:1fr;} }
+
+  label{display:block;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+        color:var(--dim);font-weight:600;margin-bottom:3px;}
+  input[type=text]{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+        color:var(--text);font-size:13.5px;padding:8px 10px;font-family:var(--sans);}
+  input[type=text]:focus{outline:none;border-color:var(--accent);}
+  input.times{font-family:var(--mono);}
+  input.bpm{font-family:var(--mono);text-align:center;width:66px;flex:none;}
+  input.err{border-color:var(--bad);}
+  .title-in{flex:1;font-weight:600;}
+  .rm{width:34px;height:34px;flex:none;border-radius:8px;background:transparent;border:1px solid var(--line);
+      color:var(--dim);font-size:16px;padding:0;}
+  .rm:hover{color:var(--bad);border-color:var(--bad);}
+  .note{font-size:10.5px;color:var(--warn);margin-top:5px;}
+
+  .foot{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);
+        font-size:11.5px;color:var(--dim);line-height:1.65;}
+  .foot b{color:var(--muted);}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;background:var(--surface-2);
+         border:1px solid var(--line);border-radius:10px;padding:11px 18px;font-size:13px;
+         box-shadow:0 12px 32px -12px rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .25s;}
+  .toast.show{opacity:1;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+
+<!-- Saturday 60 app shell -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sat 60">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Saturday 60</p>
+  <h1>Drops Library Editor</h1>
+  <p class="sub">Open a <b>Saturday60-Drops</b> file to read or change it outside the Selector and the Build Sheet.
+     Times are shown in m:ss — type them that way and they are converted back on save.</p>
+
+  <div class="bar">
+    <button class="primary" id="openBtn">Open file</button>
+    <button id="mergeBtn" disabled>Merge another file</button>
+    <button id="newBtn">Start empty</button>
+    <button id="addBtn" disabled>Add song</button>
+    <button id="saveBtn" disabled>Save file</button>
+    <span class="count" id="count"></span>
+  </div>
+  <input type="file" id="fileIn" accept="application/json,.json" style="display:none">
+  <input type="file" id="mergeIn" accept="application/json,.json" style="display:none">
+
+  <input type="text" class="search" id="search" placeholder="Filter by song title or drill…" style="display:none">
+
+  <div id="list"></div>
+
+  <p class="foot">
+    <b>How matching works.</b> The tools find a song by its title with the artist, capitalisation and punctuation
+    ignored — so “Titanium” and “Titanium — David Guetta, Sia” are the same song. Rename a title here and its key is
+    rebuilt on save.<br>
+    <b>Drop times</b> take m:ss separated by commas (1:14, 2:40). Plain seconds work too.
+    <b>Drill</b> is the interval text the Build Sheet puts in Cue Notes.
+  </p>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var songs=[];            // [{key, title, bpm, timesText, drill}]
+  var loadedName='';
+  var listEl=document.getElementById('list'),
+      countEl=document.getElementById('count'),
+      searchEl=document.getElementById('search'),
+      toastEl=document.getElementById('toast');
+
+  function toast(msg){
+    toastEl.textContent=msg; toastEl.classList.add('show');
+    clearTimeout(toast._t); toast._t=setTimeout(function(){toastEl.classList.remove('show');},2200);
+  }
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function normTitle(t){
+    return String(t||'').split(' \u2014 ')[0].toLowerCase().replace(/[^a-z0-9]+/g,'');
+  }
+  function fmt(sec){sec=Math.max(0,Math.round(sec));var m=Math.floor(sec/60),s=sec%60;
+    return m+':'+(s<10?'0'+s:s);}
+  function parseTimes(txt){
+    // returns {secs:[...], bad:[...]} — accepts "1:14, 2:40" or plain seconds
+    var secs=[], bad=[];
+    String(txt||'').split(/[,;]+/).forEach(function(tok){
+      tok=tok.trim(); if(!tok)return;
+      var m=tok.match(/^(\d+):([0-5]?\d)$/);
+      if(m){ secs.push(parseInt(m[1],10)*60+parseInt(m[2],10)); return; }
+      if(/^\d+$/.test(tok)){ secs.push(parseInt(tok,10)); return; }
+      bad.push(tok);
+    });
+    secs.sort(function(a,b){return a-b;});
+    return {secs:secs, bad:bad};
+  }
+  function dateStamp(){
+    var d=new Date(), p=function(n){return (n<10?'0':'')+n;};
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  }
+
+  function fromFile(obj){
+    var out=[];
+    Object.keys(obj||{}).forEach(function(k){
+      var e=obj[k]||{};
+      out.push({key:k, title:e.title||k, bpm:(e.bpm==null?'':String(e.bpm)),
+                timesText:(e.drops||[]).map(fmt).join(', '), drill:e.intervals||''});
+    });
+    out.sort(function(a,b){return a.title.toLowerCase().localeCompare(b.title.toLowerCase());});
+    return out;
+  }
+
+  function render(){
+    var q=(searchEl.value||'').trim().toLowerCase();
+    var shown=songs.filter(function(s){
+      return !q || s.title.toLowerCase().indexOf(q)>=0 || (s.drill||'').toLowerCase().indexOf(q)>=0;
+    });
+    countEl.textContent = songs.length
+      ? (q ? shown.length+' of '+songs.length+' songs' : songs.length+' song'+(songs.length===1?'':'s'))
+      : '';
+    searchEl.style.display = songs.length>6 ? 'block' : 'none';
+
+    if(!songs.length){
+      listEl.innerHTML='<div class="empty"><b>No library open.</b><br>'+
+        'Open a Saturday60-Drops file, or start empty and build one.'+
+        '<div class="hint">Everything stays on this device — nothing is uploaded.</div></div>';
+      return;
+    }
+    if(!shown.length){
+      listEl.innerHTML='<div class="empty">Nothing matches \u201c'+esc(q)+'\u201d.</div>';
+      return;
+    }
+    listEl.innerHTML=shown.map(function(s){
+      var i=songs.indexOf(s);
+      var p=parseTimes(s.timesText);
+      var bad=p.bad.length>0;
+      return '<div class="song'+(bad?' bad':'')+'">'+
+        '<div class="row1">'+
+          '<input type="text" class="title-in" data-i="'+i+'" data-f="title" value="'+esc(s.title)+'" placeholder="Song title">'+
+          '<input type="text" class="bpm" data-i="'+i+'" data-f="bpm" value="'+esc(s.bpm)+'" placeholder="BPM">'+
+          '<button class="rm" data-rm="'+i+'" title="Remove">\u00d7</button>'+
+        '</div>'+
+        '<div class="row2">'+
+          '<div><label>Drop times</label>'+
+            '<input type="text" class="times'+(bad?' err':'')+'" data-i="'+i+'" data-f="timesText" value="'+esc(s.timesText)+'" placeholder="1:14, 2:40">'+
+            (bad?'<div class="note">Not a time: '+esc(p.bad.join(', '))+'</div>':'')+
+          '</div>'+
+          '<div><label>Drill</label>'+
+            '<input type="text" data-i="'+i+'" data-f="drill" value="'+esc(s.drill)+'" placeholder="3 \u00d7 climb efforts, one per chorus">'+
+          '</div>'+
+        '</div></div>';
+    }).join('');
+
+    listEl.querySelectorAll('input[data-f]').forEach(function(el){
+      el.addEventListener('input',function(){
+        songs[+el.getAttribute('data-i')][el.getAttribute('data-f')]=el.value;
+        if(el.getAttribute('data-f')==='timesText'){
+          var p=parseTimes(el.value);
+          el.classList.toggle('err',p.bad.length>0);
+        }
+      });
+      el.addEventListener('blur',function(){
+        if(el.getAttribute('data-f')==='timesText')render();
+      });
+    });
+    listEl.querySelectorAll('[data-rm]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var i=+btn.getAttribute('data-rm');
+        if(confirm('Remove \u201c'+(songs[i].title||'this song')+'\u201d from the library?')){
+          songs.splice(i,1); render(); syncButtons();
+        }
+      });
+    });
+  }
+
+  function syncButtons(){
+    document.getElementById('saveBtn').disabled = !songs.length;
+    document.getElementById('addBtn').disabled = false;
+    document.getElementById('mergeBtn').disabled = false;
+  }
+
+  function readFile(file, cb){
+    var rd=new FileReader();
+    rd.onload=function(){
+      var p=null;
+      try{ p=JSON.parse(String(rd.result||'')); }
+      catch(e){ toast('That file is not valid JSON.'); return; }
+      if(!p || p.kind!=='s60-drops' || !p.songs){
+        toast('Not a drops library file.'); return;
+      }
+      cb(p, file.name);
+    };
+    rd.readAsText(file);
+  }
+
+  document.getElementById('openBtn').addEventListener('click',function(){
+    var f=document.getElementById('fileIn'); f.value=''; f.click();
+  });
+  document.getElementById('fileIn').addEventListener('change',function(){
+    var f=this.files&&this.files[0]; if(!f)return;
+    readFile(f,function(p,name){
+      songs=fromFile(p.songs); loadedName=name;
+      render(); syncButtons();
+      toast('Opened '+songs.length+' song'+(songs.length===1?'':'s'));
+    });
+  });
+
+  document.getElementById('mergeBtn').addEventListener('click',function(){
+    var f=document.getElementById('mergeIn'); f.value=''; f.click();
+  });
+  document.getElementById('mergeIn').addEventListener('change',function(){
+    var f=this.files&&this.files[0]; if(!f)return;
+    readFile(f,function(p){
+      var have={}; songs.forEach(function(s){have[normTitle(s.title)]=s;});
+      var added=0, updated=0;
+      fromFile(p.songs).forEach(function(inc){
+        var k=normTitle(inc.title), cur=have[k];
+        if(!cur){ songs.push(inc); have[k]=inc; added++; return; }
+        var a=parseTimes(cur.timesText).secs.length, b=parseTimes(inc.timesText).secs.length;
+        if(b>a){ cur.timesText=inc.timesText; updated++; }
+        if(inc.drill && !cur.drill){ cur.drill=inc.drill; updated++; }
+      });
+      songs.sort(function(a,b){return a.title.toLowerCase().localeCompare(b.title.toLowerCase());});
+      render(); syncButtons();
+      toast('Merged: '+added+' new, '+updated+' updated');
+    });
+  });
+
+  document.getElementById('newBtn').addEventListener('click',function(){
+    if(songs.length && !confirm('Discard the library open here and start empty?'))return;
+    songs=[]; loadedName=''; render(); syncButtons();
+  });
+
+  document.getElementById('addBtn').addEventListener('click',function(){
+    songs.unshift({key:'', title:'', bpm:'', timesText:'', drill:''});
+    searchEl.value='';
+    render(); syncButtons();
+    var first=listEl.querySelector('input[data-f="title"]'); if(first)first.focus();
+  });
+
+  document.getElementById('saveBtn').addEventListener('click',function(){
+    var out={}, dupes=[], badTimes=[], noTitle=0;
+    songs.forEach(function(s){
+      var title=(s.title||'').trim();
+      if(!title){ noTitle++; return; }
+      var k=normTitle(title);
+      if(!k){ noTitle++; return; }
+      var p=parseTimes(s.timesText);
+      if(p.bad.length) badTimes.push(title);
+      if(out[k]) dupes.push(title);
+      var e={title:title, drops:p.secs};
+      if((s.bpm||'').trim()) e.bpm=parseInt(s.bpm,10);
+      if((s.drill||'').trim()) e.intervals=s.drill.trim();
+      out[k]=e;
+    });
+    var warn=[];
+    if(noTitle) warn.push(noTitle+' song'+(noTitle===1?'':'s')+' without a title will be dropped.');
+    if(dupes.length) warn.push('Same song twice: '+dupes.join(', ')+'. Only the last is kept.');
+    if(badTimes.length) warn.push('Unreadable times in: '+badTimes.join(', ')+'. Those entries are skipped.');
+    if(warn.length && !confirm(warn.join('\n\n')+'\n\nSave anyway?')) return;
+
+    try{
+      var payload={kind:'s60-drops', v:1, saved:new Date().toISOString(), songs:out};
+      var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a');
+      a.href=url; a.download='Saturday60-Drops-'+dateStamp()+'.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
+      toast('Saved '+Object.keys(out).length+' songs');
+    }catch(e){ toast('Could not save the file.'); }
+  });
+
+  searchEl.addEventListener('input',render);
+
+  // drag a file anywhere onto the page
+  document.addEventListener('dragover',function(e){e.preventDefault();});
+  document.addEventListener('drop',function(e){
+    e.preventDefault();
+    var f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0];
+    if(!f)return;
+    readFile(f,function(p,name){
+      songs=fromFile(p.songs); loadedName=name;
+      render(); syncButtons();
+      toast('Opened '+songs.length+' song'+(songs.length===1?'':'s'));
+    });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

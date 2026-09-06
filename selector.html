@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#14161a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Song BPM Selector · Saturday 60</title>
+<style>
+  :root{
+    --bg:#14161a; --surface:#1e2127; --surface-2:#252932; --line:#30343d;
+    --text:#f2f4f7; --muted:#9aa3af; --dim:#6b7280;
+    --warmup:#38bdf8; --endurance:#34d399; --climb:#f59e0b;
+    --sprints:#ef4444; --finisher:#ec4899; --cooldown:#818cf8;
+    --lock:var(--dim);
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Roboto Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--sans);
+    min-height:100vh; min-height:100dvh;
+    padding:max(18px,env(safe-area-inset-top)) 16px calc(36px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:520px;margin:0 auto;}
+  .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-weight:600;margin:0 0 4px;}
+  h1{font-size:22px;line-height:1.15;margin:0 0 18px;font-weight:700;letter-spacing:-.01em;}
+  h1 .beat{color:var(--lock);transition:color .35s ease;}
+
+  /* ---- Gauge ---- */
+  .gauge{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px 20px 20px;text-align:center;position:relative;overflow:hidden;transition:border-color .35s ease,box-shadow .35s ease;}
+  .gauge.locked{border-color:color-mix(in srgb,var(--lock) 55%,var(--line));box-shadow:0 0 0 1px color-mix(in srgb,var(--lock) 25%,transparent),0 14px 40px -18px color-mix(in srgb,var(--lock) 70%,transparent);}
+  .gauge-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:2px;}
+  .readout{font-family:var(--mono);font-size:82px;line-height:.95;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--lock);transition:color .35s ease,transform .18s ease;display:inline-block;outline:none;min-width:3ch;}
+  .readout:focus-visible{text-decoration:underline;text-decoration-color:var(--lock);}
+  .readout-unit{font-family:var(--mono);font-size:14px;color:var(--muted);letter-spacing:.1em;margin-top:2px;}
+  .phrase-strip{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--muted);}
+  .phrase-strip b{display:block;color:var(--text);font-size:13px;font-weight:700;}
+  .phrase-strip span{text-align:center;}
+  .dt-downbeat{display:flex;align-items:center;justify-content:center;gap:7px;margin:10px 0 4px;font-size:11.5px;color:var(--muted);}
+  .dt-downbeat input{width:62px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+    color:var(--text);font-family:var(--mono);font-size:13px;text-align:center;padding:6px;}
+  .chip .bar{color:var(--muted);font-size:11px;margin-left:5px;}
+  .chip .bar.on{color:var(--endurance);font-weight:700;}
+  .grid-head{display:flex;align-items:center;justify-content:space-between;margin:14px 0 6px;
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+  .grid-pick{display:flex;align-items:center;gap:5px;text-transform:none;letter-spacing:0;}
+  .gbtn{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:7px;
+    font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 10px;cursor:pointer;}
+  .gbtn.on{background:var(--text);color:var(--bg);border-color:var(--text);}
+  .gunit{font-size:10.5px;color:var(--dim);}
+  .grid-cap{font-size:10.5px;color:var(--dim);margin:0 0 5px;font-variant-numeric:tabular-nums;}
+  .grid-times{display:flex;flex-wrap:wrap;gap:5px;max-height:120px;overflow-y:auto;margin-bottom:6px;}
+  .gt{font-family:var(--mono);font-size:12px;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:7px;padding:5px 8px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .gt.big{color:var(--text);border-color:var(--dim);}
+  .gt.near{border-color:var(--climb);color:var(--climb);}
+  .grid-empty{font-size:12px;color:var(--dim);line-height:1.5;}
+  .steppers{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px;}
+  .step{width:60px;height:60px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);color:var(--text);font-size:28px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;transition:background .15s ease,transform .08s ease;}
+  .step:active{transform:scale(.93);background:var(--line);}
+  .step-fine{width:50px;height:50px;font-size:20px;}
+  .steppers .col{display:flex;flex-direction:column;gap:7px;align-items:center;}
+  .steppers .col small{font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;}
+
+  /* ---- Tap tester ---- */
+  .tap{margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;align-items:center;gap:14px;}
+  .tap-pad{width:92px;height:92px;flex:none;border-radius:50%;border:2px solid var(--line);background:var(--surface-2);color:var(--text);cursor:pointer;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .08s ease,border-color .12s ease,background .12s ease;}
+  .tap-pad:active,.tap-pad.hit{transform:scale(.94);border-color:var(--lock);background:var(--line);}
+  .tap-pad .tp-word{font-size:13px;font-weight:700;letter-spacing:.03em;}
+  .tap-pad .tp-sub{font-size:9.5px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+  .tap-info{flex:1;min-width:0;}
+  .tap-bpm{font-family:var(--mono);font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;}
+  .tap-bpm small{font-size:12px;color:var(--muted);font-family:var(--mono);margin-left:4px;}
+  .tap-meta{font-size:11px;color:var(--dim);margin-top:4px;}
+  .tap-actions{display:flex;gap:8px;margin-top:10px;}
+  .tap-actions button{flex:1;border-radius:10px;font-size:12.5px;font-weight:700;padding:9px;cursor:pointer;border:1px solid var(--line);}
+  .btn-use{background:var(--text);color:var(--bg);border-color:var(--text);}
+  .btn-use:disabled{opacity:.35;cursor:default;}
+  .btn-reset{background:var(--surface-2);color:var(--muted);}
+  .tap-actions button:active{transform:scale(.98);}
+
+  /* ---- Verdict ---- */
+  .verdict{margin-top:20px;}
+  .verdict-head{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 10px;}
+  .cards{display:flex;flex-direction:column;gap:10px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:14px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;animation:rise .28s ease both;}
+  @keyframes rise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .card .name{font-size:16px;font-weight:700;color:var(--c);}
+  .card .mode{font-size:12px;color:var(--muted);margin-top:3px;}
+  .card .rpm{text-align:right;flex:none;}
+  .card .rpm b{font-family:var(--mono);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;display:block;line-height:1;white-space:nowrap;}
+  .card .rpm small{font-size:9.5px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;}
+  .empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:16px;color:var(--muted);font-size:14px;line-height:1.5;}
+  .empty b{color:var(--text);}
+  .halftime-note{margin-top:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--muted);line-height:1.5;}
+  .halftime-note b{color:var(--climb);}
+
+  /* ---- Sections ---- */
+  .divider{margin:30px 0 18px;border:0;border-top:1px solid var(--line);}
+  .section-title{font-size:16px;font-weight:700;margin:0 0 3px;}
+  .section-sub{font-size:12.5px;color:var(--muted);margin:0 0 16px;line-height:1.5;}
+
+  /* ---- Playlist ---- */
+  .add-row{display:grid;grid-template-columns:1fr 84px;gap:8px;margin-bottom:8px;}
+  .add-row input{background:var(--surface);border:1px solid var(--line);border-radius:12px;color:var(--text);font-size:15px;font-family:var(--sans);padding:13px 14px;width:100%;}
+  .add-row input#bpmIn{font-family:var(--mono);text-align:center;font-variant-numeric:tabular-nums;}
+  .add-row input:focus{outline:none;border-color:var(--dim);}
+  .add-row input::placeholder{color:var(--dim);}
+  .add-btn{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:12px;font-size:14px;font-weight:700;padding:12px;cursor:pointer;grid-column:1 / -1;transition:transform .08s ease;}
+  .add-btn:active{transform:scale(.98);}
+  .add-btn:disabled{opacity:.4;cursor:default;}
+  .add-hint{font-size:11.5px;color:var(--dim);margin:2px 2px 14px;min-height:15px;}
+  .add-hint b{color:var(--muted);}
+  .totals{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:12px;color:var(--muted);}
+  .totals .actions{display:flex;gap:8px;}
+  .mini-btn{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:9px;font-size:11.5px;font-weight:600;padding:7px 11px;cursor:pointer;}
+  .mini-btn:active{background:var(--line);}
+  .block-group{margin-bottom:14px;}
+  .block-head{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+  .block-dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none;}
+  .block-head .bn{font-size:13px;font-weight:700;color:var(--c);}
+  .block-head .br{font-family:var(--mono);font-size:11px;color:var(--dim);margin-left:auto;font-variant-numeric:tabular-nums;}
+  .song{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--c);border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-bottom:6px;animation:rise .22s ease both;}
+  .song .st{flex:1;min-width:0;}
+  .song .st .t{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .song .st .m{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;font-variant-numeric:tabular-nums;}
+  .song select{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:8px;font-size:11px;padding:6px;max-width:104px;font-family:var(--sans);}
+  .song .rm{width:30px;height:30px;flex:none;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--dim);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .song .rm:active{background:var(--line);color:var(--text);}
+  .pl-empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);font-size:13.5px;line-height:1.5;text-align:center;}
+
+  /* ---- Settings / bands editor ---- */
+  details.panel{margin-top:26px;border-top:1px solid var(--line);padding-top:16px;}
+  summary{list-style:none;cursor:pointer;font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--muted);display:flex;align-items:center;gap:8px;}
+  summary::-webkit-details-marker{display:none;}
+  summary .chev{transition:transform .2s ease;font-size:11px;color:var(--dim);}
+  details[open] summary .chev{transform:rotate(90deg);}
+  .panel-note{font-size:12px;color:var(--muted);line-height:1.55;margin:14px 0 12px;}
+  .panel-note b{color:var(--text);}
+  .set-row{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--c);border-radius:11px;padding:11px 12px;margin-bottom:8px;}
+  .set-head{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+  .set-head .dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none;}
+  .set-head .nm{font-size:13.5px;font-weight:700;color:var(--c);}
+  .set-head .rpmout{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--text);font-variant-numeric:tabular-nums;}
+  .set-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .set-controls .num{width:58px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:8px;font-family:var(--mono);font-size:14px;text-align:center;padding:8px 4px;font-variant-numeric:tabular-nums;}
+  .set-controls .dash{color:var(--dim);}
+  .set-controls .unit{font-size:10.5px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-right:2px;}
+  .set-controls select{background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:8px;font-size:12.5px;padding:8px 6px;margin-left:auto;font-family:var(--sans);}
+  .cap-row{display:flex;align-items:center;gap:8px;margin:10px 2px 4px;font-size:12.5px;color:var(--muted);}
+  .cap-row .num{width:58px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:8px;font-family:var(--mono);font-size:14px;text-align:center;padding:8px 4px;}
+  .reset-row{margin-top:12px;}
+  .panel-rules{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.6;padding-left:18px;}
+  .panel-rules li{margin-bottom:4px;}
+  .panel-rules b{color:var(--muted);}
+
+  .foot{margin-top:22px;font-size:11.5px;color:var(--dim);line-height:1.6;text-align:center;}
+  .foot b{color:var(--muted);}
+  /* ---- Drop markers ---- */
+  .song .mode-btn{min-width:34px;height:30px;flex:none;padding:0 6px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .song .mode-btn.set{color:var(--c);border-color:color-mix(in srgb,var(--c) 55%,var(--line));background:color-mix(in srgb,var(--c) 12%,var(--surface-2));}
+  .song .mode-btn:active{background:var(--line);}
+  .song .m i{font-style:normal;color:var(--c);opacity:.9;}
+  .song .drop-btn{min-width:34px;height:30px;flex:none;padding:0 7px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;font-variant-numeric:tabular-nums;}
+  .song .drop-btn.has{color:var(--c);border-color:color-mix(in srgb,var(--c) 45%,var(--line));}
+  .song .drop-btn:active{background:var(--line);}
+  .drops-line{font-family:var(--mono);font-size:11px;color:var(--c);margin-top:3px;font-variant-numeric:tabular-nums;opacity:.92;}
+  .drops-line .pin{opacity:.75;margin-right:3px;}
+  .modal-back{position:fixed;inset:0;background:rgba(8,9,11,.72);display:none;align-items:flex-end;justify-content:center;z-index:50;}
+  .modal-back.open{display:flex;}
+  .modal{background:var(--surface);border:1px solid var(--line);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:20px 18px calc(22px + env(safe-area-inset-bottom));animation:sheet .25s ease;}
+  @keyframes sheet{from{transform:translateY(34px);opacity:.5;}to{transform:none;opacity:1;}}
+  .modal-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  .modal-h .mt{font-size:15px;font-weight:700;}
+  .modal-h .mx{background:none;border:none;color:var(--muted);font-size:24px;line-height:1;cursor:pointer;padding:0 4px;}
+  .modal-song{font-size:12.5px;color:var(--muted);margin:2px 0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .dt-timer{text-align:center;font-family:var(--mono);font-size:52px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em;}
+  .dt-ctrls{display:flex;gap:8px;justify-content:center;margin:14px 0;}
+  .dt-ctrls button{border-radius:10px;font-size:13px;font-weight:700;padding:10px 16px;cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--text);}
+  .dt-ctrls .startpause{min-width:100px;}
+  .dt-ctrls .startpause.run{background:var(--climb);color:#1a1205;border-color:var(--climb);}
+  .mark-btn{width:100%;background:var(--text);color:var(--bg);border:none;border-radius:14px;font-size:16px;font-weight:800;letter-spacing:.02em;padding:16px;cursor:pointer;margin-bottom:16px;}
+  .mark-btn:active{transform:scale(.99);}
+  .drops-cap-h{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px;}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;min-height:20px;}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 12px;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;}
+  .chip button{background:none;border:none;color:var(--dim);font-size:15px;cursor:pointer;padding:0;line-height:1;}
+  .chips-empty{font-size:12.5px;color:var(--dim);line-height:1.4;}
+  .manual{display:flex;gap:8px;align-items:center;}
+  .manual .mlbl{font-size:11.5px;color:var(--dim);}
+  .manual input{width:78px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:9px;font-family:var(--mono);font-size:14px;text-align:center;padding:9px;}
+  .manual button{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:9px;font-size:12.5px;font-weight:600;padding:9px 13px;cursor:pointer;}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+</style>
+
+<!-- Saturday 60 app shell -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sat 60">
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Saturday 60 · Keiser M3</p>
+  <h1>Song <span class="beat">BPM</span> Selector</h1>
+
+  <!-- SELECTOR -->
+  <div class="gauge" id="gauge">
+    <div class="gauge-label">Song tempo</div>
+    <span class="readout" id="readout" contenteditable="true" inputmode="numeric" role="textbox" aria-label="Song BPM">120</span>
+    <div class="readout-unit">BPM</div>
+    <div class="phrase-strip" id="phraseStrip"></div>
+    <div class="steppers">
+      <div class="col"><div class="step step-fine" data-d="-5">−5</div><small>5</small></div>
+      <div class="col"><div class="step" data-d="-1">−</div><small>1</small></div>
+      <div class="col"><div class="step" data-d="1">+</div><small>1</small></div>
+      <div class="col"><div class="step step-fine" data-d="5">+5</div><small>5</small></div>
+    </div>
+  </div>
+
+  <!-- TAP TESTER -->
+  <div class="tap">
+    <div class="tap-pad" id="tapPad" role="button" tabindex="0" aria-label="Tap in time with the music">
+      <span class="tp-word">TAP</span><span class="tp-sub">in time</span>
+    </div>
+    <div class="tap-info">
+      <div class="tap-bpm"><span id="tapBpm">–</span><small>BPM</small></div>
+      <div class="tap-meta" id="tapMeta">Tap the beat 4+ times</div>
+      <div class="tap-actions">
+        <button class="btn-use" id="tapUse" disabled>Use</button>
+        <button class="btn-reset" id="tapReset">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <p class="verdict-head">Where it fits · beat-locked RPM</p>
+    <div class="cards" id="cards"></div>
+    <div id="halftime"></div>
+  </div>
+
+  <!-- PLAYLIST -->
+  <hr class="divider">
+  <p class="section-title">Playlist builder</p>
+  <p class="section-sub">Jot a song and its BPM, then file it under a block. Grouped below with the beat-locked RPM. Saves on this phone.</p>
+  <div class="add-row">
+    <input id="titleIn" type="text" placeholder="Song title" autocomplete="off" enterkeyhint="next">
+    <input id="bpmIn" type="text" inputmode="numeric" placeholder="BPM" autocomplete="off" enterkeyhint="done">
+    <button class="add-btn" id="addBtn" disabled>Add song</button>
+  </div>
+  <div class="add-hint" id="addHint"></div>
+  <div class="totals">
+    <span id="totalCount">0 songs</span>
+    <span class="actions">
+      <button class="mini-btn" id="dlViewBtn" title="See and manage every song whose drops you have stored">Drops library</button>
+      <input type="file" id="dlFile" accept="application/json,.json" style="display:none">
+      <button class="mini-btn" id="backupBtn" title="Download everything as a .json file">Backup</button>
+      <button class="mini-btn" id="restoreBtn" title="Restore from a .json backup file">Restore</button>
+      <button class="mini-btn" id="importBtn" title="Paste a Selector code (from another Selector, or the sheet’s Send → Selector)">Import code</button>
+      <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
+      <button class="mini-btn" id="sendBtn">Send to sheet</button>
+      <button class="mini-btn" id="copyBtn">Copy list</button>
+      <button class="mini-btn" id="clearBtn">Clear all</button>
+    </span>
+  </div>
+  <div id="playlist"></div>
+
+  <!-- SETTINGS / BANDS EDITOR -->
+  <details class="panel">
+    <summary><span class="chev">▶</span> Bands & RPM settings</summary>
+    <p class="panel-note">RPM is always <b>beat-locked</b> — pick <b>On beat</b> (RPM = BPM) or <b>Half-beat</b> (RPM = BPM ÷ 2) per block, and set the BPM range. Everything updates live and saves on this phone.</p>
+    <div id="editor"></div>
+    <div class="cap-row">RPM cap · all blocks <input class="num" id="capIn" inputmode="numeric"> RPM</div>
+    <div class="reset-row" style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="mini-btn" id="saveDefBtn">Save as my defaults</button>
+      <button class="mini-btn" id="resetBtn">Reset to my defaults</button>
+      <button class="mini-btn" id="factoryBtn">Factory reset</button>
+    </div>
+    <div class="add-hint" id="defHint" style="margin-top:8px;"></div>
+    <ul class="panel-rules">
+      <li>Every block's RPM is capped at the value above (default <b>110</b>) — songs may run faster; the legs never do.</li>
+      <li>Only <b>Climb</b> ships as half-beat by default; switch any block to half-beat for fast tracks.</li>
+      <li>Crossfade <b>10 s</b>, gapless, Automix off.</li>
+    </ul>
+  </details>
+
+  <p class="foot">Open in Chrome → menu → <b>Add to Home screen</b> to run it like an app. Works offline; playlist & settings save on this phone.</p>
+</div>
+
+<!-- DROP-MARKER SHEET -->
+<div class="modal-back" id="dlBack">
+  <div class="modal" role="dialog" aria-label="Drops library">
+    <div class="modal-h"><span class="mt">Drops library</span><button class="mx" id="dlDone" aria-label="Close">×</button></div>
+    <div class="modal-song" id="dlCount">-</div>
+    <div id="dlList" style="max-height:46vh;overflow-y:auto;margin-bottom:12px"></div>
+    <div class="imp-row" style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="mini-btn" id="dlAdd">Add this playlist</button>
+      <button class="mini-btn" id="dlExport">Export file</button>
+      <button class="mini-btn" id="dlImport">Import file</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-back" id="dropBack">
+  <div class="modal" role="dialog" aria-label="Drop markers">
+    <div class="modal-h"><span class="mt">Drop markers</span><button class="mx" id="dropClose" aria-label="Close">×</button></div>
+    <div class="modal-song" id="dropSong">—</div>
+    <div class="dt-timer" id="dtTimer">0:00</div>
+    <div class="dt-downbeat">first downbeat at <input id="dbIn" inputmode="decimal" placeholder="0" title="Seconds into the track where bar 1 starts. Leave blank if the beat begins with the track — 3.7 and 0:03 both work."> sec</div>
+    <div class="grid-head">
+      <span>Phrase boundaries</span>
+      <span class="grid-pick">
+        <button class="gbtn" data-grid="8">8</button>
+        <button class="gbtn" data-grid="16">16</button>
+        <button class="gbtn" data-grid="32">32</button>
+        <span class="gunit">bars</span>
+      </span>
+    </div>
+    <div class="grid-cap" id="gridCap"></div>
+    <div class="grid-times" id="gridTimes"></div>
+    <div class="dt-ctrls">
+      <button class="startpause" id="dtStart">Start</button>
+      <button id="dtReset">Reset</button>
+    </div>
+    <button class="mark-btn" id="dtMark">Mark drop</button>
+    <div class="drops-cap-h">Captured drops</div>
+    <div class="chips" id="dropChips"></div>
+    <div class="manual"><span class="mlbl">Add by hand</span><input id="manualIn" type="text" placeholder="1:14" aria-label="Drop time, minutes colon seconds"><button id="manualAdd">Add</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ---- Defaults: beat-locked. mode 'beat' = RPM=BPM, 'half' = RPM=BPM/2 ---- */
+  var DEFAULTS = {
+    blocks:{
+      warmup:   {lo:95,  hi:110, mode:"beat"},
+      endurance:{lo:100, hi:110, mode:"beat"},
+      climb:    {lo:120, hi:130, mode:"half"},
+      sprints:  {lo:100, hi:110, mode:"beat"},
+      finisher: {lo:80,  hi:110, mode:"beat"},
+      cooldown: {lo:80,  hi:100, mode:"beat"}
+    },
+    rpmCap:110
+  };
+  var META = [
+    {key:"warmup",   name:"Warm-Up",          color:"var(--warmup)"},
+    {key:"endurance",name:"Endurance / Tempo",color:"var(--endurance)"},
+    {key:"climb",    name:"Climb",            color:"var(--climb)"},
+    {key:"sprints",  name:"Sprints",          color:"var(--sprints)"},
+    {key:"finisher", name:"Mixed Finisher",   color:"var(--finisher)"},
+    {key:"cooldown", name:"Cool-Down",        color:"var(--cooldown)"}
+  ];
+  var ORDER = META.map(function(m){return m.key;});
+  function meta(k){return META.filter(function(m){return m.key===k;})[0];}
+
+  var MIN=40,MAX=220,DEFAULT=120;
+  function clamp(n){return Math.max(MIN,Math.min(MAX,n));}
+
+  /* ---- Settings (persisted) ---- */
+  var SKEY='s60_settings_v2', DKEY='s60_mydefaults_v1';
+  var settings = loadSettings();
+  function mergeOverFactory(s){
+    var out=deepCopy(DEFAULTS);
+    if(!s) return out;
+    if(s.rpmCap) out.rpmCap=s.rpmCap;
+    if(s.blocks) ORDER.forEach(function(k){ if(s.blocks[k]) out.blocks[k]=Object.assign(out.blocks[k],s.blocks[k]); });
+    return out;
+  }
+  function myDefaults(){
+    try{ var r=localStorage.getItem(DKEY); return r?mergeOverFactory(JSON.parse(r)):deepCopy(DEFAULTS); }
+    catch(e){ return deepCopy(DEFAULTS); }
+  }
+  function hasMyDefaults(){ try{return !!localStorage.getItem(DKEY);}catch(e){return false;} }
+  function loadSettings(){
+    try{
+      var r=localStorage.getItem(SKEY);
+      if(!r) return myDefaultsSafe();
+      return mergeOverFactory(JSON.parse(r));
+    }catch(e){return myDefaultsSafe();}
+  }
+  function myDefaultsSafe(){ try{return myDefaults();}catch(e){return deepCopy(DEFAULTS);} }
+  function saveSettings(){try{localStorage.setItem(SKEY,JSON.stringify(settings));}catch(e){}}
+  function deepCopy(o){return JSON.parse(JSON.stringify(o));}
+
+  function band(k){return settings.blocks[k];}
+  function cap(){return settings.rpmCap;}
+
+  /* ---- RPM logic (always beat-locked) ---- */
+  function rpmValue(k,bpm){
+    var b=band(k);
+    var raw = b.mode==="half" ? Math.round(bpm/2) : bpm;
+    return Math.min(raw, cap());
+  }
+  // a song may override its block's ride mode; songMode() resolves which applies
+  function songMode(s){ return (s && (s.mode==='beat'||s.mode==='half')) ? s.mode : band(s.block).mode; }
+  function songRpm(s){
+    var bpm=parseInt(s.bpm,10); if(isNaN(bpm))return '';
+    var raw = songMode(s)==='half' ? Math.round(bpm/2) : bpm;
+    return Math.min(raw, cap());
+  }
+  function rpmRangeText(k){
+    var b=band(k);
+    var lo = b.mode==="half" ? Math.round(b.lo/2) : b.lo;
+    var hi = b.mode==="half" ? Math.round(b.hi/2) : b.hi;
+    lo=Math.min(lo,cap()); hi=Math.min(hi,cap());
+    return lo===hi ? String(lo) : lo+"–"+hi;
+  }
+  function modeLabel(k){
+    var b=band(k);
+    return b.mode==="half" ? "Half-beat · legs at BPM ÷ 2" : "On the beat · 1:1";
+  }
+  function matches(bpm){return ORDER.filter(function(k){var b=band(k);return bpm>=b.lo && bpm<=b.hi;});}
+
+  /* ============ SELECTOR ============ */
+  var readout=document.getElementById('readout'),
+      gauge=document.getElementById('gauge'),
+      cards=document.getElementById('cards'),
+      halftimeEl=document.getElementById('halftime');
+  function getBpm(){var n=parseInt((readout.textContent||'').replace(/[^0-9]/g,''),10);return isNaN(n)?null:n;}
+
+  function renderVerdict(){
+    var bpm=getBpm();
+    cards.innerHTML=''; halftimeEl.innerHTML='';
+    if(bpm===null){
+      gauge.classList.remove('locked');
+      document.documentElement.style.setProperty('--lock','var(--dim)');
+      cards.innerHTML='<div class="empty">Type or tap a tempo to see where it fits.</div>';
+      return;
+    }
+    var hits=matches(bpm);
+    document.documentElement.style.setProperty('--lock', hits.length?meta(hits[0]).color:'var(--dim)');
+    gauge.classList.toggle('locked', hits.length>0);
+    readout.style.transform='scale(1.04)'; setTimeout(function(){readout.style.transform='scale(1)';},120);
+    if(hits.length){
+      hits.forEach(function(k){
+        var m=meta(k), b=band(k), el=document.createElement('div');
+        var raw = b.mode==="half" ? Math.round(bpm/2) : bpm;
+        var val = Math.min(raw, cap());
+        var lbl = modeLabel(k) + (raw>cap() ? " · capped at "+cap() : "");
+        el.className='card'; el.style.setProperty('--c',m.color);
+        el.innerHTML='<div><div class="name">'+m.name+'</div><div class="mode">'+lbl+'</div></div>'+
+          '<div class="rpm"><b>'+val+'</b><small>RPM</small></div>';
+        cards.appendChild(el);
+      });
+    } else {
+      var nearest=null,best=1e9;
+      ORDER.forEach(function(k){var b=band(k);var d=bpm<b.lo?b.lo-bpm:bpm-b.hi; if(d<best){best=d;nearest=k;}});
+      var nb=band(nearest);
+      cards.innerHTML='<div class="empty">No block at <b>'+bpm+' BPM</b>. Closest is <b>'+meta(nearest).name+
+        '</b> ('+nb.lo+'–'+nb.hi+' BPM), '+best+' BPM away.</div>';
+    }
+    renderPhraseStrip();
+    if(bpm>cap()){
+      var half=Math.round(bpm/2), hb=matches(half);
+      if(hb.length){
+        halftimeEl.innerHTML='<div class="halftime-note">Too fast to ride straight? Played <b>half-time</b> it feels like <b>'+
+          half+' BPM</b> — that suits '+hb.map(function(k){return meta(k).name;}).join(', ')+'.</div>';
+      }
+    }
+  }
+  function MAX_BAND(){var mx=0;ORDER.forEach(function(k){mx=Math.max(mx,band(k).hi);});return mx;}
+  function setBpm(n){readout.textContent=clamp(n);renderVerdict();}
+
+  document.querySelectorAll('.step[data-d]').forEach(function(btn){
+    btn.addEventListener('click',function(){var c=getBpm();if(c===null)c=DEFAULT;setBpm(c+parseInt(btn.getAttribute('data-d'),10));});
+  });
+  readout.addEventListener('input',function(){
+    var cleaned=(readout.textContent||'').replace(/[^0-9]/g,'');
+    if(cleaned!==readout.textContent){readout.textContent=cleaned;var r=document.createRange(),s=window.getSelection();r.selectNodeContents(readout);r.collapse(false);s.removeAllRanges();s.addRange(r);}
+    renderVerdict();
+  });
+  readout.addEventListener('blur',function(){var n=getBpm();setBpm(n===null?DEFAULT:n);});
+  readout.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();readout.blur();}
+    if(e.key==='ArrowUp'){e.preventDefault();setBpm((getBpm()||DEFAULT)+1);}
+    if(e.key==='ArrowDown'){e.preventDefault();setBpm((getBpm()||DEFAULT)-1);}
+  });
+
+  /* ============ TAP TESTER ============ */
+  var tapPad=document.getElementById('tapPad'),
+      tapBpm=document.getElementById('tapBpm'),
+      tapMeta=document.getElementById('tapMeta'),
+      tapUse=document.getElementById('tapUse'),
+      tapReset=document.getElementById('tapReset');
+  var taps=[], lastTapBpm=null;
+
+  function doTap(){
+    var now=(performance&&performance.now)?performance.now():Date.now();
+    if(taps.length && (now-taps[taps.length-1])>2000) taps=[];   // long gap = restart
+    taps.push(now); if(taps.length>12) taps.shift();
+    tapPad.classList.add('hit'); setTimeout(function(){tapPad.classList.remove('hit');},90);
+    if(taps.length>=2){
+      var sum=0; for(var i=1;i<taps.length;i++) sum+=(taps[i]-taps[i-1]);
+      var avg=sum/(taps.length-1);
+      var bpm=clamp(Math.round(60000/avg));
+      lastTapBpm=bpm;
+      tapBpm.textContent=bpm;
+      tapMeta.textContent=taps.length+" taps · keep going to refine";
+      tapUse.disabled=false;
+    } else {
+      tapBpm.textContent='–'; tapMeta.textContent="Keep tapping…"; tapUse.disabled=true;
+    }
+  }
+  tapPad.addEventListener('pointerdown',function(e){e.preventDefault();doTap();});
+  tapPad.addEventListener('keydown',function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();doTap();}});
+  tapReset.addEventListener('click',function(){taps=[];lastTapBpm=null;tapBpm.textContent='–';tapMeta.textContent="Tap the beat 4+ times";tapUse.disabled=true;});
+  tapUse.addEventListener('click',function(){
+    if(lastTapBpm==null)return;
+    setBpm(lastTapBpm);
+    if(bpmIn) bpmIn.value=lastTapBpm, updateHint();
+    gauge.scrollIntoView({behavior:'smooth',block:'start'});
+    var o=tapUse.textContent; tapUse.textContent='Set ✓'; setTimeout(function(){tapUse.textContent=o;},1000);
+  });
+
+  /* ============ PLAYLIST ============ */
+  var PKEY='s60_playlist_v1';
+  var titleIn=document.getElementById('titleIn'),
+      bpmIn=document.getElementById('bpmIn'),
+      addBtn=document.getElementById('addBtn'),
+      addHint=document.getElementById('addHint'),
+      playlist=document.getElementById('playlist'),
+      totalCount=document.getElementById('totalCount'),
+      copyBtn=document.getElementById('copyBtn'),
+      clearBtn=document.getElementById('clearBtn');
+  var songs=loadSongs();
+  function loadSongs(){try{var r=localStorage.getItem(PKEY);var a=r?JSON.parse(r):[];a.forEach(function(s){if(!s.drops)s.drops=[];});return a;}catch(e){return [];}}
+  function saveSongs(){try{localStorage.setItem(PKEY,JSON.stringify(songs));}catch(e){}}
+  function bestBlockFor(bpm){var m=matches(bpm);return m.length?m[0]:"warmup";}
+
+  function updateHint(){
+    var t=titleIn.value.trim(), n=parseInt(bpmIn.value.replace(/[^0-9]/g,''),10);
+    addBtn.disabled=!(t && !isNaN(n));
+    if(!isNaN(n)){
+      var m=matches(n);
+      addHint.innerHTML = m.length
+        ? 'Fits <b>'+m.map(function(k){return meta(k).name;}).join(', ')+'</b> — change the block after adding.'
+        : 'No band matches '+n+' BPM — files under Warm-Up; reassign as needed.';
+    } else { addHint.textContent=''; }
+  }
+  function addSong(){
+    var t=titleIn.value.trim(), n=parseInt(bpmIn.value.replace(/[^0-9]/g,''),10);
+    if(!t||isNaN(n))return;
+    songs.push({id:Date.now()+''+Math.floor(Math.random()*1000),title:t,bpm:clamp(n),block:bestBlockFor(n),drops:[]});
+    saveSongs(); titleIn.value=''; bpmIn.value=''; updateHint(); renderPlaylist(); titleIn.focus();
+  }
+  function removeSong(id){songs=songs.filter(function(s){return s.id!==id;});saveSongs();renderPlaylist();}
+  function moveSong(id,k){songs.forEach(function(s){if(s.id===id)s.block=k;});saveSongs();renderPlaylist();}
+  function escapeHtml(s){return s.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  function renderPlaylist(){
+    totalCount.textContent=songs.length+(songs.length===1?' song':' songs');
+    if(!songs.length){playlist.innerHTML='<div class="pl-empty">No songs yet. Add one above and it drops into its block.</div>';return;}
+    var html='';
+    ORDER.forEach(function(k){
+      var m=meta(k), b=band(k);
+      var inB=songs.filter(function(s){return s.block===k;});
+      if(!inB.length)return;
+      var tag = b.mode==="half" ? "½-beat" : "1:1";
+      html+='<div class="block-group"><div class="block-head" style="--c:'+m.color+'"><span class="block-dot"></span>'+
+        '<span class="bn">'+m.name+'</span><span class="br">'+tag+'</span></div>';
+      inB.forEach(function(s){
+        var opts=ORDER.map(function(kk){return '<option value="'+kk+'"'+(kk===k?' selected':'')+'>'+meta(kk).name+'</option>';}).join('');
+        var d=songDrops(s);
+        var dropsLine = d.length ? '<div class="drops-line"><span class="pin">◉</span>'+d.map(fmtTime).join(' · ')+'</div>' : '';
+        var dbtn = '<button class="drop-btn'+(d.length?' has':'')+'" data-drop="'+s.id+'" aria-label="Drop markers">◎'+(d.length?' '+d.length:'')+'</button>';
+        var override = (s.mode==='beat'||s.mode==='half');
+        var mlabel = songMode(s)==='half' ? '½' : '1:1';
+        var mbtn = '<button class="mode-btn'+(override?' set':'')+'" data-mode="'+s.id+
+                   '" title="Ride mode for this song — tap to change">'+mlabel+'</button>';
+        html+='<div class="song" style="--c:'+m.color+'"><div class="st"><div class="t">'+escapeHtml(s.title)+'</div>'+
+          '<div class="m">'+s.bpm+' BPM · '+songRpm(s)+' RPM'+(override?' ·<i>set</i>':'')+'</div>'+dropsLine+'</div>'+
+          mbtn+dbtn+
+          '<select data-id="'+s.id+'" aria-label="Move to block">'+opts+'</select>'+
+          '<button class="rm" data-id="'+s.id+'" aria-label="Remove">×</button></div>';
+      });
+      html+='</div>';
+    });
+    playlist.innerHTML=html;
+    playlist.querySelectorAll('.rm').forEach(function(btn){btn.addEventListener('click',function(){removeSong(btn.getAttribute('data-id'));});});
+    playlist.querySelectorAll('select').forEach(function(sel){sel.addEventListener('change',function(){moveSong(sel.getAttribute('data-id'),sel.value);});});
+    playlist.querySelectorAll('[data-drop]').forEach(function(btn){btn.addEventListener('click',function(){openDrops(btn.getAttribute('data-drop'));});});
+    playlist.querySelectorAll('[data-mode]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var id=btn.getAttribute('data-mode');
+        songs.forEach(function(s){
+          if(s.id!==id)return;
+          // cycle: follow the block  ->  1:1  ->  ½  ->  follow the block
+          if(s.mode!=='beat' && s.mode!=='half') s.mode='beat';
+          else if(s.mode==='beat') s.mode='half';
+          else delete s.mode;
+        });
+        saveSongs(); renderPlaylist();
+      });
+    });
+  }
+
+  function copyList(){
+    if(!songs.length){flash(copyBtn,'Empty');return;}
+    var lines=['THE SATURDAY 60 — PLAYLIST',''];
+    ORDER.forEach(function(k){
+      var b=band(k), inB=songs.filter(function(s){return s.block===k;});
+      if(!inB.length)return;
+      var tag=b.mode==="half"?"half-beat":"1:1";
+      lines.push(meta(k).name.toUpperCase()+'  ('+tag+')');
+      inB.forEach(function(s){
+        var line='  • '+s.title+' — '+s.bpm+' BPM → '+songRpm(s)+' RPM'+((s.mode==='beat'||s.mode==='half')?' ('+(s.mode==='half'?'½':'1:1')+')':'');
+        var d=songDrops(s); if(d.length) line+='   [drops '+d.map(fmtTime).join(', ')+']';
+        lines.push(line);
+      });
+      lines.push('');
+    });
+    var text=lines.join('\n');
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){flash(copyBtn,'Copied');},function(){legacyCopy(text);});}
+    else legacyCopy(text);
+  }
+  function legacyCopy(text){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');flash(copyBtn,'Copied');}catch(e){flash(copyBtn,'Failed');}document.body.removeChild(ta);}
+  function flash(btn,msg){var o=btn.textContent;btn.textContent=msg;setTimeout(function(){btn.textContent=o;},1200);}
+  function clearAll(){if(!songs.length)return;if(confirm('Clear all '+songs.length+' songs?')){songs=[];saveSongs();renderPlaylist();}}
+
+  titleIn.addEventListener('input',updateHint);
+  bpmIn.addEventListener('input',function(){var c=bpmIn.value.replace(/[^0-9]/g,'');if(c!==bpmIn.value)bpmIn.value=c;updateHint();});
+  addBtn.addEventListener('click',addSong);
+  titleIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();bpmIn.focus();}});
+  bpmIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();if(!addBtn.disabled)addSong();}});
+  copyBtn.addEventListener('click',copyList);
+  clearBtn.addEventListener('click',clearAll);
+
+  /* ---- Send playlist to the Build Sheet template ---- */
+  var sendBtn=document.getElementById('sendBtn'), FEEDKEY='s60_feed_v1';
+  function copyText(text,btn,okMsg){
+    function ok(){flash(btn,okMsg);}
+    function ko(){var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){flash(btn,'Failed');}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,ko);}else ko();
+  }
+  sendBtn.addEventListener('click',function(){
+    if(!songs.length){flash(sendBtn,'Empty');return;}
+    var myDef=null; try{var r=localStorage.getItem(DKEY); if(r)myDef=JSON.parse(r);}catch(e){}
+    var payload={t:Date.now(),songs:songs.map(function(s){return {title:s.title,bpm:s.bpm,block:s.block,mode:s.mode||undefined,db:s.dbOffset||undefined,drops:songDrops(s).slice()};}),settings:settings,mydefaults:myDef||undefined};
+    try{localStorage.setItem(FEEDKEY,JSON.stringify(payload));}catch(e){}
+    var code='S60'+btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    copyText(code,sendBtn,'Sent ✓');
+  });
+
+  /* ---- Import a transfer code from another device's Selector ---- */
+  var importBtn=document.getElementById('importBtn');
+  /* ---- phrase maths: 4/4 assumed, bar = 4 beats ---- */
+  function beatSec(bpm){ return 60/bpm; }
+  function barSec(bpm){ return 240/bpm; }
+  // the phrase grid: boundary times where a drill can naturally start or end
+  function phraseTimes(bpm, offset, bars, upto){
+    var step=barSec(bpm)*bars, out=[], t=(offset||0);
+    while(t<=upto+0.01){ out.push(t); t+=step; }
+    return out;
+  }
+  // how a drop sits against a grid: the boundary to snap to, and the gap
+  function nearestBoundary(sec,bpm,offset,bars){
+    var step=barSec(bpm)*bars; if(!step)return null;
+    var t=sec-(offset||0);
+    var idx=Math.round(t/step);
+    if(idx<0)idx=0;
+    var at=(offset||0)+idx*step;
+    return {at:at, delta:sec-at, n:idx};
+  }
+  function renderPhraseStrip(){
+    var el=document.getElementById('phraseStrip'); if(!el)return;
+    var bpm=getBpm();
+    if(!bpm){ el.innerHTML=''; return; }
+    var b=barSec(bpm);
+    function f(x){ return x<10 ? x.toFixed(2)+'s' : fmtTime(Math.round(x)); }
+    el.innerHTML='<span><b>'+f(b)+'</b>1 bar</span>'+
+                 '<span><b>'+f(b*8)+'</b>8 bars</span>'+
+                 '<span><b>'+f(b*16)+'</b>16 bars</span>'+
+                 '<span><b>'+f(b*32)+'</b>32 bars</span>';
+  }
+
+  /* ---- drops library: song title -> drop times, kept across weeks ---- */
+  function dateStamp(){
+    var d=new Date(), p=function(n){return (n<10?'0':'')+n;};
+    return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+  }
+
+  var DLKEY='s60_drops_lib_v1';
+  var dlFile=document.getElementById('dlFile');
+
+  function normTitle(t){
+    return String(t||'').split(' \u2014 ')[0].toLowerCase().replace(/[^a-z0-9]+/g,'');
+  }
+  function dlLoad(){
+    try{var r=localStorage.getItem(DLKEY); var o=r?JSON.parse(r):{}; return (o&&typeof o==='object')?o:{};}
+    catch(e){return {};}
+  }
+  function dlSave(o){try{localStorage.setItem(DLKEY,JSON.stringify(o));}catch(e){}}
+  function dlAbsorbCurrent(lib){
+    var n=0;
+    songs.forEach(function(s){
+      var d=songDrops(s);
+      if(!d.length)return;
+      var k=normTitle(s.title); if(!k)return;
+      var prev=lib[k];
+      lib[k]={title:s.title, bpm:s.bpm, drops:d.slice()};
+      if(s.dbOffset)lib[k].db=s.dbOffset;                        // first downbeat, in seconds
+      else if(prev&&prev.db)lib[k].db=prev.db;
+      if(prev&&prev.intervals)lib[k].intervals=prev.intervals;   // keep a drill saved from the Build Sheet
+      n++;
+    });
+    return n;
+  }
+
+  var dlBack=document.getElementById('dlBack'),
+      dlList=document.getElementById('dlList'),
+      dlCount=document.getElementById('dlCount'),
+      dlSaveBtn=document.getElementById('dlExport'),
+      dlLoadBtn=document.getElementById('dlImport');
+
+  function renderDropsLib(){
+    var lib=dlLoad();
+    var keys=Object.keys(lib).sort(function(a,b){
+      return String(lib[a].title||'').toLowerCase().localeCompare(String(lib[b].title||'').toLowerCase());
+    });
+    dlCount.textContent = keys.length
+      ? keys.length+' song'+(keys.length===1?'':'s')+' stored \u2014 they fill in automatically when a matching song appears'
+      : 'Empty. Mark some drops, then tap \u201cAdd this playlist\u201d.';
+    dlList.innerHTML = keys.length ? keys.map(function(k){
+      var e=lib[k], times=(e.drops||[]).map(fmtTime).join(' \u00b7 ');
+      var extra=[];
+      if(e.db)extra.push('downbeat '+fmtTime(e.db));
+      if(e.intervals)extra.push(escapeHtml(e.intervals));
+      var drill=extra.length?('<div class="m" style="font-style:italic">'+extra.join(' \u00b7 ')+'</div>'):'';
+      return '<div class="song" style="--c:var(--muted)"><div class="st">'+
+             '<div class="t">'+escapeHtml(e.title||k)+'</div>'+
+             '<div class="m">\u25c9 '+escapeHtml(times)+'</div>'+drill+'</div>'+
+             '<button class="rm" data-dlrm="'+escapeHtml(k)+'" aria-label="Remove">\u00d7</button></div>';
+    }).join('') : '<div class="chips-empty">Nothing stored yet.</div>';
+    dlList.querySelectorAll('[data-dlrm]').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var k=btn.getAttribute('data-dlrm'), l=dlLoad();
+        if(confirm('Remove \u201c'+((l[k]&&l[k].title)||k)+'\u201d from the drops library?')){
+          delete l[k]; dlSave(l); renderDropsLib();
+        }
+      });
+    });
+  }
+  document.getElementById('dlViewBtn').addEventListener('click',function(){ renderDropsLib(); dlBack.classList.add('open'); });
+  document.getElementById('dlDone').addEventListener('click',function(){ dlBack.classList.remove('open'); });
+  dlBack.addEventListener('click',function(e){ if(e.target===dlBack)dlBack.classList.remove('open'); });
+  document.getElementById('dlAdd').addEventListener('click',function(){
+    var lib=dlLoad(), n=dlAbsorbCurrent(lib);
+    dlSave(lib); renderDropsLib();
+    var withDrops=songs.filter(function(s){return songDrops(s).length;}).length;
+    var skipped=songs.length-withDrops;
+    if(!n){
+      alert('Nothing to add.\n\nOnly songs that have drop times are stored, and none of the '+
+            songs.length+' song'+(songs.length===1?'':'s')+' in this playlist has any yet.');
+      return;
+    }
+    var msg=n+' song'+(n===1?'':'s')+' added to the library on this device'+
+            (skipped?(' ('+skipped+' skipped \u2014 no drop times yet)'):'')+
+            '.\n\nThe library now holds '+Object.keys(lib).length+' songs.\n\n'+
+            'Export it to a file now? Nothing leaves this device until you do \u2014 '+
+            'the file is what the Build Sheet and the Drops Library Editor read.';
+    if(confirm(msg)) dlSaveBtn.click();
+  });
+
+  dlSaveBtn.addEventListener('click',function(){
+    var lib=dlLoad();
+    var n=dlAbsorbCurrent(lib);
+    if(!n && !Object.keys(lib).length){flash(dlSaveBtn,'No drops');return;}
+    dlSave(lib);
+    var total=Object.keys(lib).length;
+    try{
+      var blob=new Blob([JSON.stringify({kind:'s60-drops',v:1,saved:new Date().toISOString(),songs:lib},null,2)],
+                        {type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download='Saturday60-Drops-'+dateStamp()+'.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
+      flash(dlSaveBtn,total+' songs \u2713');
+    }catch(e){flash(dlSaveBtn,'Failed');}
+  });
+
+  dlLoadBtn.addEventListener('click',function(){ dlFile.value=''; dlFile.click(); });
+  dlFile.addEventListener('change',function(){
+    var f=dlFile.files&&dlFile.files[0]; if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      var p=null;
+      try{p=JSON.parse(String(rd.result||''));}catch(e){alert('That file could not be read.');return;}
+      if(!p||p.kind!=='s60-drops'||!p.songs){alert('That file is not a drops library.');return;}
+      var lib=dlLoad(), added=0;
+      Object.keys(p.songs).forEach(function(k){
+        if(!lib[k]){lib[k]=p.songs[k]; added++;}
+        else if((p.songs[k].drops||[]).length>(lib[k].drops||[]).length){lib[k]=p.songs[k];}
+      });
+      dlSave(lib);
+      var filled=0, already=0;
+      songs.forEach(function(s){
+        var e=lib[normTitle(s.title)];
+        if(!e||!e.drops||!e.drops.length)return;
+        if(e.db && !s.dbOffset) s.dbOffset=e.db;
+        if(songDrops(s).length){already++;return;}
+        s.drops=e.drops.slice(); filled++;
+      });
+      saveSongs(); renderPlaylist();
+      alert('Drops library now holds '+Object.keys(lib).length+' songs ('+added+' new).\n\n'+
+            'Filled '+filled+' song'+(filled===1?'':'s')+' in this playlist'+
+            (already?('; '+already+' already had drops and were left alone.'):'.'));
+    };
+    rd.readAsText(f);
+  });
+
+  /* ---- backup to / restore from a .json file ---- */
+  var backupBtn=document.getElementById('backupBtn'),
+      restoreBtn=document.getElementById('restoreBtn'),
+      restoreFile=document.getElementById('restoreFile');
+
+  function currentPayload(){
+    var myDef=null; try{var r=localStorage.getItem(DKEY); if(r)myDef=JSON.parse(r);}catch(e){}
+    return {kind:'s60-selector-backup', v:1, saved:new Date().toISOString(),
+            songs:songs, settings:settings, mydefaults:myDef||undefined};
+  }
+  function downloadJSON(obj,name){
+    try{
+      var blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download=name;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
+      return true;
+    }catch(e){return false;}
+  }
+  backupBtn.addEventListener('click',function(){
+    if(!songs.length && !confirm('The playlist is empty. Back up the settings anyway?'))return;
+    flash(backupBtn, downloadJSON(currentPayload(),'Saturday60-Selector-Backup-'+dateStamp()+'.json') ? 'Saved ✓' : 'Failed');
+  });
+
+  function applySelectorPayload(p){
+    var stamp=Date.now();
+    songs=(p.songs||[]).map(function(s,i){
+      var blk=(s.block&&ORDER.indexOf(s.block)>=0)?s.block:'warmup';
+      var o={id:stamp+'_'+i, title:String(s.title||''),
+             bpm:clamp(parseInt(s.bpm,10)||DEFAULT), block:blk,
+             drops:Array.isArray(s.drops)?s.drops.slice():[]};
+      if(s.mode==='beat'||s.mode==='half')o.mode=s.mode;
+      if(s.db>0)o.dbOffset=s.db;
+      return o;
+    });
+    saveSongs();
+    if(p.settings){
+      var out=deepCopy(DEFAULTS);
+      if(p.settings.rpmCap)out.rpmCap=p.settings.rpmCap;
+      if(p.settings.blocks)ORDER.forEach(function(k){ if(p.settings.blocks[k])out.blocks[k]=Object.assign(out.blocks[k],p.settings.blocks[k]); });
+      settings=out; saveSettings(); buildEditor();
+    }
+    if(p.mydefaults){ try{localStorage.setItem(DKEY,JSON.stringify(p.mydefaults));}catch(e){} if(typeof paintDefHint==='function')paintDefHint(); }
+    renderPlaylist(); renderVerdict(); updateHint();
+  }
+
+  restoreBtn.addEventListener('click',function(){ restoreFile.value=''; restoreFile.click(); });
+  restoreFile.addEventListener('change',function(){
+    var f=restoreFile.files&&restoreFile.files[0]; if(!f)return;
+    var rd=new FileReader();
+    rd.onload=function(){
+      var p=null;
+      try{ p=JSON.parse(String(rd.result||'')); }
+      catch(e){ alert('That file could not be read as a backup.'); return; }
+      if(p && p.kind==='s60-sheet-backup'){
+        alert('That is a Build Sheet backup — open it in the Build Sheet\u2019s Restore instead.');
+        return;
+      }
+      if(!p || !Array.isArray(p.songs)){
+        alert('That file does not contain a Selector backup.');
+        return;
+      }
+      var when=p.saved?(' saved '+String(p.saved).slice(0,10)):'';
+      if(!confirm('Restore '+p.songs.length+' song'+(p.songs.length===1?'':'s')+when+
+                  '?\n\nThis replaces the playlist and settings on this device.'))return;
+      applySelectorPayload(p);
+      flash(restoreBtn,'Restored ✓');
+    };
+    rd.readAsText(f);
+  });
+
+  importBtn.addEventListener('click',function(){
+    var code=prompt('Paste a transfer code from your other device.\n\n(On that device, open the Selector and tap "Send to sheet" \u2014 it copies the code to the clipboard. Get it here via email, notes, or messaging.)');
+    if(!code)return;
+    var payload=null;
+    try{
+      code=code.replace(/\s+/g,'');
+      if(code.slice(0,4)==='S60B'){
+        alert('That is a Build Sheet code — only another Build Sheet can read it.\n\nTo bring a ride from the Build Sheet into the Selector, use the sheet\u2019s "Send to Selector" button instead, then paste that code here.');
+        return;
+      }
+      if(code.slice(0,3)==='S60')code=code.slice(3);
+      payload=JSON.parse(decodeURIComponent(escape(atob(code))));
+    }catch(e){alert('That code could not be read. Copy it again from the other device and retry.');return;}
+    if(!payload||!payload.songs||!payload.songs.length){alert('No playlist found in that code.');return;}
+    var extras=payload.settings?' Band settings come along too.':'';
+    if(!confirm('Replace this device\u2019s playlist with '+payload.songs.length+' song'+(payload.songs.length===1?'':'s')+' from the code?'+extras))return;
+    var stamp=Date.now();
+    songs=payload.songs.map(function(s,i){
+      var blk=(s.block&&ORDER.indexOf(s.block)>=0)?s.block:'warmup';
+      var o={id:stamp+'_'+i, title:String(s.title||''), bpm:clamp(parseInt(s.bpm,10)||DEFAULT), block:blk, drops:Array.isArray(s.drops)?s.drops.slice():[]};
+      if(s.mode==='beat'||s.mode==='half')o.mode=s.mode;
+      if(s.db>0)o.dbOffset=s.db;
+      return o;
+    });
+    saveSongs();
+    if(payload.settings){
+      var out=deepCopy(DEFAULTS);
+      if(payload.settings.rpmCap)out.rpmCap=payload.settings.rpmCap;
+      if(payload.settings.blocks)ORDER.forEach(function(k){ if(payload.settings.blocks[k])out.blocks[k]=Object.assign(out.blocks[k],payload.settings.blocks[k]); });
+      settings=out; saveSettings(); buildEditor();
+    }
+    if(payload.mydefaults){ try{localStorage.setItem(DKEY,JSON.stringify(payload.mydefaults));}catch(e){} if(typeof paintDefHint==='function')paintDefHint(); }
+    renderPlaylist(); renderVerdict(); updateHint();
+    flash(importBtn,'Done ✓');
+  });
+
+  /* ============ SETTINGS EDITOR ============ */
+  var editor=document.getElementById('editor'),
+      capIn=document.getElementById('capIn'),
+      resetBtn=document.getElementById('resetBtn');
+
+  function buildEditor(){
+    var html='';
+    ORDER.forEach(function(k){
+      var m=meta(k), b=band(k);
+      html+='<div class="set-row" style="--c:'+m.color+'">'+
+        '<div class="set-head"><span class="dot"></span><span class="nm">'+m.name+'</span>'+
+        '<span class="rpmout" id="rpmout_'+k+'">→ '+rpmRangeText(k)+' RPM</span></div>'+
+        '<div class="set-controls">'+
+          '<input class="num" data-k="'+k+'" data-f="lo" inputmode="numeric" value="'+b.lo+'">'+
+          '<span class="dash">–</span>'+
+          '<input class="num" data-k="'+k+'" data-f="hi" inputmode="numeric" value="'+b.hi+'">'+
+          '<span class="unit">BPM</span>'+
+          '<select data-k="'+k+'" data-f="mode">'+
+            '<option value="beat"'+(b.mode==="beat"?' selected':'')+'>On beat</option>'+
+            '<option value="half"'+(b.mode==="half"?' selected':'')+'>Half-beat</option>'+
+          '</select>'+
+        '</div></div>';
+    });
+    editor.innerHTML=html;
+    capIn.value=cap();
+    editor.querySelectorAll('input.num').forEach(function(inp){
+      inp.addEventListener('input',function(){var c=inp.value.replace(/[^0-9]/g,'');if(c!==inp.value)inp.value=c;});
+      inp.addEventListener('change',commitEditor);
+      inp.addEventListener('blur',commitEditor);
+    });
+    editor.querySelectorAll('select').forEach(function(sel){sel.addEventListener('change',commitEditor);});
+  }
+  function commitEditor(){
+    ORDER.forEach(function(k){
+      var loEl=editor.querySelector('input[data-k="'+k+'"][data-f="lo"]');
+      var hiEl=editor.querySelector('input[data-k="'+k+'"][data-f="hi"]');
+      var modeEl=editor.querySelector('select[data-k="'+k+'"][data-f="mode"]');
+      var lo=clamp(parseInt(loEl.value,10)||band(k).lo);
+      var hi=clamp(parseInt(hiEl.value,10)||band(k).hi);
+      if(lo>hi){var t=lo;lo=hi;hi=t;}
+      loEl.value=lo; hiEl.value=hi;
+      settings.blocks[k].lo=lo; settings.blocks[k].hi=hi; settings.blocks[k].mode=modeEl.value;
+    });
+    var cp=parseInt((capIn.value||'').replace(/[^0-9]/g,''),10);
+    settings.rpmCap = isNaN(cp)?DEFAULTS.rpmCap:clamp(cp);
+    capIn.value=settings.rpmCap;
+    saveSettings();
+    ORDER.forEach(function(k){var o=document.getElementById('rpmout_'+k);if(o)o.textContent='→ '+rpmRangeText(k)+' RPM';});
+    renderVerdict(); renderPlaylist(); updateHint();
+  }
+  capIn.addEventListener('input',function(){var c=capIn.value.replace(/[^0-9]/g,'');if(c!==capIn.value)capIn.value=c;});
+  capIn.addEventListener('change',commitEditor);
+  capIn.addEventListener('blur',commitEditor);
+  var saveDefBtn=document.getElementById('saveDefBtn'),
+      factoryBtn=document.getElementById('factoryBtn'),
+      defHint=document.getElementById('defHint');
+  function paintDefHint(){
+    defHint.textContent = hasMyDefaults()
+      ? 'Your saved defaults are active — Reset returns to them.'
+      : 'No personal defaults saved yet — Reset returns to the factory Saturday 60 values.';
+  }
+  saveDefBtn.addEventListener('click',function(){
+    commitEditor();
+    try{localStorage.setItem(DKEY,JSON.stringify(settings));}catch(e){}
+    flash(saveDefBtn,'Saved ✓'); paintDefHint();
+  });
+  resetBtn.addEventListener('click',function(){
+    var msg=hasMyDefaults()?'Reset all bands and the RPM cap to your saved defaults?':'No personal defaults saved — reset to the factory Saturday 60 values?';
+    if(confirm(msg)){
+      settings=myDefaults(); saveSettings(); buildEditor(); renderVerdict(); renderPlaylist(); updateHint(); paintDefHint();
+    }
+  });
+  factoryBtn.addEventListener('click',function(){
+    if(confirm('Wipe your saved defaults and restore the original Saturday 60 factory values?')){
+      try{localStorage.removeItem(DKEY);}catch(e){}
+      settings=deepCopy(DEFAULTS); saveSettings(); buildEditor(); renderVerdict(); renderPlaylist(); updateHint(); paintDefHint();
+    }
+  });
+  paintDefHint();
+
+  /* ============ DROP MARKERS ============ */
+  function fmtTime(sec){sec=Math.max(0,Math.round(sec));var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0'+s:s);}
+  function parseSecs(str){          // for the downbeat field: bare seconds or m:ss
+    str=(str||'').trim(); if(!str)return null;
+    if(str.indexOf(':')>=0)return parseTime(str);
+    var v=parseFloat(str);
+    return isNaN(v)?null:v;
+  }
+  function parseTime(str){
+    str=(str||'').trim(); if(!str)return null;
+    if(str.indexOf(':')>=0){var p=str.split(':');var mm=parseInt(p[0],10),ss=parseInt(p[1],10);if(isNaN(mm)||isNaN(ss))return null;return mm*60+ss;}
+    var n=parseInt(str.replace(/[^0-9]/g,''),10); return isNaN(n)?null:n;
+  }
+  function songDrops(s){ if(!s.drops) s.drops=[]; return s.drops; }
+  function addDropTo(s,sec){
+    var d=songDrops(s); sec=Math.max(0,Math.round(sec));
+    if(d.indexOf(sec)>=0) return false;
+    d.push(sec); d.sort(function(a,b){return a-b;}); saveSongs(); return true;
+  }
+
+  var dropBack=document.getElementById('dropBack'),
+      dropClose=document.getElementById('dropClose'),
+      dropSong=document.getElementById('dropSong'),
+      dtTimer=document.getElementById('dtTimer'),
+      dtStart=document.getElementById('dtStart'),
+      dtReset=document.getElementById('dtReset'),
+      dtMark=document.getElementById('dtMark'),
+      dropChips=document.getElementById('dropChips'),
+      manualIn=document.getElementById('manualIn'),
+      manualAdd=document.getElementById('manualAdd');
+  var dropCurId=null, tRun=false, tBase=0, tStartAt=0, tTick=null;
+
+  function nowMs(){return (performance&&performance.now)?performance.now():Date.now();}
+  function elapsed(){return tBase + (tRun ? (nowMs()-tStartAt) : 0);}
+  function paintTimer(){dtTimer.textContent=fmtTime(elapsed()/1000);}
+  function startTick(){ if(!tTick) tTick=setInterval(paintTimer,100); }
+  function stopTick(){ if(tTick){clearInterval(tTick);tTick=null;} }
+  function curSong(){return songs.filter(function(s){return s.id===dropCurId;})[0];}
+  function setStartLabel(){ dtStart.textContent=tRun?'Pause':'Start'; dtStart.classList.toggle('run',tRun); }
+
+  function openDrops(id){
+    dropCurId=id; var s=curSong(); if(!s)return;
+    dropSong.textContent=s.title+' · '+s.bpm+' BPM';
+    tRun=false; stopTick(); tBase=0; tStartAt=0; paintTimer(); setStartLabel();
+    var dbEl=document.getElementById('dbIn');
+    if(dbEl)dbEl.value=s.dbOffset?String(Math.round(s.dbOffset*10)/10):'';
+    renderChips();
+    dropBack.classList.add('open');
+  }
+  function closeDrops(){ tRun=false; stopTick(); dropBack.classList.remove('open'); dropCurId=null; renderPlaylist(); }
+
+  function renderGrid(){
+    var el=document.getElementById('gridTimes'); if(!el)return;
+    var s=curSong();
+    var bpm=s?parseInt(s.bpm,10):NaN;
+    var grid=s?(s.grid||8):8;
+    document.querySelectorAll('.gbtn').forEach(function(b){
+      b.classList.toggle('on', +b.getAttribute('data-grid')===grid);
+    });
+    var cap=document.getElementById('gridCap');
+    if(!s||isNaN(bpm)||bpm<=0){
+      el.innerHTML='<span class="grid-empty">Add a BPM for this song to see its phrase grid.</span>';
+      if(cap)cap.textContent='';
+      return;
+    }
+    if(cap){
+      var stepS=barSec(bpm)*grid;
+      cap.textContent=s.title+' \u00b7 '+bpm+' BPM \u00b7 '+stepS.toFixed(1)+'s per '+grid+' bars'+
+                      ((s.dbOffset)?(' \u00b7 from '+(Math.round(s.dbOffset*10)/10)+'s'):'');
+    }
+    var off=s.dbOffset||0;
+    var drops=songDrops(s);
+    var last=Math.max(drops.length?drops[drops.length-1]+barSec(bpm)*grid:0, off+barSec(bpm)*grid*8);
+    var times=phraseTimes(bpm,off,grid,last);
+    if(times.length>40)times=times.slice(0,40);
+    el.innerHTML=times.map(function(t,i){
+      var big=(grid===8)&&(i%4===0);              // every 32 bars stands out on the 8-grid
+      var near=drops.some(function(d){return Math.abs(d-t)<barSec(bpm)*1.5;});
+      return '<span class="gt'+(big?' big':'')+(near?' near':'')+'">'+fmtTime(t)+'</span>';
+    }).join('');
+  }
+
+  function renderChips(){
+    var s=curSong(); var d=s?songDrops(s):[];
+    renderGrid();          // must run for every song, drops or not — see below
+    if(!d.length){ dropChips.innerHTML='<span class="chips-empty">None yet — start the timer as the track begins, then tap Mark drop on each drop.</span>'; return; }
+    var bpm=s?parseInt(s.bpm,10):NaN;
+    var off=s?(s.dbOffset||0):0;
+    var grid=s?(s.grid||8):8;
+    dropChips.innerHTML=d.map(function(sec,i){
+      var tag='';
+      if(!isNaN(bpm)&&bpm>0){
+        var nb=nearestBoundary(sec,bpm,off,grid);
+        var dd=Math.abs(nb.delta);
+        tag = dd<0.25
+          ? '<span class="bar on">on the '+grid+'</span>'
+          : '<span class="bar">'+fmtTime(nb.at)+' ('+(nb.delta>0?'+':'\u2212')+dd.toFixed(1)+'s)</span>';
+      }
+      return '<span class="chip">'+fmtTime(sec)+tag+'<button data-i="'+i+'" aria-label="Remove">×</button></span>';
+    }).join('');
+    dropChips.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(){
+      var s2=curSong(); if(!s2)return; var i=parseInt(btn.getAttribute('data-i'),10); s2.drops.splice(i,1); saveSongs(); renderChips();
+    });});
+  }
+
+  (function(){
+    var dbEl=document.getElementById('dbIn');
+    if(!dbEl)return;
+    dbEl.addEventListener('input',function(){
+      var c=dbEl.value.replace(/[^0-9:.]/g,''); if(c!==dbEl.value)dbEl.value=c;
+      var s=curSong(); if(!s)return;
+      var v=parseSecs(dbEl.value);
+      if(v==null){ delete s.dbOffset; } else { s.dbOffset=v; }
+      saveSongs(); renderChips();
+    });
+  })();
+
+  document.querySelectorAll('.gbtn').forEach(function(b){
+    b.addEventListener('click',function(){
+      var s=curSong(); if(!s)return;
+      s.grid=+b.getAttribute('data-grid');
+      saveSongs(); renderChips();
+    });
+  });
+
+  dtStart.addEventListener('click',function(){
+    if(tRun){ tBase=elapsed(); tRun=false; stopTick(); }
+    else { tStartAt=nowMs(); tRun=true; startTick(); }
+    setStartLabel(); paintTimer();
+  });
+  dtReset.addEventListener('click',function(){ tRun=false; stopTick(); tBase=0; tStartAt=0; setStartLabel(); paintTimer(); });
+  dtMark.addEventListener('click',function(){
+    var s=curSong(); if(!s)return;
+    var ok=addDropTo(s, elapsed()/1000); renderChips();
+    if(ok){ dtMark.textContent='Marked ✓'; setTimeout(function(){dtMark.textContent='Mark drop';},700); }
+  });
+  manualAdd.addEventListener('click',function(){
+    var s=curSong(); if(!s)return;
+    var sec=parseTime(manualIn.value); if(sec==null)return;
+    addDropTo(s,sec); manualIn.value=''; renderChips();
+  });
+  manualIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();manualAdd.click();}});
+  dropClose.addEventListener('click',closeDrops);
+  dropBack.addEventListener('click',function(e){ if(e.target===dropBack) closeDrops(); });
+
+  /* ---- init ---- */
+  buildEditor();
+  setBpm(DEFAULT);
+  renderPlaylist();
+})();
+</script>
+</body>
+</html>

@@ -173,26 +173,63 @@
     };
   }
 
-  function canShareFiles() {
-    if (!navigator.share || !navigator.canShare || typeof File !== 'function') return false;
-    try {
-      return navigator.canShare({ files: [new File(['x'], 't.json', { type: 'application/json' })] });
-    } catch (e) { return false; }
+  /* Phones will not share every kind of file. Chrome's share sheet accepts
+     text/plain but refuses application/json, so a .json backup is turned away.
+     We therefore offer the same bytes as a .txt when .json isn't allowed — the
+     contents are identical and Restore reads either. AS_TEXT remembers a phone
+     that accepted .json at the check and then refused it for real. */
+  var AS_TEXT = 's60-share-as-text';
+
+  function preferText() {
+    try { return localStorage.getItem(AS_TEXT) === '1'; } catch (e) { return false; }
   }
+  function rememberPreferText() {
+    try { localStorage.setItem(AS_TEXT, '1'); } catch (e) {}
+  }
+
+  function asText(name) { return name.replace(/\.json$/i, '') + '.txt'; }
+
+  function makeFile(blob, name, type) {
+    try { return new File([blob], name, { type: type }); } catch (e) { return null; }
+  }
+  function shareable(file) {
+    if (!file || !navigator.share || !navigator.canShare) return false;
+    try { return navigator.canShare({ files: [file] }); } catch (e) { return false; }
+  }
+
+  /* Which shape of file this device will take — checked with a stand-in of the
+     same type and extension as the real thing. */
+  function shareShape() {
+    if (!navigator.share || !navigator.canShare || typeof File !== 'function') return null;
+    var probe = new Blob(['{}'], { type: 'application/json' });
+    if (!preferText() && shareable(makeFile(probe, 'probe.json', 'application/json'))) return 'json';
+    if (shareable(makeFile(probe, 'probe.txt', 'text/plain'))) return 'text';
+    return null;
+  }
+
   function canPickFile() { return typeof window.showSaveFilePicker === 'function'; }
 
   function deliver(blob, name, mode, anchor, realClick) {
-    function fallBack() { realClick.call(anchor); }
+    function fallBack(why) {
+      if (why) note(why + ' — saved to your downloads instead');
+      realClick.call(anchor);
+    }
 
     if (mode === 'share') {
-      var file;
-      try { file = new File([blob], name, { type: blob.type || 'application/json' }); }
-      catch (e) { return fallBack(); }
-      navigator.share({ files: [file], title: name }).then(function () {
+      var shape = shareShape();
+      var file = shape === 'json'
+        ? makeFile(blob, name, 'application/json')
+        : makeFile(blob, asText(name), 'text/plain');
+
+      if (!file || !shareable(file)) return fallBack('This phone will not share that file');
+
+      navigator.share({ files: [file], title: file.name }).then(function () {
         note('Sent to your share sheet');
       }).catch(function (err) {
         if (err && err.name === 'AbortError') return;      // user backed out
-        fallBack();
+        // Said yes to .json, then refused it. Use .txt from here on.
+        if (shape === 'json') rememberPreferText();
+        fallBack('Share sheet refused it (' + ((err && err.name) || 'unknown') + ')');
       });
       return;
     }
@@ -224,8 +261,18 @@
     'drops.html':      ['saveBtn']
   };
 
+  /* Restore/Import must accept the .txt twin as well as .json. */
+  function widenFileInputs() {
+    var inputs = document.querySelectorAll('input[type=file]');
+    Array.prototype.forEach.call(inputs, function (el) {
+      var a = el.getAttribute('accept') || '';
+      if (a.indexOf('json') < 0) return;
+      if (a.indexOf('.txt') < 0) el.setAttribute('accept', a + ',.txt,text/plain');
+    });
+  }
+
   function addSaveButtons() {
-    var share = canShareFiles(), pick = !share && canPickFile();
+    var share = !!shareShape(), pick = !share && canPickFile();
     if (!share && !pick) return;            // nothing better than a download here
 
     var mode = share ? 'share' : 'picker';
@@ -268,6 +315,7 @@
     if (!isHub) addHubBar();
     trackBlobUrls();
     interceptDownloadClicks();
+    widenFileInputs();
     addSaveButtons();
     register();
   }

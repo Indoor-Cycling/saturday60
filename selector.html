@@ -216,6 +216,9 @@
                   background:var(--surface-2);cursor:pointer;flex:none;}
   .ckey input.csw::-webkit-color-swatch-wrapper{padding:2px;}
   .ckey input.csw::-webkit-color-swatch{border:none;border-radius:3px;}
+  .lenuse{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:7px;
+          font-size:10.5px;padding:3px 8px;cursor:pointer;font-family:var(--sans);margin-left:4px;}
+  .lenuse:active{background:var(--line);color:var(--text);}
   .manual{display:flex;gap:8px;align-items:center;}
   .manual .mlbl{font-size:11.5px;color:var(--dim);}
   .manual input{width:78px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:9px;font-family:var(--mono);font-size:14px;text-align:center;padding:9px;}
@@ -340,6 +343,7 @@
     <div class="modal-song" id="dropSong">—</div>
     <div class="dt-timer" id="dtTimer">0:00</div>
     <div class="dt-downbeat">first downbeat at <input id="dbIn" inputmode="decimal" placeholder="0" title="Seconds into the track where bar 1 starts. Leave blank if the beat begins with the track — 3.7 and 0:03 both work."> sec</div>
+    <div class="dt-downbeat">song length <input id="lenIn" inputmode="numeric" placeholder="3:41" title="How long the track runs. Sent to the Build Sheet so the ride clock is right. Leave blank if you would rather fill it there."> <button class="lenuse" id="lenUse" type="button" title="Take the time now showing on the timer">from timer</button></div>
     <div class="grid-head">
       <span>Phrase boundaries</span>
       <span class="grid-pick">
@@ -618,7 +622,8 @@
         var mbtn = '<button class="mode-btn'+(override?' set':'')+'" data-mode="'+s.id+
                    '" title="Ride mode for this song — tap to change">'+mlabel+'</button>';
         html+='<div class="song" style="--c:'+m.color+'"><div class="st"><div class="t">'+escapeHtml(s.title)+'</div>'+
-          '<div class="m">'+s.bpm+' BPM · '+songRpm(s)+' RPM'+(override?' ·<i>set</i>':'')+'</div>'+dropsLine+'</div>'+
+          '<div class="m">'+s.bpm+' BPM · '+songRpm(s)+' RPM'+(override?' ·<i>set</i>':'')+
+            (s.len?' · '+fmtTime(s.len):'')+'</div>'+dropsLine+'</div>'+
           mbtn+dbtn+
           '<select data-id="'+s.id+'" aria-label="Move to block">'+opts+'</select>'+
           '<button class="rm" data-id="'+s.id+'" aria-label="Remove">×</button></div>';
@@ -696,7 +701,7 @@
   sendBtn.addEventListener('click',function(){
     if(!songs.length){flash(sendBtn,'Empty');return;}
     var myDef=null; try{var r=localStorage.getItem(DKEY); if(r)myDef=JSON.parse(r);}catch(e){}
-    var payload={t:Date.now(),songs:songs.map(function(s){return {title:s.title,bpm:s.bpm,block:s.block,mode:s.mode||undefined,db:s.dbOffset||undefined,drops:songDrops(s).slice(),cols:s.dropCols||undefined};}),settings:settings,mydefaults:myDef||undefined};
+    var payload={t:Date.now(),songs:songs.map(function(s){return {title:s.title,bpm:s.bpm,block:s.block,mode:s.mode||undefined,db:s.dbOffset||undefined,drops:songDrops(s).slice(),cols:s.dropCols||undefined,len:s.len||undefined};}),settings:settings,mydefaults:myDef||undefined};
     try{localStorage.setItem(FEEDKEY,JSON.stringify(payload));}catch(e){}
     var code='S60'+btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
     copyText(code,sendBtn,'Sent ✓');
@@ -904,7 +909,8 @@
       var o={id:stamp+'_'+i, title:String(s.title||''),
              bpm:clamp(parseInt(s.bpm,10)||DEFAULT), block:blk,
              drops:Array.isArray(s.drops)?s.drops.slice():[],
-             dropCols:(s.cols&&typeof s.cols==='object')?s.cols:{}};
+             dropCols:(s.cols&&typeof s.cols==='object')?s.cols:{},
+             len:(+s.len>0)?Math.round(+s.len):undefined};
       if(s.mode==='beat'||s.mode==='half')o.mode=s.mode;
       if(s.db>0)o.dbOffset=s.db;
       return o;
@@ -965,7 +971,8 @@
     songs=payload.songs.map(function(s,i){
       var blk=(s.block&&ORDER.indexOf(s.block)>=0)?s.block:'warmup';
       var o={id:stamp+'_'+i, title:String(s.title||''), bpm:clamp(parseInt(s.bpm,10)||DEFAULT), block:blk, drops:Array.isArray(s.drops)?s.drops.slice():[],
-             dropCols:(s.dropCols&&typeof s.dropCols==='object')?s.dropCols:((s.cols&&typeof s.cols==='object')?s.cols:{})};
+             dropCols:(s.dropCols&&typeof s.dropCols==='object')?s.dropCols:((s.cols&&typeof s.cols==='object')?s.cols:{}),
+             len:(+s.len>0)?Math.round(+s.len):undefined};
       if(s.mode==='beat'||s.mode==='half')o.mode=s.mode;
       if(s.db>0)o.dbOffset=s.db;
       return o;
@@ -1152,6 +1159,8 @@
     tRun=false; stopTick(); tBase=0; tStartAt=0; paintTimer(); setStartLabel();
     var dbEl=document.getElementById('dbIn');
     if(dbEl)dbEl.value=s.dbOffset?String(Math.round(s.dbOffset*10)/10):'';
+    var lenEl=document.getElementById('lenIn');
+    if(lenEl)lenEl.value=s.len?fmtTime(s.len):'';
     renderChips();
     dropBack.classList.add('open');
   }
@@ -1326,6 +1335,30 @@
     addDropTo(s,sec); manualIn.value=''; renderChips();
   });
   manualIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();manualAdd.click();}});
+
+  /* ---- song length: optional, and only ever set by you ---- */
+  var lenIn=document.getElementById('lenIn'), lenUse=document.getElementById('lenUse');
+  function commitLen(){
+    var s=curSong(); if(!s)return;
+    var raw=(lenIn.value||'').trim();
+    if(!raw){ delete s.len; saveSongs(); return; }
+    var sec=parseTime(raw);
+    if(sec==null||sec<=0){ lenIn.value=s.len?fmtTime(s.len):''; return; }   // unreadable — put it back
+    s.len=Math.round(sec); saveSongs();
+    lenIn.value=fmtTime(s.len);
+  }
+  if(lenIn){
+    lenIn.addEventListener('change',commitLen);
+    lenIn.addEventListener('blur',commitLen);
+    lenIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();lenIn.blur();}});
+  }
+  if(lenUse) lenUse.addEventListener('click',function(){
+    var s=curSong(); if(!s)return;
+    var sec=Math.round(elapsed()/1000);
+    if(sec<=0)return;
+    s.len=sec; saveSongs(); lenIn.value=fmtTime(sec);
+    lenUse.textContent='set \u2713'; setTimeout(function(){lenUse.textContent='from timer';},800);
+  });
   dropClose.addEventListener('click',closeDrops);
   dropBack.addEventListener('click',function(e){ if(e.target===dropBack) closeDrops(); });
 

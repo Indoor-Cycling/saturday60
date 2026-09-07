@@ -105,6 +105,9 @@
   .ridedrops{font-family:var(--mono);font-size:9px;color:var(--muted);padding:0 2px 2px;line-height:1.3;font-variant-numeric:tabular-nums;}
   .barpos{font-family:var(--mono);font-size:9px;color:var(--dim);padding:0 2px 2px;line-height:1.3;font-variant-numeric:tabular-nums;}
   .slots input.len{font-family:var(--mono);text-align:center;}
+  /* a song with no runtime yet — the ride clock can't be trusted until it's filled */
+  .slots input.len.need{background:#fdf3e0;box-shadow:inset 0 0 0 1px var(--seg2);border-radius:4px;}
+  .slots input.len.need::placeholder{color:var(--seg2);}
   .sum-cell{font-family:var(--mono);text-align:center;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;}
   .seg-head .segsum{font-family:var(--mono);font-size:10.5px;font-weight:600;opacity:.9;margin-right:10px;}
   .mv{border:none;background:none;color:var(--muted);cursor:pointer;font-size:11px;padding:1px 3px;line-height:1;}
@@ -127,6 +130,7 @@
 
   /* print */
   @media print{
+    .slots input.len.need{background:none!important;box-shadow:none!important;}
     body{background:#fff;}
     .page{max-width:none;padding:0;}
     .toolbar,.rm-cell,.addrow,.status,.mv,.smv,.secpos,.drift-ctl,.lib-panel,.int-preset{display:none!important;}
@@ -1186,7 +1190,7 @@
         html+='<tr>'+
           '<td>'+songNum+'</td>'+
           '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="song" placeholder="'+esc(row.ph||'song title')+'">'+esc(row.song)+'</textarea></td>'+
-          '<td><input type="text" class="len" data-s="'+si+'" data-r="'+ri+'" data-f="len" value="'+esc(row.len||'')+'" placeholder="3:41"></td>'+
+          '<td><input type="text" class="len'+((row.song||'').trim()&&!(row.len||'').trim()?' need':'')+'" data-s="'+si+'" data-r="'+ri+'" data-f="len" value="'+esc(row.len||'')+'" placeholder="3:41"></td>'+
           '<td><input type="text" class="bpm" inputmode="numeric" data-s="'+si+'" data-r="'+ri+'" data-f="bpm" value="'+esc(row.bpm)+'"></td>'+
           '<td><select data-s="'+si+'" data-r="'+ri+'" data-f="mode">'+modeOpts+'</select></td>'+
           '<td class="rpm-cell" id="rpm_'+si+'_'+ri+'">'+rpmFor(row)+'</td>'+
@@ -1219,6 +1223,11 @@
         data[si].rows[ri][f]=el.value;
         if(f==='bpm'||f==='mode'){document.getElementById('rpm_'+si+'_'+ri).textContent=rpmFor(data[si].rows[ri]);}
         if(f==='len'||f==='drops')updateSums();
+        if(f==='len'||f==='song'){
+          var lenEl=(f==='len')?el:document.querySelector('input.len[data-s="'+si+'"][data-r="'+ri+'"]');
+          var r=data[si].rows[ri];
+          if(lenEl)lenEl.classList.toggle('need', !!(r.song||'').trim() && !(r.len||'').trim());
+        }
         save();
       });
       if(el.tagName==='SELECT'){el.addEventListener('change',function(){
@@ -1494,6 +1503,13 @@
   var HOME={warmup:'warmup',tempo:'seg1',climb:'seg2',sprint:'seg3',cool:'cool'};
   function fmtSec(sec){sec=Math.max(0,Math.round(sec));var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0'+s:s);}
   function applySong(row,s){
+    // A length belongs to the song that was in this slot. If a different
+    // song lands here, the old runtime is not just stale but actively
+    // wrong — it drives the ride clock — so it goes. A length sent from
+    // the Selector always wins, since it came with this song.
+    var sameSong = normTitle(row.song)===normTitle(s.title||'');
+    if(+s.len>0)        row.len=fmtSec(Math.round(+s.len));
+    else if(!sameSong)  row.len='';
     row.song=s.title||'';
     row.bpm=String(s.bpm||row.bpm||'');
     if(s.db>0 && !(row.db||'').trim()) row.db=fmtSec(s.db);
@@ -1588,8 +1604,17 @@
       });
     });
     save(); render();
-    statusEl.textContent='Imported ✓';
-    setTimeout(function(){statusEl.textContent='';},2000);
+    var need=0;
+    data.forEach(function(seg){seg.rows.forEach(function(r){
+      if((r.song||'').trim() && !(r.len||'').trim()) need++;
+    });});
+    var songs=payload.songs.length;
+    statusEl.textContent='Imported \u2713';
+    setTimeout(function(){statusEl.textContent='';},2500);
+    if(need) alert('Imported '+songs+' song'+(songs===1?'':'s')+'.\n\n'+need+' song'+(need===1?' now needs':'s now need')+
+                   ' a length \u2014 those boxes are outlined in amber.\n\nA length belongs to the song that was '+
+                   'in the slot, so any slot that changed song had its old runtime cleared rather than left to '+
+                   'mislead the ride clock.');
   });
 
   document.getElementById('resetBtn').addEventListener('click',function(){

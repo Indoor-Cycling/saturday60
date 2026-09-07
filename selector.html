@@ -131,6 +131,10 @@
   .song select{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:8px;font-size:11px;padding:6px;max-width:104px;font-family:var(--sans);}
   .song .rm{width:30px;height:30px;flex:none;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--dim);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
   .song .rm:active{background:var(--line);color:var(--text);}
+  /* armed by a first tap — says what the next tap will do */
+  .song .rm.arm{width:auto;padding:0 10px;font-size:11px;font-weight:700;letter-spacing:.01em;
+                background:#ef4444;border-color:#ef4444;color:#fff;}
+  .song .rm.arm:active{background:#dc2626;color:#fff;}
   .pl-empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);font-size:13.5px;line-height:1.5;text-align:center;}
 
   /* ---- Settings / bands editor ---- */
@@ -555,7 +559,22 @@
   function moveSong(id,k){songs.forEach(function(s){if(s.id===id)s.block=k;});saveSongs();renderPlaylist();}
   function escapeHtml(s){return s.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
+  // --- two-tap remove -------------------------------------------------
+  var armedRm=null, armTimer=null;
+  function disarmRemove(){
+    if(armTimer){clearTimeout(armTimer); armTimer=null;}
+    if(armedRm){
+      if(armedRm.isConnected){ armedRm.classList.remove('arm'); armedRm.textContent='×'; }
+      armedRm=null;
+    }
+  }
+  // Tapping anywhere else puts the armed button back to a plain ×.
+  document.addEventListener('click',function(e){
+    if(armedRm && e.target!==armedRm && !armedRm.contains(e.target)) disarmRemove();
+  },true);
+
   function renderPlaylist(){
+    disarmRemove();                 // the old buttons are about to be replaced
     totalCount.textContent=songs.length+(songs.length===1?' song':' songs');
     if(!songs.length){playlist.innerHTML='<div class="pl-empty">No songs yet. Add one above and it drops into its block.</div>';return;}
     var html='';
@@ -584,7 +603,18 @@
       html+='</div>';
     });
     playlist.innerHTML=html;
-    playlist.querySelectorAll('.rm').forEach(function(btn){btn.addEventListener('click',function(){removeSong(btn.getAttribute('data-id'));});});
+    // Remove needs two taps: the first arms the button, the second removes.
+    // It disarms itself after 4s, or as soon as another remove button is armed.
+    playlist.querySelectorAll('.rm').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        if(btn.classList.contains('arm')){ removeSong(btn.getAttribute('data-id')); return; }
+        disarmRemove();
+        btn.classList.add('arm');
+        btn.textContent='Delete?';
+        armedRm=btn;
+        armTimer=setTimeout(disarmRemove,4000);
+      });
+    });
     playlist.querySelectorAll('select').forEach(function(sel){sel.addEventListener('change',function(){moveSong(sel.getAttribute('data-id'),sel.value);});});
     playlist.querySelectorAll('[data-drop]').forEach(function(btn){btn.addEventListener('click',function(){openDrops(btn.getAttribute('data-drop'));});});
     playlist.querySelectorAll('[data-mode]').forEach(function(btn){

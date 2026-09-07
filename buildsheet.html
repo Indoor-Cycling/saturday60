@@ -608,7 +608,9 @@
     data.forEach(function(seg){seg.rows.forEach(function(row){
       var d=dropsToSecs(row.drops); if(!d.length)return;
       var k=normTitle(row.song); if(!k)return;
+      var prevCols=lib[k]&&lib[k].cols;
       lib[k]={title:row.song, bpm:row.bpm, drops:d, intervals:(row.intervals||'')};
+      if(prevCols)lib[k].cols=prevCols;   // set in the Selector — the sheet never shows or clears it
       var dbv=parseLen(row.db||''); if(dbv>0)lib[k].db=dbv;
       n++;
     });});
@@ -622,7 +624,9 @@
       var d=dropsToSecs(row.drops);
       if(!d.length)return;
       var k=normTitle(row.song); if(!k)return;
+      var prevCols=lib[k]&&lib[k].cols;
       lib[k]={title:row.song, bpm:row.bpm, drops:d, intervals:(row.intervals||'')};
+      if(prevCols)lib[k].cols=prevCols;   // set in the Selector — the sheet never shows or clears it
       var dbv=parseLen(row.db||''); if(dbv>0)lib[k].db=dbv;
       n++;
     });});

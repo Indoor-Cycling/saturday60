@@ -158,7 +158,8 @@
     Object.keys(obj||{}).forEach(function(k){
       var e=obj[k]||{};
       out.push({key:k, title:e.title||k, bpm:(e.bpm==null?'':String(e.bpm)),
-                timesText:(e.drops||[]).map(fmt).join(', '), drill:e.intervals||''});
+                timesText:(e.drops||[]).map(fmt).join(', '), drill:e.intervals||'',
+                cols:e.cols});
     });
     out.sort(function(a,b){return a.title.toLowerCase().localeCompare(b.title.toLowerCase());});
     return out;
@@ -303,6 +304,7 @@
       if(p.bad.length) badTimes.push(title);
       if(out[k]) dupes.push(title);
       var e={title:title, drops:p.secs};
+      if(s.cols && Object.keys(s.cols).length) e.cols=s.cols;   // colour coding set in the Selector
       if((s.bpm||'').trim()) e.bpm=parseInt(s.bpm,10);
       if((s.drill||'').trim()) e.intervals=s.drill.trim();
       out[k]=e;

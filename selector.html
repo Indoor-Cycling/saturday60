@@ -194,6 +194,18 @@
   .chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:6px 8px 6px 12px;font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;}
   .chip button{background:none;border:none;color:var(--dim);font-size:15px;cursor:pointer;padding:0;line-height:1;}
   .chips-empty{font-size:12.5px;color:var(--dim);line-height:1.4;}
+  /* colour-coded drops: tap a chip to cycle it through the key */
+  .chip{cursor:pointer;}
+  .chip.tinted{border-width:1.5px;}
+  .chip.tinted .bar{color:inherit;opacity:.75;}
+  .ckey{display:flex;flex-wrap:wrap;gap:6px 10px;margin:0 0 10px;align-items:center;}
+  .ckey .ki{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted);}
+  .ckey .sw{width:11px;height:11px;border-radius:3px;flex:none;}
+  .ckey .kname{max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ckey input{width:74px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;
+              color:var(--text);font-size:11px;padding:3px 5px;font-family:var(--sans);}
+  .ckey .kedit{background:none;border:1px solid var(--line);color:var(--dim);border-radius:6px;
+               font-size:10px;padding:3px 8px;cursor:pointer;margin-left:auto;font-family:var(--sans);}
   .manual{display:flex;gap:8px;align-items:center;}
   .manual .mlbl{font-size:11.5px;color:var(--dim);}
   .manual input{width:78px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:9px;font-family:var(--mono);font-size:14px;text-align:center;padding:9px;}
@@ -335,6 +347,7 @@
     </div>
     <button class="mark-btn" id="dtMark">Mark drop</button>
     <div class="drops-cap-h">Captured drops</div>
+    <div class="ckey" id="dropKey"></div>
     <div class="chips" id="dropChips"></div>
     <div class="manual"><span class="mlbl">Add by hand</span><input id="manualIn" type="text" placeholder="1:14" aria-label="Drop time, minutes colon seconds"><button id="manualAdd">Add</button></div>
   </div>
@@ -673,7 +686,7 @@
   sendBtn.addEventListener('click',function(){
     if(!songs.length){flash(sendBtn,'Empty');return;}
     var myDef=null; try{var r=localStorage.getItem(DKEY); if(r)myDef=JSON.parse(r);}catch(e){}
-    var payload={t:Date.now(),songs:songs.map(function(s){return {title:s.title,bpm:s.bpm,block:s.block,mode:s.mode||undefined,db:s.dbOffset||undefined,drops:songDrops(s).slice()};}),settings:settings,mydefaults:myDef||undefined};
+    var payload={t:Date.now(),songs:songs.map(function(s){return {title:s.title,bpm:s.bpm,block:s.block,mode:s.mode||undefined,db:s.dbOffset||undefined,drops:songDrops(s).slice(),cols:s.dropCols||undefined};}),settings:settings,mydefaults:myDef||undefined};
     try{localStorage.setItem(FEEDKEY,JSON.stringify(payload));}catch(e){}
     var code='S60'+btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
     copyText(code,sendBtn,'Sent ✓');
@@ -736,6 +749,7 @@
       var k=normTitle(s.title); if(!k)return;
       var prev=lib[k];
       lib[k]={title:s.title, bpm:s.bpm, drops:d.slice()};
+      if(s.dropCols&&Object.keys(s.dropCols).length)lib[k].cols=JSON.parse(JSON.stringify(s.dropCols));
       if(s.dbOffset)lib[k].db=s.dbOffset;                        // first downbeat, in seconds
       else if(prev&&prev.db)lib[k].db=prev.db;
       if(prev&&prev.intervals)lib[k].intervals=prev.intervals;   // keep a drill saved from the Build Sheet
@@ -836,7 +850,9 @@
         if(!e||!e.drops||!e.drops.length)return;
         if(e.db && !s.dbOffset) s.dbOffset=e.db;
         if(songDrops(s).length){already++;return;}
-        s.drops=e.drops.slice(); filled++;
+        s.drops=e.drops.slice();
+        if(e.cols)s.dropCols=JSON.parse(JSON.stringify(e.cols));
+        filled++;
       });
       saveSongs(); renderPlaylist();
       alert('Drops library now holds '+Object.keys(lib).length+' songs ('+added+' new).\n\n'+
@@ -877,7 +893,8 @@
       var blk=(s.block&&ORDER.indexOf(s.block)>=0)?s.block:'warmup';
       var o={id:stamp+'_'+i, title:String(s.title||''),
              bpm:clamp(parseInt(s.bpm,10)||DEFAULT), block:blk,
-             drops:Array.isArray(s.drops)?s.drops.slice():[]};
+             drops:Array.isArray(s.drops)?s.drops.slice():[],
+             dropCols:(s.cols&&typeof s.cols==='object')?s.cols:{}};
       if(s.mode==='beat'||s.mode==='half')o.mode=s.mode;
       if(s.db>0)o.dbOffset=s.db;
       return o;
@@ -937,7 +954,8 @@
     var stamp=Date.now();
     songs=payload.songs.map(function(s,i){
       var blk=(s.block&&ORDER.indexOf(s.block)>=0)?s.block:'warmup';
-      var o={id:stamp+'_'+i, title:String(s.title||''), bpm:clamp(parseInt(s.bpm,10)||DEFAULT), block:blk, drops:Array.isArray(s.drops)?s.drops.slice():[]};
+      var o={id:stamp+'_'+i, title:String(s.title||''), bpm:clamp(parseInt(s.bpm,10)||DEFAULT), block:blk, drops:Array.isArray(s.drops)?s.drops.slice():[],
+             dropCols:(s.dropCols&&typeof s.dropCols==='object')?s.dropCols:((s.cols&&typeof s.cols==='object')?s.cols:{})};
       if(s.mode==='beat'||s.mode==='half')o.mode=s.mode;
       if(s.db>0)o.dbOffset=s.db;
       return o;
@@ -1047,6 +1065,33 @@
     if(str.indexOf(':')>=0){var p=str.split(':');var mm=parseInt(p[0],10),ss=parseInt(p[1],10);if(isNaN(mm)||isNaN(ss))return null;return mm*60+ss;}
     var n=parseInt(str.replace(/[^0-9]/g,''),10); return isNaN(n)?null:n;
   }
+  /* ---- colour-coded drops -------------------------------------------
+     A drop's colour is held in s.dropCols, keyed by its time in seconds,
+     so it survives sorting and removal without any index bookkeeping.
+     0 means no colour. Older files simply have no dropCols and open as
+     plain drops; older copies of the tools ignore the extra key. */
+  var DROP_COLOURS = ['', '#38bdf8', '#f59e0b', '#ef4444', '#ec4899', '#818cf8', '#34d399'];
+  var KEY_DEFAULTS = ['', 'Intro', 'Build', 'Drop', 'Chorus', 'Hook', 'Breakdown'];
+  var CKEY = 's60-drop-key';
+
+  function keyNames(){
+    try{
+      var r=JSON.parse(localStorage.getItem(CKEY)||'null');
+      if(Array.isArray(r) && r.length===KEY_DEFAULTS.length) return r;
+    }catch(e){}
+    return KEY_DEFAULTS.slice();
+  }
+  function saveKeyNames(a){ try{ localStorage.setItem(CKEY, JSON.stringify(a)); }catch(e){} }
+
+  function dropCols(s){ if(!s.dropCols||typeof s.dropCols!=='object') s.dropCols={}; return s.dropCols; }
+  function dropColour(s,sec){ return +(dropCols(s)[sec]||0); }
+  function cycleDropColour(s,sec){
+    var c=dropColour(s,sec)+1;
+    if(c>=DROP_COLOURS.length) c=0;
+    if(c) dropCols(s)[sec]=c; else delete dropCols(s)[sec];
+    saveSongs();
+  }
+
   function songDrops(s){ if(!s.drops) s.drops=[]; return s.drops; }
   function addDropTo(s,sec){
     var d=songDrops(s); sec=Math.max(0,Math.round(sec));
@@ -1132,11 +1177,58 @@
           ? '<span class="bar on">on the '+grid+'</span>'
           : '<span class="bar">'+fmtTime(nb.at)+' ('+(nb.delta>0?'+':'\u2212')+dd.toFixed(1)+'s)</span>';
       }
-      return '<span class="chip">'+fmtTime(sec)+tag+'<button data-i="'+i+'" aria-label="Remove">×</button></span>';
+      var c=dropColour(s,sec), col=DROP_COLOURS[c]||'';
+      var style=c ? ' style="background:'+col+'22;border-color:'+col+';color:'+col+'"' : '';
+      return '<span class="chip'+(c?' tinted':'')+'" data-sec="'+sec+'"'+style+
+             ' title="Tap to change colour">'+fmtTime(sec)+tag+
+             '<button data-i="'+i+'" aria-label="Remove">×</button></span>';
     }).join('');
-    dropChips.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(){
-      var s2=curSong(); if(!s2)return; var i=parseInt(btn.getAttribute('data-i'),10); s2.drops.splice(i,1); saveSongs(); renderChips();
+    dropChips.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var s2=curSong(); if(!s2)return;
+      var i=parseInt(btn.getAttribute('data-i'),10), sec=s2.drops[i];
+      s2.drops.splice(i,1); delete dropCols(s2)[sec];
+      saveSongs(); renderChips();
     });});
+    // tapping the chip itself steps it on to the next colour in the key
+    dropChips.querySelectorAll('.chip').forEach(function(ch){ch.addEventListener('click',function(){
+      var s2=curSong(); if(!s2)return;
+      cycleDropColour(s2, +ch.getAttribute('data-sec'));
+      renderChips();
+    });});
+    renderDropKey();
+  }
+
+  function renderDropKey(){
+    var el=document.getElementById('dropKey'); if(!el)return;
+    var s=curSong(), any=s?songDrops(s).length:0;
+    if(!any){ el.innerHTML=''; return; }
+    var names=keyNames();
+    if(el.getAttribute('data-editing')==='1'){
+      el.innerHTML=DROP_COLOURS.map(function(col,i){
+        if(!i)return '';
+        return '<span class="ki"><span class="sw" style="background:'+col+'"></span>'+
+               '<input type="text" data-k="'+i+'" value="'+escapeHtml(names[i])+'" maxlength="14"></span>';
+      }).join('')+'<button class="kedit" id="keyDone">Done</button>';
+      el.querySelector('#keyDone').addEventListener('click',function(){
+        var out=KEY_DEFAULTS.slice();
+        el.querySelectorAll('input[data-k]').forEach(function(inp){
+          out[+inp.getAttribute('data-k')] = inp.value.trim() || KEY_DEFAULTS[+inp.getAttribute('data-k')];
+        });
+        saveKeyNames(out);
+        el.setAttribute('data-editing','0');
+        renderDropKey();
+      });
+      return;
+    }
+    el.innerHTML=DROP_COLOURS.map(function(col,i){
+      if(!i)return '';
+      return '<span class="ki"><span class="sw" style="background:'+col+'"></span>'+
+             '<span class="kname">'+escapeHtml(names[i])+'</span></span>';
+    }).join('')+'<button class="kedit" id="keyEdit">Rename</button>';
+    el.querySelector('#keyEdit').addEventListener('click',function(){
+      el.setAttribute('data-editing','1'); renderDropKey();
+    });
   }
 
   (function(){

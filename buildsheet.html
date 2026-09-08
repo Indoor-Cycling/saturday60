@@ -160,10 +160,10 @@
   Type songs, BPMs and drop times; pick ride mode &amp; position from the dropdowns. RPM computes itself. Everything autosaves on this device.</p>
 
   <div class="toolbar">
-    <button class="primary" id="printBtn">Print / Save as PDF</button>
+    <button title="Open the print dialogue — choose Save as PDF there to keep a copy" class="primary" id="printBtn">Print / Save as PDF</button>
     <button id="importBtn" title="Fills matching slots by block role">Import ← Selector</button>
     <button id="dropsBtn" title="Merges ONLY drop times, matching songs by title">Import drops only</button>
-    <button id="spotifyBtn">Import Spotify export</button>
+    <button title="Paste a Spotify or Chosic export to fill songs, BPMs and lengths in one go" id="spotifyBtn">Import Spotify export</button>
     <button id="dlViewBtn" title="See and manage every song whose drops you have stored">Drops library</button>
     <input type="file" id="dlFile" accept="application/json,.json" style="display:none">
     <button id="bkBtn" title="Download the whole sheet as a .json file">Backup</button>
@@ -173,9 +173,9 @@
     <button id="importSheetBtn" title="Paste a code from another Build Sheet">Import ← Build Sheet</button>
     <button id="toSelectorBtn" title="Sends songs, BPMs and drops to the phone Selector">Send → Selector</button>
     <button id="phraseBtn" title="Every song’s 8/16/32-bar boundaries on the ride clock">Phrase map</button>
-    <button id="excelBtn">Export for Excel</button>
-    <button id="resetBtn">Reset to defaults</button>
-    <button id="clearSongsBtn">Clear songs &amp; drops only</button>
+    <button title="Copy the sheet as Excel rows, ready to paste into the workbook at B2" id="excelBtn">Export for Excel</button>
+    <button title="Discard this sheet and start again from the default Build Sheet" id="resetBtn">Reset to defaults</button>
+    <button title="Empty the song titles, lengths and drop times, keeping every other setting" id="clearSongsBtn">Clear songs &amp; drops only</button>
     <span class="drift-ctl">Drift <input id="driftIn" inputmode="decimal" title="Average fractional seconds each song runs past its whole-second length. Applied to ◉ ride times only; Σ stays matched to MOWL."> s/song</span>
     <span class="status" id="status"></span>
   </div>
@@ -211,8 +211,8 @@
     <div class="imp-row">
       <input type="file" id="impFile" accept=".csv,.txt,text/csv,text/plain">
       <span class="grow"></span>
-      <button id="impCancel">Cancel</button>
-      <button class="primary" id="impGo">Import</button>
+      <button title="Close without importing" id="impCancel">Cancel</button>
+      <button title="Import the pasted rows into the sheet" class="primary" id="impGo">Import</button>
     </div>
   </div>
 </div>
@@ -222,26 +222,26 @@
     <div class="modal-h" style="display:flex;justify-content:space-between;align-items:baseline">
       <h3 style="margin:0">Phrase map · ride clock</h3>
       <span class="grid-pick">
-        <button class="gbtn" data-pgrid="8">8</button>
-        <button class="gbtn" data-pgrid="16">16</button>
-        <button class="gbtn" data-pgrid="32">32</button>
+        <button title="Map phrases every 8 bars" class="gbtn" data-pgrid="8">8</button>
+        <button title="Map phrases every 16 bars" class="gbtn" data-pgrid="16">16</button>
+        <button title="Map phrases every 32 bars" class="gbtn" data-pgrid="32">32</button>
         <span style="font-size:10.5px;color:var(--muted)">bars</span>
       </span>
     </div>
     <div class="modal-h" style="display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-top:6px">
       <span style="font-size:10.5px;color:var(--muted)">clock</span>
       <span class="grid-pick">
-        <button class="gbtn" data-pclock="mowl">match MOWL</button>
-        <button class="gbtn" data-pclock="audio">real audio</button>
+        <button title="Show times on the MOWL ride clock" class="gbtn" data-pclock="mowl">match MOWL</button>
+        <button title="Show true audio times, drift included" class="gbtn" data-pclock="audio">real audio</button>
       </span>
     </div>
     <p>Where each song’s phrase boundaries fall in the class, so an interval in Session Designer can start and end on the music. Times use the same crossfade and drift maths as the ◉ ride column. Set an offset if a track opens with an intro before bar 1.</p>
     <p id="pmHint" style="font-size:11px;font-weight:600;margin:2px 0 8px"></p>
     <div id="pmList" style="max-height:50vh;overflow-y:auto;margin-bottom:10px"></div>
     <div class="imp-row">
-      <button id="pmCopy">Copy as text</button>
+      <button title="Copy the phrase map as text" id="pmCopy">Copy as text</button>
       <span class="grow"></span>
-      <button class="primary" id="pmDone">Done</button>
+      <button title="Close the phrase map" class="primary" id="pmDone">Done</button>
     </div>
   </div>
 </div>
@@ -252,11 +252,11 @@
     <p id="dlCount">-</p>
     <div class="dm-list" id="dlList"></div>
     <div class="imp-row">
-      <button id="dlAdd">Add this sheet’s drops</button>
-      <button id="dlExport">Export file</button>
-      <button id="dlImport">Import file</button>
+      <button title="Store this sheet's drop times into the library for future rides" id="dlAdd">Add this sheet’s drops</button>
+      <button title="Save the whole drops library as a file" id="dlExport">Export file</button>
+      <button title="Merge a drops library file into this one" id="dlImport">Import file</button>
       <span class="grow"></span>
-      <button class="primary" id="dlDone">Done</button>
+      <button title="Close the drops library" class="primary" id="dlDone">Done</button>
     </div>
   </div>
 </div>
@@ -268,8 +268,8 @@
     <textarea id="codeText" placeholder="S60B…"></textarea>
     <div class="imp-row">
       <span class="grow"></span>
-      <button id="codeCancel">Cancel</button>
-      <button class="primary" id="codeGo">Import</button>
+      <button title="Close without importing" id="codeCancel">Cancel</button>
+      <button title="Read the pasted code and load it" class="primary" id="codeGo">Import</button>
     </div>
   </div>
 </div>
@@ -283,11 +283,11 @@
     <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:8px 0 5px">Drills</div>
     <div class="dm-list" id="dmList"></div>
     <div class="imp-row">
-      <button id="dmAddGroup">＋ Add group</button>
-      <button id="dmAdd">＋ Add drill</button>
-      <button id="dmRestore">Restore built-ins</button>
+      <button title="Add a new heading to group your drills under" id="dmAddGroup">＋ Add group</button>
+      <button title="Add a drill to this group" id="dmAdd">＋ Add drill</button>
+      <button title="Bring back the drills the app shipped with, keeping your own" id="dmRestore">Restore built-ins</button>
       <span class="grow"></span>
-      <button class="primary" id="dmDone">Done</button>
+      <button title="Close the drill catalogue" class="primary" id="dmDone">Done</button>
     </div>
   </div>
 </div>

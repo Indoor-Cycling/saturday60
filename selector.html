@@ -263,8 +263,8 @@
       <div class="tap-bpm"><span id="tapBpm">–</span><small>BPM</small></div>
       <div class="tap-meta" id="tapMeta">Tap the beat 4+ times</div>
       <div class="tap-actions">
-        <button class="btn-use" id="tapUse" disabled>Use</button>
-        <button class="btn-reset" id="tapReset">Reset</button>
+        <button title="Use the tapped tempo as this song's BPM" class="btn-use" id="tapUse" disabled>Use</button>
+        <button title="Clear the taps and start the tempo test again" class="btn-reset" id="tapReset">Reset</button>
       </div>
     </div>
   </div>
@@ -282,7 +282,7 @@
   <div class="add-row">
     <input id="titleIn" type="text" placeholder="Song title" autocomplete="off" enterkeyhint="next">
     <input id="bpmIn" type="text" inputmode="numeric" placeholder="BPM" autocomplete="off" enterkeyhint="done">
-    <button class="add-btn" id="addBtn" disabled>Add song</button>
+    <button title="Add this song to the playlist, filed under the block its BPM suits" class="add-btn" id="addBtn" disabled>Add song</button>
   </div>
   <div class="add-hint" id="addHint"></div>
   <div class="totals">
@@ -294,9 +294,9 @@
       <button class="mini-btn" id="restoreBtn" title="Restore from a .json backup file">Restore</button>
       <button class="mini-btn" id="importBtn" title="Paste a Selector code (from another Selector, or the sheet’s Send → Selector)">Import code</button>
       <input type="file" id="restoreFile" accept="application/json,.json" style="display:none">
-      <button class="mini-btn" id="sendBtn">Send to sheet</button>
-      <button class="mini-btn" id="copyBtn">Copy list</button>
-      <button class="mini-btn" id="clearBtn">Clear all</button>
+      <button title="Hand this playlist to the Build Sheet on this device, and copy a transfer code for any other device" class="mini-btn" id="sendBtn">Send to sheet</button>
+      <button title="Copy the playlist as plain text, ready to paste into notes or a message" class="mini-btn" id="copyBtn">Copy list</button>
+      <button title="Remove every song from the playlist. Drops stored in the library are kept" class="mini-btn" id="clearBtn">Clear all</button>
     </span>
   </div>
   <div id="playlist"></div>
@@ -308,9 +308,9 @@
     <div id="editor"></div>
     <div class="cap-row">RPM cap · all blocks <input class="num" id="capIn" inputmode="numeric"> RPM</div>
     <div class="reset-row" style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="mini-btn" id="saveDefBtn">Save as my defaults</button>
-      <button class="mini-btn" id="resetBtn">Reset to my defaults</button>
-      <button class="mini-btn" id="factoryBtn">Factory reset</button>
+      <button title="Remember these block settings as your own starting point" class="mini-btn" id="saveDefBtn">Save as my defaults</button>
+      <button title="Put the block settings back to the ones you saved" class="mini-btn" id="resetBtn">Reset to my defaults</button>
+      <button title="Discard your saved settings and return to the values the app shipped with" class="mini-btn" id="factoryBtn">Factory reset</button>
     </div>
     <div class="add-hint" id="defHint" style="margin-top:8px;"></div>
     <ul class="panel-rules">
@@ -326,20 +326,21 @@
 <!-- DROP-MARKER SHEET -->
 <div class="modal-back" id="dlBack">
   <div class="modal" role="dialog" aria-label="Drops library">
-    <div class="modal-h"><span class="mt">Drops library</span><button class="mx" id="dlDone" aria-label="Close">×</button></div>
+    <div class="modal-h"><span class="mt">Drops library</span><button title="Close the drops library" class="mx" id="dlDone" aria-label="Close">×</button></div>
     <div class="modal-song" id="dlCount">-</div>
     <div id="dlList" style="max-height:46vh;overflow-y:auto;margin-bottom:12px"></div>
     <div class="imp-row" style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="mini-btn" id="dlAdd">Add this playlist</button>
-      <button class="mini-btn" id="dlExport">Export file</button>
-      <button class="mini-btn" id="dlImport">Import file</button>
+      <button class="mini-btn" id="dlFill" title="Look every song in your playlist up in this library and fill in any drops it does not have yet">Fill from library</button>
+      <button title="Store the drops from every song in this playlist into the library for future rides" class="mini-btn" id="dlAdd">Add this playlist</button>
+      <button title="Save the whole drops library as a file you can keep or move to another device" class="mini-btn" id="dlExport">Export file</button>
+      <button title="Merge a drops library file into this one, and fill any matching songs that have none" class="mini-btn" id="dlImport">Import file</button>
     </div>
   </div>
 </div>
 
 <div class="modal-back" id="dropBack">
   <div class="modal" role="dialog" aria-label="Drop markers">
-    <div class="modal-h"><span class="mt">Drop markers</span><button class="mx" id="dropClose" aria-label="Close">×</button></div>
+    <div class="modal-h"><span class="mt">Drop markers</span><button title="Close this song's drop markers" class="mx" id="dropClose" aria-label="Close">×</button></div>
     <div class="modal-song" id="dropSong">—</div>
     <div class="dt-timer" id="dtTimer">0:00</div>
     <div class="dt-downbeat">first downbeat at <input id="dbIn" inputmode="decimal" placeholder="0" title="Seconds into the track where bar 1 starts. Leave blank if the beat begins with the track — 3.7 and 0:03 both work."> sec</div>
@@ -347,23 +348,23 @@
     <div class="grid-head">
       <span>Phrase boundaries</span>
       <span class="grid-pick">
-        <button class="gbtn" data-grid="8">8</button>
-        <button class="gbtn" data-grid="16">16</button>
-        <button class="gbtn" data-grid="32">32</button>
+        <button title="Show phrase boundaries every 8 bars" class="gbtn" data-grid="8">8</button>
+        <button title="Show phrase boundaries every 16 bars" class="gbtn" data-grid="16">16</button>
+        <button title="Show phrase boundaries every 32 bars" class="gbtn" data-grid="32">32</button>
         <span class="gunit">bars</span>
       </span>
     </div>
     <div class="grid-cap" id="gridCap"></div>
     <div class="grid-times" id="gridTimes"></div>
     <div class="dt-ctrls">
-      <button class="startpause" id="dtStart">Start</button>
-      <button id="dtReset">Reset</button>
+      <button title="Start the timer as the track begins, then mark each drop as you hear it" class="startpause" id="dtStart">Start</button>
+      <button title="Put the timer back to 0:00" id="dtReset">Reset</button>
     </div>
-    <button class="mark-btn" id="dtMark">Mark drop</button>
+    <button title="Record a drop at the time now showing on the timer" class="mark-btn" id="dtMark">Mark drop</button>
     <div class="drops-cap-h">Captured drops</div>
     <div class="ckey" id="dropKey"></div>
     <div class="chips" id="dropChips"></div>
-    <div class="manual"><span class="mlbl">Add by hand</span><input id="manualIn" type="text" placeholder="1:14" aria-label="Drop time, minutes colon seconds"><button id="manualAdd">Add</button></div>
+    <div class="manual"><span class="mlbl">Add by hand</span><input id="manualIn" type="text" placeholder="1:14" aria-label="Drop time, minutes colon seconds"><button title="Add a drop at the time typed on the left" id="manualAdd">Add</button></div>
   </div>
 </div>
 
@@ -616,7 +617,7 @@
         var opts=ORDER.map(function(kk){return '<option value="'+kk+'"'+(kk===k?' selected':'')+'>'+meta(kk).name+'</option>';}).join('');
         var d=songDrops(s);
         var dropsLine = d.length ? '<div class="drops-line"><span class="pin">◉</span>'+d.map(fmtTime).join(' · ')+'</div>' : '';
-        var dbtn = '<button class="drop-btn'+(d.length?' has':'')+'" data-drop="'+s.id+'" aria-label="Drop markers">◎'+(d.length?' '+d.length:'')+'</button>';
+        var dbtn = '<button class="drop-btn'+(d.length?' has':'')+'" data-drop="'+s.id+'" aria-label="Drop markers" title="Mark and colour-code this song\u2019s drops, and set its length">◎'+(d.length?' '+d.length:'')+'</button>';
         var override = (s.mode==='beat'||s.mode==='half');
         var mlabel = songMode(s)==='half' ? '½' : '1:1';
         var mbtn = '<button class="mode-btn'+(override?' set':'')+'" data-mode="'+s.id+
@@ -626,7 +627,7 @@
             (s.len?' · '+fmtTime(s.len):'')+'</div>'+dropsLine+'</div>'+
           mbtn+dbtn+
           '<select data-id="'+s.id+'" aria-label="Move to block">'+opts+'</select>'+
-          '<button class="rm" data-id="'+s.id+'" aria-label="Remove">×</button></div>';
+          '<button class="rm" data-id="'+s.id+'" aria-label="Remove" title="Remove this song \u2014 tap once to arm, again to confirm">×</button></div>';
       });
       html+='</div>';
     });
@@ -785,7 +786,7 @@
       return String(lib[a].title||'').toLowerCase().localeCompare(String(lib[b].title||'').toLowerCase());
     });
     dlCount.textContent = keys.length
-      ? keys.length+' song'+(keys.length===1?'':'s')+' stored \u2014 they fill in automatically when a matching song appears'
+      ? keys.length+' song'+(keys.length===1?'':'s')+' stored \u2014 tap \u201cFill from library\u201d to drop them into matching songs'
       : 'Empty. Mark some drops, then tap \u201cAdd this playlist\u201d.';
     dlList.innerHTML = keys.length ? keys.map(function(k){
       var e=lib[k], times=(e.drops||[]).map(fmtTime).join(' \u00b7 ');
@@ -843,6 +844,27 @@
       setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
       flash(dlSaveBtn,total+' songs \u2713');
     }catch(e){flash(dlSaveBtn,'Failed');}
+  });
+
+  /* Fill any song that has no drops yet from what this device already knows. */
+  document.getElementById('dlFill').addEventListener('click',function(){
+    var lib=dlLoad(), filled=0, already=0, unknown=0;
+    if(!Object.keys(lib).length){ alert('The drops library on this device is empty.\n\nMark some drops and tap \u201cAdd this playlist\u201d, or import a drops file.'); return; }
+    if(!songs.length){ alert('There are no songs in the playlist to fill.'); return; }
+    songs.forEach(function(s){
+      var e=lib[normTitle(s.title)];
+      if(!e||!e.drops||!e.drops.length){ unknown++; return; }
+      if(songDrops(s).length){ already++; return; }
+      if(e.db && !s.dbOffset) s.dbOffset=e.db;
+      s.drops=e.drops.slice();
+      if(e.cols) s.dropCols=JSON.parse(JSON.stringify(e.cols));
+      filled++;
+    });
+    if(filled){ saveSongs(); renderPlaylist(); }
+    var msg = filled ? ('Filled drops for '+filled+' song'+(filled===1?'':'s')+'.') : 'Nothing to fill.';
+    if(already) msg += '\n\n'+already+' song'+(already===1?' already had':'s already had')+' drops \u2014 those were left alone.';
+    if(unknown) msg += '\n\n'+unknown+' song'+(unknown===1?' is':'s are')+' not in the library yet.';
+    alert(msg);
   });
 
   dlLoadBtn.addEventListener('click',function(){ dlFile.value=''; dlFile.click(); });
@@ -1218,7 +1240,7 @@
       var style=c ? ' style="background:'+col+'22;border-color:'+col+';color:'+col+'"' : '';
       return '<span class="chip'+(c?' tinted':'')+'" data-sec="'+sec+'"'+style+
              ' title="Tap to change colour">'+fmtTime(sec)+tag+
-             '<button data-i="'+i+'" aria-label="Remove">×</button></span>';
+             '<button data-i="'+i+'" aria-label="Remove" title="Remove this drop">×</button></span>';
     }).join('');
     dropChips.querySelectorAll('button').forEach(function(btn){btn.addEventListener('click',function(e){
       e.stopPropagation();

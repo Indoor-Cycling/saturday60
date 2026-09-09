@@ -176,11 +176,22 @@
   .drops-line .pin{opacity:.75;margin-right:3px;}
   .modal-back{position:fixed;inset:0;background:rgba(8,9,11,.72);display:none;align-items:flex-end;justify-content:center;z-index:50;}
   .modal-back.open{display:flex;}
-  .modal{background:var(--surface);border:1px solid var(--line);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:20px 18px calc(22px + env(safe-area-inset-bottom));animation:sheet .25s ease;}
+  .modal{background:var(--surface);border:1px solid var(--line);border-bottom:none;border-radius:20px 20px 0 0;width:100%;max-width:520px;padding:20px 18px calc(22px + env(safe-area-inset-bottom));animation:sheet .25s ease;
+         max-height:94vh;max-height:94dvh;overflow-y:auto;overscroll-behavior:contain;}
   @keyframes sheet{from{transform:translateY(34px);opacity:.5;}to{transform:none;opacity:1;}}
-  .modal-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  .modal-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+           position:sticky;top:0;z-index:3;background:var(--surface);
+           margin:-20px -18px 0;padding:16px 18px 8px;
+           border-bottom:1px solid var(--line);}
   .modal-h .mt{font-size:15px;font-weight:700;}
-  .modal-h .mx{background:none;border:none;color:var(--muted);font-size:24px;line-height:1;cursor:pointer;padding:0 4px;}
+  .modal-h .mx{background:none;border:1px solid var(--line);color:var(--text);font-size:20px;line-height:1;
+               cursor:pointer;padding:0;width:36px;height:36px;flex:none;border-radius:9px;align-self:center;}
+  .modal-h .mx:active{background:var(--line);}
+  /* a second way out, at the end of the sheet where the thumb already is */
+  .sheet-done{width:100%;margin-top:16px;padding:13px;border-radius:12px;border:none;
+              background:var(--text);color:var(--bg);font-size:14px;font-weight:700;
+              cursor:pointer;font-family:var(--sans);}
+  .sheet-done:active{transform:scale(.99);}
   .modal-song{font-size:12.5px;color:var(--muted);margin:2px 0 16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .dt-timer{text-align:center;font-family:var(--mono);font-size:52px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-.02em;}
   .dt-ctrls{display:flex;gap:8px;justify-content:center;margin:14px 0;}
@@ -365,6 +376,7 @@
     <div class="ckey" id="dropKey"></div>
     <div class="chips" id="dropChips"></div>
     <div class="manual"><span class="mlbl">Add by hand</span><input id="manualIn" type="text" placeholder="1:14" aria-label="Drop time, minutes colon seconds"><button title="Add a drop at the time typed on the left" id="manualAdd">Add</button></div>
+    <button class="sheet-done" id="dropDone" type="button" title="Close this song’s drop markers">Done</button>
   </div>
 </div>
 
@@ -1382,6 +1394,8 @@
     lenUse.textContent='set \u2713'; setTimeout(function(){lenUse.textContent='from timer';},800);
   });
   dropClose.addEventListener('click',closeDrops);
+  var dropDone=document.getElementById('dropDone');
+  if(dropDone) dropDone.addEventListener('click',closeDrops);
   dropBack.addEventListener('click',function(e){ if(e.target===dropBack) closeDrops(); });
 
   /* ---- init ---- */

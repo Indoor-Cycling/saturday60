@@ -1,7 +1,7 @@
 /* Saturday 60 — service worker
    Bump VERSION whenever you upload changed files. That forces every
    installed copy to re-download the whole app on its next launch. */
-var VERSION = 's60-v12';
+var VERSION = 's60-v13';
 var CACHE = 'saturday60-' + VERSION;
 
 var ASSETS = [

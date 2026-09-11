@@ -18,7 +18,7 @@
   :root{
     --bg:#14161a; --surface:#1e2127; --surface-2:#252932; --line:#30343d;
     --text:#f2f4f7; --muted:#9aa3af; --dim:#6b7280;
-    --accent:#38bdf8; --good:#34d399; --warn:#f59e0b;
+    --accent:#38bdf8; --good:#34d399; --warn:#f59e0b; --doc:#c084fc;
     --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -42,10 +42,15 @@
   a.card:active{transform:scale(.995);}
   a.card.two{border-left-color:var(--warn);}
   a.card.three{border-left-color:var(--good);}
+  a.card.four{border-left-color:var(--doc);margin-bottom:4px;}
+  a.card.four:hover{border-left-color:var(--doc);}
   .card h2{font-size:15.5px;margin:0 0 4px;font-weight:650;letter-spacing:-.005em;
            display:flex;align-items:center;gap:8px;}
   .card h2 .arrow{margin-left:auto;color:var(--dim);font-size:17px;font-weight:400;}
   .card p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.55;}
+  .cardnote{margin:0 0 14px;padding-left:17px;font-size:11.5px;}
+  .cardnote a{color:var(--muted);text-decoration:none;}
+  .cardnote a:hover{color:var(--text);}
 
   .panel{background:var(--surface);border:1px solid var(--line);border-radius:13px;
          padding:14px 16px;margin-top:20px;}
@@ -100,6 +105,12 @@
     <h2>Drops Library Editor <span class="arrow">›</span></h2>
     <p>Open, merge and tidy a Saturday60-Drops file outside the other two tools.</p>
   </a>
+
+  <a class="card four" href="Saturday60_WeeklyWorkflow.html">
+    <h2>Weekly Workflow <span class="arrow">›</span></h2>
+    <p>The whole routine on one page, phase by phase — Spotify and Chosic through drops, print, MOWL and the Excel backup.</p>
+  </a>
+  <p class="cardnote"><a href="Saturday60_WeeklyWorkflow.pdf">Print-ready PDF ›</a></p>
 
   <div class="panel">
     <h3>This app</h3>

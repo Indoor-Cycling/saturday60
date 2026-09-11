@@ -1,7 +1,7 @@
 /* Saturday 60 — service worker
    Bump VERSION whenever you upload changed files. That forces every
    installed copy to re-download the whole app on its next launch. */
-var VERSION = 's60-v15';
+var VERSION = 's60-v16';
 var CACHE = 'saturday60-' + VERSION;
 
 var ASSETS = [
@@ -10,6 +10,8 @@ var ASSETS = [
   'selector.html',
   'buildsheet.html',
   'drops.html',
+  'Saturday60_WeeklyWorkflow.html',
+  'Saturday60_WeeklyWorkflow.pdf',
   'app.js',
   'manifest.webmanifest',
   'icons/icon-192.png',
@@ -80,7 +82,11 @@ self.addEventListener('fetch', function (e) {
       }).catch(function () {
         // Offline and unknown page — fall back to the hub.
         if (req.mode === 'navigate') {
-          return caches.match('index.html') || caches.match('./');
+          return caches.match('index.html').then(function (page) {
+            return page || caches.match('./');
+          }).then(function (page) {
+            return page || new Response('', { status: 504, statusText: 'Offline' });
+          });
         }
         return new Response('', { status: 504, statusText: 'Offline' });
       });

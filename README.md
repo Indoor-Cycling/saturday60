@@ -30,12 +30,12 @@ loss only shows up later as missing colours or a page that no longer works
 offline.
 
 **After replacing any file, raise the version** on line 4 of `sw.js`
-(`s60-v15` → `s60-v16`). That one word is what tells installed copies there is
+(`s60-v18` → `s60-v19`). That one word is what tells installed copies there is
 something new. The hub screen shows the running version and has a
 **Check for updates** button, so you can confirm an upload landed.
 
 **To roll a change back,** upload the older files with a *higher* version number
-(`s60-v16-rollback`). A version number only ever goes forward — re-uploading an
+(`s60-v19-rollback`). A version number only ever goes forward — re-uploading an
 older one leaves every installed copy unaware anything changed.
 
 ---

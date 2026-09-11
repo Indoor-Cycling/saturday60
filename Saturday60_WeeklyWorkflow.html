@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Saturday 60 — Weekly Workflow</title>
+<style>
+  @page { size: letter; margin: 0.7in 0.7in 0.5in; }
+  :root{
+    --ink:#1a1d23; --grey:#7b8593; --line:#c9ced6;
+    --p1:#2f80c2; --p2:#1e8e5a; --p3:#c07a10; --p4:#a63a8f; --p5:#c0392b; --p6:#1e8e5a;
+    --new:#0e7fb8;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;color:var(--ink);background:#fff;
+       font-family:Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+       font-size:8.55pt;line-height:1.26;}
+  h1{font-size:18pt;margin:0 0 2px;font-weight:700;letter-spacing:-.01em;}
+  .sub{color:var(--p1);font-size:8pt;line-height:1.34;margin:0 0 6px;}
+  .bar{color:#fff;font-weight:700;font-size:8.9pt;letter-spacing:.03em;
+       padding:3.5px 10px;margin:6px 0 0;background:var(--p1);
+       break-after:avoid;page-break-after:avoid;}
+  .b2{background:var(--p2);} .b3{background:var(--p3);}
+  .b4{background:var(--p4);} .b5{background:var(--p5);} .b6{background:var(--p6);}
+  table{width:100%;border-collapse:collapse;margin:0;}
+  tr{break-inside:avoid;page-break-inside:avoid;}
+  td{padding:1.9px 6px 1.9px 0;vertical-align:top;border-bottom:1px solid #e8ebee;}
+  td.n{width:22px;text-align:center;font-weight:700;color:var(--ink);padding-left:6px;}
+  tr:last-child td{border-bottom:none;}
+  .foot{color:var(--grey);font-size:7.7pt;line-height:1.38;margin-top:6px;
+        border-top:1px solid var(--line);padding-top:6px;}
+  .url{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:8.2pt;}
+  .new{color:var(--new);font-weight:700;font-size:7pt;letter-spacing:.07em;margin-left:4px;}
+</style>
+</head>
+<body>
+
+<h1>THE SATURDAY 60 — Weekly Workflow</h1>
+<p class="sub">Spotify → Chosic → Build Sheet → drops → print → MOWL + Excel backup · Rules that ride along
+automatically: RPM beat-locked (1:1 or ½) · 110 RPM hard ceiling · PLAYLIST FIRST — MUSIC LEADS</p>
+
+<div class="bar">PHASE 1 — BUILD THE PLAYLIST IN SPOTIFY (ride order is everything)</div>
+<table>
+  <tr><td class="n">1</td><td>Build in exact ride order: Warm-Up → Segment 1 → bridge → Segment 2 → bridge → Segment 3 → Segment 4 finisher → Cool-Down. Playlist position = sheet position.</td></tr>
+  <tr><td class="n">2</td><td>Playback rules: crossfade 10 s · gapless ON · Automix OFF. Make the playlist public so Chosic can read it.</td></tr>
+</table>
+
+<div class="bar b2">PHASE 2 — EXPORT THROUGH CHOSIC (titles + BPM + length)</div>
+<table>
+  <tr><td class="n">1</td><td>Copy the playlist link (▪ → Share → Copy link), paste at chosic.com/spotify-playlist-analyzer, download the CSV.</td></tr>
+  <tr><td class="n">2</td><td>Scan the CSV: Explicit column all zeros; Camelot codes match within segments (bridges are free reset points).</td></tr>
+</table>
+
+<div class="bar b3">PHASE 3 — IMPORT INTO THE BUILD SHEET</div>
+<table>
+  <tr><td class="n">1</td><td>Open the Build Sheet → Import Spotify export → choose the CSV. BPMs, lengths and RPMs fill; anything over 110 BPM is set to ½ automatically.</td></tr>
+  <tr><td class="n">2</td><td><b>Fill the drops you already own:</b> Drops library → <b>Fill from library</b> — every song marked in an earlier week gets its drop times and drill text back; only songs with none are touched. Not sharing this device's library? <b>Import file</b> → newest Saturday60-Drops file. Load before you Save, so exports stay a superset.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">3</td><td>Housekeep: nudge placement with ▲▼ or the jump dropdown · set Ride mode where defaults don't fit · tap-test any BPM that looks doubled or halved.</td></tr>
+</table>
+
+<div class="bar b4">PHASE 4 — DROPS VIA THE SELECTOR (phone) — for whatever Phase 3 could not fill</div>
+<table>
+  <tr><td class="n">1</td><td><b>Start with what you already have:</b> Drops library → <b>Fill from library</b>. Every song you have marked before gets its drops, colour coding and downbeat back in one tap — only songs with none are touched.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">2</td><td>Mark the rest: add the key work-block songs, tap a song's ◎ button, capture drops — split-screen with Spotify and Mark drop live · split-screen with Musixmatch and tap when the lyrics flip to Chorus · read Spotify's elapsed time and use Add by hand (most accurate) · or the YouTube most-replayed peak. Tap a chip to colour-code it; the sheet fits a half-height window and the × stays pinned.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">3</td><td>While you are there, set each song's <b>length</b> — type it or take it <i>from timer</i>. Lengths travel with the songs, so the import fills the sheet's Len column instead of clearing it.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">4</td><td>Get them to the sheet: type into Drop times, or Send to sheet → Import from Selector. Pick ONE import route per week. Then bank the week: Drops library → <b>Add this playlist</b>.</td></tr>
+</table>
+
+<div class="bar b5">PHASE 5 — PRINT AND PROGRAM MOWL</div>
+<table>
+  <tr><td class="n">1</td><td>Check the sheet before you print: no amber length boxes (a slot that changed song lost its old runtime), Σ close to 60:00, no +n? in the headers.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">2</td><td>Build Sheet → Print / Save as PDF; the finished week joins the kit.</td></tr>
+  <tr><td class="n">3</td><td>MOWL Session Designer: link the playlist → intervals auto-import per song → set counts from the Intervals column → nudge boundaries to the Drop times → set targets from Power (Z2 ≈56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
+</table>
+
+<div class="bar b6">PHASE 6 — EXCEL BACKUP AND CHARTS</div>
+<table>
+  <tr><td class="n">1</td><td><b>FIRST:</b> Developer → Macros → <b>ClearPlaylist</b>. Wipes last week's songs, Pointers and intervals — all keyed to row position. Skip it and a shorter ride leaves the tail of the old one in your totals.</td></tr>
+  <tr><td class="n">2</td><td>Build Sheet → Export for Excel. In the workbook click <b>B2 on My Playlist</b> and paste (block B:J). Pointers (K) and Avg RPM (L) are never overwritten.</td></tr>
+  <tr><td class="n">3</td><td>Pick the gears: Gear (M3) 1–24, Gear (M3i) 1–72. Add intervals on the Intervals sheet for a weighted Avg RPM. The Load curves and segment/cadence charts update themselves.</td></tr>
+  <tr><td class="n">4</td><td>Developer → Macros → <b>FormatPlaylistPrint</b>. Sizes the fold-up sheet to your song count and drops empty slots. Print double-sided, flip on the LONG edge, fold in half — ride detail front, song + artist back.</td></tr>
+</table>
+
+<p class="foot">
+The tools live at <span class="url">https://indoor-cycling.github.io/saturday60/</span> — one installed app, working
+offline, all three sharing one drops library on that device. Data still lives per device: each tool's <b>Backup</b>
+writes a dated file you can Restore anywhere, any time, and <b>Save to…</b> sends it to the share sheet instead of the
+downloads folder (a phone shares it as .txt — same contents). Transfer codes stay the quick courier between phone and
+desktop. After uploading a change, bump the version in sw.js and tap <b>Update now</b>; the hub's <b>Check for
+updates</b> settles whether it landed. Rider: FTP 158 W · Max HR 164 · TSS target ~65–70 · drift 0.43 s/song.
+</p>
+</body>
+</html>

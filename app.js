@@ -293,7 +293,7 @@
   var SAVE_TARGETS = {
     'selector.html':   ['backupBtn', 'dlExport'],
     'buildsheet.html': ['bkBtn', 'dlExport'],
-    'drops.html':      ['saveBtn']
+    'drops.html':      ['saveBtn', 'csvBtn']
   };
 
   /* Restore/Import must accept the .txt twin as well as .json. */

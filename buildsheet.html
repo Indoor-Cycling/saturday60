@@ -1,3 +1,18 @@
+<!--
+  ============================================================================
+  THE SATURDAY 60 — MOWL-Style Build Sheet
+  THIS FILE IS THE LIVE VERSION. It is served from
+  https://indoor-cycling.github.io/saturday60/
+
+  If you are an AI assistant revising this tool: start from THIS file, not
+  from an older copy. It already contains the shared app shell (app.js, the
+  manifest and icons) and the drops-library colour-coding support. A revision
+  built from an earlier copy will silently remove them.
+
+  After replacing any file, raise the version in sw.js (line 4) so installed
+  copies notice the change.
+  ============================================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -253,6 +268,7 @@
     <p id="dlCount">-</p>
     <div class="dm-list" id="dlList"></div>
     <div class="imp-row">
+      <button title="Look every song on this sheet up in the library and fill in the drops, drill and downbeat it does not have yet" id="dlFill">Fill from library</button>
       <button title="Store this sheet's drop times into the library for future rides" id="dlAdd">Add this sheet’s drops</button>
       <button title="Save the whole drops library as a file" id="dlExport">Export file</button>
       <button title="Merge a drops library file into this one" id="dlImport">Import file</button>
@@ -646,6 +662,34 @@
       setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
       sheetStatus('Drops library saved \u2713 ('+Object.keys(lib).length+' songs)');
     }catch(e){sheetStatus('Save failed');}
+  });
+
+  /* Fill this sheet from the library already stored on this device. */
+  document.getElementById('dlFill').addEventListener('click',function(){
+    var lib=dlLoad();
+    if(!Object.keys(lib).length){
+      alert('The drops library on this device is empty.\n\nImport a drops file, or mark drops and tap \u201cAdd this sheet\u2019s drops\u201d.');
+      return;
+    }
+    var filled=0, already=0, unknown=0, songs=0;
+    data.forEach(function(seg){seg.rows.forEach(function(row){
+      if(!(row.song||'').trim())return;
+      songs++;
+      var e=lib[normTitle(row.song)];
+      if(!e||!e.drops||!e.drops.length){ unknown++; return; }
+      var got=false;
+      if(!(row.drops||'').trim()){ row.drops=e.drops.map(fmtSec).join(', '); got=true; }
+      if(e.intervals && !(row.intervals||'').trim()){ row.intervals=e.intervals; got=true; }
+      if(e.db && !(row.db||'').trim()){ row.db=fmtSec(e.db); got=true; }
+      if(got)filled++; else already++;
+    });});
+    if(!songs){ alert('There are no songs on this sheet to fill.'); return; }
+    if(filled){ save(); render(); }
+    var msg = filled ? ('Filled '+filled+' song'+(filled===1?'':'s')+' from the library.') : 'Nothing to fill.';
+    if(already) msg += '\n\n'+already+' song'+(already===1?' already had':'s already had')+' its drops \u2014 left alone.';
+    if(unknown) msg += '\n\n'+unknown+' song'+(unknown===1?' is':'s are')+' not in the library yet.';
+    alert(msg);
+    sheetStatus('Filled from library \u2713 ('+filled+')');
   });
 
   dlLoadBtn.addEventListener('click',function(){ dlFile.value=''; dlFile.click(); });

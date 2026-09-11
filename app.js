@@ -1,4 +1,8 @@
-/* Saturday 60 — shared app shell.
+/* THE SATURDAY 60 — shared app shell.
+   THIS FILE IS THE LIVE VERSION, served from
+   https://indoor-cycling.github.io/saturday60/ — revise from this copy,
+   not an older one, and raise VERSION in sw.js after any upload.
+
    Loaded by every page. Registers the service worker, offers an
    update when a new version is uploaded, and puts a "back to the
    hub" bar on the three tool pages. It never touches the tools'

@@ -248,6 +248,25 @@
 
   function canPickFile() { return typeof window.showSaveFilePicker === 'function'; }
 
+  /* Chrome on Android now offers showSaveFilePicker too, but there it opens
+     the Android document picker — local folders only, no Drive, no mail. The
+     share sheet is the one that reaches the cloud on a phone. So the choice is
+     made by the kind of device, not merely by which API happens to exist. */
+  function isHandheld() {
+    try {
+      var d = navigator.userAgentData;
+      if (d && typeof d.mobile === 'boolean') return d.mobile;
+    } catch (e) {}
+    if (/Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(navigator.userAgent || '')) return true;
+    // iPadOS reports itself as a Mac; the touch points give it away.
+    if ((navigator.maxTouchPoints || 0) > 1 && /Mac/i.test(navigator.platform || '')) return true;
+    try {
+      if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches &&
+          !window.matchMedia('(pointer: fine)').matches) return true;
+    } catch (e) {}
+    return false;
+  }
+
   function deliver(blob, name, mode, anchor, realClick) {
     function fallBack(why) {
       if (why) note(why + ' — saved to your downloads instead');
@@ -314,14 +333,15 @@
   }
 
   function enhanceSaveButtons() {
-    // A real save dialog beats a share sheet wherever one exists — it puts the
-    // file straight in a folder. Only fall back to sharing when there is no
-    // picker, which in practice means a phone.
-    var pick = canPickFile(), share = !pick && !!shareShape();
+    // On a computer a real save dialog is best: the file lands straight in a
+    // folder. On a phone the share sheet is best: it is the only route that
+    // reaches Drive, Files or mail — the phone's own picker sees local storage
+    // only. Each falls back to the other when its first choice is missing.
+    var pick = canPickFile(), share = !!shareShape();
     if (!pick && !share) return;      // no way to choose here — plain download stands
 
-    var mode = pick ? 'picker' : 'share';
-    var hint = pick
+    var mode = (isHandheld() && share) ? 'share' : (pick ? 'picker' : 'share');
+    var hint = mode === 'picker'
       ? 'You choose the folder this is saved in'
       : 'You choose where this goes — Drive, Files, mail, or your downloads folder';
 

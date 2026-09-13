@@ -314,13 +314,16 @@
   }
 
   function enhanceSaveButtons() {
-    var share = !!shareShape(), pick = !share && canPickFile();
-    if (!share && !pick) return;      // no way to choose here — plain download stands
+    // A real save dialog beats a share sheet wherever one exists — it puts the
+    // file straight in a folder. Only fall back to sharing when there is no
+    // picker, which in practice means a phone.
+    var pick = canPickFile(), share = !pick && !!shareShape();
+    if (!pick && !share) return;      // no way to choose here — plain download stands
 
-    var mode = share ? 'share' : 'picker';
-    var hint = share
-      ? 'You choose where this goes — Drive, Files, mail, or your downloads folder'
-      : 'You choose where this is saved';
+    var mode = pick ? 'picker' : 'share';
+    var hint = pick
+      ? 'You choose the folder this is saved in'
+      : 'You choose where this goes — Drive, Files, mail, or your downloads folder';
 
     var ids = SAVE_TARGETS[location.pathname.split('/').pop()] || [];
     ids.forEach(function (id) {

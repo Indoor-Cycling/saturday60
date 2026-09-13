@@ -226,7 +226,7 @@
     try { localStorage.setItem(AS_TEXT, '1'); } catch (e) {}
   }
 
-  function asText(name) { return name.replace(/\.json$/i, '') + '.txt'; }
+  function asText(name) { return name.replace(/\.[a-z0-9]{1,5}$/i, '') + '.txt'; }
 
   function makeFile(blob, name, type) {
     try { return new File([blob], name, { type: type }); } catch (e) { return null; }
@@ -255,10 +255,10 @@
     }
 
     if (mode === 'share') {
-      var shape = shareShape();
-      var file = shape === 'json'
-        ? makeFile(blob, name, 'application/json')
-        : makeFile(blob, asText(name), 'text/plain');
+      var type = String(blob.type || 'application/json').split(';')[0].trim();
+      var natural = makeFile(blob, name, type);
+      var asItself = natural && !(type === 'application/json' && preferText()) && shareable(natural);
+      var file = asItself ? natural : makeFile(blob, asText(name), 'text/plain');
 
       if (!file || !shareable(file)) return fallBack('This phone will not share that file');
 
@@ -267,7 +267,7 @@
       }).catch(function (err) {
         if (err && err.name === 'AbortError') return;      // user backed out
         // Said yes to .json, then refused it. Use .txt from here on.
-        if (shape === 'json') rememberPreferText();
+        if (asItself && type === 'application/json') rememberPreferText();
         fallBack('Share sheet refused it (' + ((err && err.name) || 'unknown') + ')');
       });
       return;
@@ -294,10 +294,13 @@
     setTimeout(function () { el.remove(); }, 2600);
   }
 
+  /* Every button in the app that writes a file. Each one asks where the file
+     should go, rather than dropping it in the downloads folder — there is no
+     separate "Save to…" button any more. */
   var SAVE_TARGETS = {
     'selector.html':   ['backupBtn', 'dlExport'],
     'buildsheet.html': ['bkBtn', 'dlExport'],
-    'drops.html':      ['saveBtn']   // not csvBtn — two identical "Save to…" buttons side by side is worse than one
+    'drops.html':      ['saveBtn', 'csvBtn']
   };
 
   /* Restore/Import must accept the .txt twin as well as .json. */
@@ -310,42 +313,36 @@
     });
   }
 
-  function addSaveButtons() {
+  function enhanceSaveButtons() {
     var share = !!shareShape(), pick = !share && canPickFile();
-    if (!share && !pick) return;            // nothing better than a download here
+    if (!share && !pick) return;      // no way to choose here — plain download stands
 
     var mode = share ? 'share' : 'picker';
-    var label = share ? 'Save to…' : 'Save as…';
     var hint = share
-      ? 'Send this file to Drive, Files, mail — anywhere but Downloads'
-      : 'Choose the folder to save this file in';
+      ? 'You choose where this goes — Drive, Files, mail, or your downloads folder'
+      : 'You choose where this is saved';
 
     var ids = SAVE_TARGETS[location.pathname.split('/').pop()] || [];
     ids.forEach(function (id) {
       var src = document.getElementById(id);
-      if (!src || document.getElementById('s60-saveto-' + id)) return;
+      if (!src || src.getAttribute('data-s60-save') === '1') return;
+      src.setAttribute('data-s60-save', '1');
 
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.id = 's60-saveto-' + id;
-      btn.className = src.className;        // borrow the tool's own button styling
-      btn.textContent = label;
-      btn.title = hint;
-      btn.disabled = src.disabled;
-
-      btn.addEventListener('click', function () {
+      // Capture runs before the tool's own handler, so the redirect is armed
+      // by the time it builds the file and clicks its hidden link. The timeout
+      // disarms it once that synchronous work is done.
+      src.addEventListener('click', function () {
         if (src.disabled) return;
         redirect = mode;
-        try { src.click(); } finally { redirect = null; }
-      });
+        setTimeout(function () { redirect = null; }, 0);
+      }, true);
 
-      src.parentNode.insertBefore(btn, src.nextSibling);
-
-      // keep it in step with the button it shadows
-      try {
-        new MutationObserver(function () { btn.disabled = src.disabled; })
-          .observe(src, { attributes: true, attributeFilter: ['disabled'] });
-      } catch (e) {}
+      // say so in the tooltip, without changing the button's label
+      var t = src.getAttribute('title');
+      if (!t) src.setAttribute('title', hint);
+      else if (t.indexOf('you choose') < 0 && t.indexOf('You choose') < 0) {
+        src.setAttribute('title', t + ' · ' + hint);
+      }
     });
   }
 
@@ -355,7 +352,7 @@
     trackBlobUrls();
     interceptDownloadClicks();
     widenFileInputs();
-    addSaveButtons();
+    enhanceSaveButtons();
     register();
   }
 

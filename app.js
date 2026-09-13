@@ -297,7 +297,7 @@
   var SAVE_TARGETS = {
     'selector.html':   ['backupBtn', 'dlExport'],
     'buildsheet.html': ['bkBtn', 'dlExport'],
-    'drops.html':      ['saveBtn', 'csvBtn']
+    'drops.html':      ['saveBtn']   // not csvBtn — two identical "Save to…" buttons side by side is worse than one
   };
 
   /* Restore/Import must accept the .txt twin as well as .json. */

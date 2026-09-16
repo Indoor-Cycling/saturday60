@@ -70,9 +70,25 @@
   .grid-cap{font-size:10.5px;color:var(--dim);margin:0 0 5px;font-variant-numeric:tabular-nums;}
   .grid-times{display:flex;flex-wrap:wrap;gap:5px;max-height:120px;overflow-y:auto;margin-bottom:6px;}
   .gt{font-family:var(--mono);font-size:12px;background:var(--surface-2);border:1px solid var(--line);
-    border-radius:7px;padding:5px 8px;color:var(--muted);font-variant-numeric:tabular-nums;}
+    border-radius:7px;padding:5px 8px;color:var(--muted);font-variant-numeric:tabular-nums;
+    position:relative;overflow:hidden;cursor:pointer;user-select:none;-webkit-user-select:none;
+    -webkit-touch-callout:none;touch-action:pan-y;}
   .gt.big{color:var(--text);border-color:var(--dim);}
   .gt.near{border-color:var(--climb);color:var(--climb);}
+  /* an exact match: this boundary IS one of the captured drops */
+  .gt.got{border-color:var(--climb);color:var(--climb);background:color-mix(in srgb,var(--climb) 16%,transparent);font-weight:700;}
+  /* the half-second hold, drawn as a bar sweeping across the chip */
+  .gt .fill{position:absolute;left:0;top:0;bottom:0;right:0;background:currentColor;opacity:.22;
+    transform:scaleX(0);transform-origin:left center;pointer-events:none;}
+  .gt.press .fill{animation:gtfill .5s linear forwards;}
+  @keyframes gtfill{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  .gt.flash{animation:gtflash .45s ease;}
+  @keyframes gtflash{0%{transform:scale(1);}30%{transform:scale(1.14);}100%{transform:scale(1);}}
+  @media (prefers-reduced-motion: reduce){
+    .gt.press .fill{animation:none;transform:scaleX(1);opacity:.14;}
+    .gt.flash{animation:none;}
+  }
+  .grid-hint{font-size:10.5px;color:var(--dim);margin:0 0 6px;line-height:1.45;}
   .grid-empty{font-size:12px;color:var(--dim);line-height:1.5;}
   .steppers{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin-top:18px;}
   .step{width:60px;height:60px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);color:var(--text);font-size:28px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;user-select:none;transition:background .15s ease,transform .08s ease;}
@@ -384,6 +400,7 @@
       </span>
     </div>
     <div class="grid-cap" id="gridCap"></div>
+    <div class="grid-hint" id="gridHint"></div>
     <div class="grid-times" id="gridTimes"></div>
     <div class="dt-ctrls">
       <button title="Start the timer as the track begins, then mark each drop as you hear it" class="startpause" id="dtStart">Start</button>
@@ -1226,12 +1243,14 @@
     document.querySelectorAll('.gbtn').forEach(function(b){
       b.classList.toggle('on', +b.getAttribute('data-grid')===grid);
     });
-    var cap=document.getElementById('gridCap');
+    var cap=document.getElementById('gridCap'), hint=document.getElementById('gridHint');
     if(!s||isNaN(bpm)||bpm<=0){
       el.innerHTML='<span class="grid-empty">Add a BPM for this song to see its phrase grid.</span>';
       if(cap)cap.textContent='';
+      if(hint)hint.textContent='';
       return;
     }
+    if(hint)hint.textContent='Hold a time for half a second to capture it as a drop. Hold a captured one to take it back.';
     if(cap){
       var stepS=barSec(bpm)*grid;
       cap.textContent=s.title+' \u00b7 '+bpm+' BPM \u00b7 '+stepS.toFixed(1)+'s per '+grid+' bars'+
@@ -1244,15 +1263,19 @@
     if(times.length>40)times=times.slice(0,40);
     el.innerHTML=times.map(function(t,i){
       var big=(grid===8)&&(i%4===0);              // every 32 bars stands out on the 8-grid
-      var near=drops.some(function(d){return Math.abs(d-t)<barSec(bpm)*1.5;});
-      return '<span class="gt'+(big?' big':'')+(near?' near':'')+'">'+fmtTime(t)+'</span>';
+      var sec=Math.round(t);
+      var got=drops.indexOf(sec)>=0;              // this boundary IS a captured drop
+      var near=!got&&drops.some(function(d){return Math.abs(d-t)<barSec(bpm)*1.5;});
+      return '<span class="gt'+(big?' big':'')+(got?' got':'')+(near?' near':'')+
+             '" data-t="'+sec+'" title="'+(got?'Hold to remove this drop':'Hold to capture this as a drop')+
+             '"><span class="fill"></span>'+fmtTime(t)+'</span>';
     }).join('');
   }
 
   function renderChips(){
     var s=curSong(); var d=s?songDrops(s):[];
     renderGrid();          // must run for every song, drops or not — see below
-    if(!d.length){ dropChips.innerHTML='<span class="chips-empty">None yet — start the timer as the track begins, then tap Mark drop on each drop.</span>'; return; }
+    if(!d.length){ dropChips.innerHTML='<span class="chips-empty">None yet — start the timer as the track begins, then tap Mark drop on each drop. Or hold a phrase boundary above to take that time straight off the grid.</span>'; return; }
     var bpm=s?parseInt(s.bpm,10):NaN;
     var off=s?(s.dbOffset||0):0;
     var grid=s?(s.grid||8):8;
@@ -1262,7 +1285,10 @@
       if(!isNaN(bpm)&&bpm>0){
         var nb=nearestBoundary(sec,bpm,off,grid);
         var dd=Math.abs(nb.delta);
-        tag = dd<0.25
+        // Drops are stored in whole seconds, so a drop taken straight off the
+        // grid still sits up to half a second from the true boundary. Anything
+        // inside that rounding counts as on the grid.
+        tag = dd<=0.5
           ? '<span class="bar on">on the '+grid+'</span>'
           : '<span class="bar">'+fmtTime(nb.at)+' ('+(nb.delta>0?'+':'\u2212')+dd.toFixed(1)+'s)</span>';
       }
@@ -1381,6 +1407,62 @@
     var ok=addDropTo(s, elapsed()/1000); renderChips();
     if(ok){ dtMark.textContent='Marked ✓'; setTimeout(function(){dtMark.textContent='Mark drop';},700); }
   });
+  /* ---- hold a phrase boundary to capture it as a drop ----
+     The grid is rebuilt on every render, so the listeners live on the
+     container and find the chip by closest(). A hold is 500ms; sliding more
+     than 8px cancels it, so scrolling the grid never fires one by accident.
+     Holding a boundary that is already a drop takes it back, which makes the
+     same gesture its own undo. */
+  (function(){
+    var host=document.getElementById('gridTimes'); if(!host)return;
+    var HOLD=500, timer=null, held=null, x0=0, y0=0, justFired=false;
+
+    function cancel(){
+      if(timer){ clearTimeout(timer); timer=null; }
+      if(held) held.classList.remove('press');
+      held=null;
+    }
+    function buzz(pattern){ try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){} }
+
+    function fire(){
+      timer=null; justFired=true;
+      var el=held; cancel();
+      var s=curSong(); if(!el||!s)return;
+      var sec=parseInt(el.getAttribute('data-t'),10); if(isNaN(sec))return;
+      var d=songDrops(s), i=d.indexOf(sec);
+      if(i>=0){ d.splice(i,1); delete dropCols(s)[sec]; saveSongs(); buzz([12,50,12]); }
+      else { addDropTo(s,sec); buzz(18); }
+      renderChips();                               // redraws the grid as well
+      var again=host.querySelector('.gt[data-t="'+sec+'"]');
+      if(again){ again.classList.add('flash'); setTimeout(function(){ again.classList.remove('flash'); },450); }
+    }
+
+    host.addEventListener('pointerdown',function(e){
+      var el=e.target&&e.target.closest?e.target.closest('.gt'):null;
+      if(!el||e.button>0)return;
+      cancel(); justFired=false;
+      held=el; x0=e.clientX; y0=e.clientY;
+      el.classList.add('press');
+      timer=setTimeout(fire,HOLD);
+    });
+    host.addEventListener('pointermove',function(e){
+      if(!held)return;
+      if(Math.abs(e.clientX-x0)>8||Math.abs(e.clientY-y0)>8) cancel();
+    });
+    ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+      host.addEventListener(ev,cancel);
+    });
+    // a long press on a phone otherwise raises the text-selection menu
+    host.addEventListener('contextmenu',function(e){
+      if(e.target&&e.target.closest&&e.target.closest('.gt')) e.preventDefault();
+    });
+    // and the click that follows the hold must not reach anything else
+    host.addEventListener('click',function(e){
+      if(!justFired)return;
+      justFired=false; e.preventDefault(); e.stopPropagation();
+    },true);
+  })();
+
   manualAdd.addEventListener('click',function(){
     var s=curSong(); if(!s)return;
     var sec=parseTime(manualIn.value); if(sec==null)return;

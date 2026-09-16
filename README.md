@@ -29,7 +29,7 @@ A revision built from an earlier copy removes those without saying so, and the
 loss only shows up later as missing colours or a page that no longer works
 offline.
 
-**After replacing any file, raise the version** on line 4 of `sw.js`
+**After replacing any file, raise the version** on the `VERSION` line near the top of `sw.js`
 (`s60-v18` → `s60-v19`). That one word is what tells installed copies there is
 something new. The hub screen shows the running version and has a
 **Check for updates** button, so you can confirm an upload landed.

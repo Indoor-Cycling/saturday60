@@ -31,6 +31,12 @@
   .page{max-width:900px;margin:0 auto;background:var(--bg);padding:28px 30px 40px;min-height:100vh;}
   h1{font-size:22px;margin:0 0 2px;letter-spacing:-.01em;}
   .sub{font-size:11px;color:var(--muted);margin:0 0 14px;line-height:1.5;}
+  /* FTP and Max HR sit in the subtitle as editable fields; they look like part
+     of the sentence until you put a cursor in one, and print as plain text. */
+  .rider{width:42px;border:1px solid var(--line);border-radius:5px;padding:1px 3px;
+    font-family:var(--mono);font-size:11px;text-align:center;color:var(--ink);background:transparent;}
+  .rider:focus{outline:2px solid var(--warm);outline-offset:1px;}
+  @media print{ .rider{border:none;padding:0;width:auto;background:none;color:inherit;} }
   .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
   .toolbar button{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;cursor:pointer;}
   .toolbar button.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
@@ -172,7 +178,7 @@
 <body>
 <div class="page">
   <h1>THE SATURDAY 60 — MOWL-Style Build Sheet</h1>
-  <p class="sub">Fill-in template · Keiser M3 · Rider: FTP 158 W · Max HR 164 bpm · RPM always beat-locked (1:1 or half-beat) · Universal cap 110 RPM · PLAYLIST FIRST — MUSIC LEADS<br>
+  <p class="sub">Fill-in template · Keiser M3 · Rider: FTP <input class="rider" id="ftpIn" inputmode="numeric" value="158" title="Your functional threshold power. The zone table below recalculates itself from this."> W · Max HR <input class="rider" id="hrIn" inputmode="numeric" value="164" title="Your maximum heart rate. The zone table's heart-rate column recalculates itself from this."> bpm · RPM always beat-locked (1:1 or half-beat) · Universal cap 110 RPM · PLAYLIST FIRST — MUSIC LEADS<br>
   Type songs, BPMs and drop times; pick ride mode &amp; position from the dropdowns. RPM computes itself. Everything autosaves on this device.</p>
 
   <div class="toolbar">
@@ -196,14 +202,8 @@
     <span class="status" id="status"></span>
   </div>
 
-  <table class="zones">
+  <table class="zones" id="zoneTable">
     <tr><th>Zone</th><th>Power</th><th>Heart rate</th><th>Feel</th></tr>
-    <tr><td>Z1 Recovery</td><td>&lt; 87 W</td><td>&lt; 98 bpm</td><td>easy spin, conversation pace</td></tr>
-    <tr><td>Z2 Endurance</td><td>88–118 W</td><td>98–115</td><td>all-day aerobic</td></tr>
-    <tr><td>Z3 Tempo</td><td>120–142 W</td><td>115–131</td><td>comfortably hard</td></tr>
-    <tr><td>Sweet Spot</td><td>139–148 W</td><td>125–138</td><td>just under threshold</td></tr>
-    <tr><td>Z4 Threshold</td><td>150–166 W</td><td>131–148</td><td>1-hour max feel</td></tr>
-    <tr><td>Z5 VO2 / Sprint</td><td>167 W +</td><td>148–164</td><td>short surges only</td></tr>
   </table>
   <p class="dose">Ride dose target: ~65–70 TSS (MOWL medium-to-hard band for 60 min). Largest component aerobic, low end of lactate threshold.</p>
 
@@ -462,6 +462,78 @@
     var c=driftIn.value.replace(/[^0-9.]/g,''); if(c!==driftIn.value)driftIn.value=c;
     try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}
     updateSums();
+  });
+
+  /* ---- rider numbers: FTP and Max HR drive the zone table ----
+     The printed table used to be six hard-coded rows for FTP 158 W and a max
+     heart rate of 164. Both are now fields, and the table is rebuilt from the
+     same percentages those numbers came from, so a different rider — or a new
+     test result — gets a correct table instead of somebody else's. */
+  var RIDERKEY='s60_rider_v1';
+  var ftpIn=document.getElementById('ftpIn'), hrIn=document.getElementById('hrIn');
+  var RIDER_DEF={ftp:158, hr:164};
+
+  // low and high as a share of FTP, and of max heart rate; null means open-ended
+  var ZONES=[
+    {name:'Z1 Recovery',    p:[null,0.55], h:[null,0.60], feel:'easy spin, conversation pace'},
+    {name:'Z2 Endurance',   p:[0.56,0.75], h:[0.60,0.70], feel:'all-day aerobic'},
+    {name:'Z3 Tempo',       p:[0.76,0.90], h:[0.70,0.80], feel:'comfortably hard'},
+    {name:'Sweet Spot',     p:[0.88,0.94], h:[0.76,0.84], feel:'just under threshold'},
+    {name:'Z4 Threshold',   p:[0.95,1.05], h:[0.80,0.90], feel:'1-hour max feel'},
+    {name:'Z5 VO2 / Sprint',p:[1.06,null], h:[0.90,1.00], feel:'short surges only'}
+  ];
+
+  function riderNum(el, def){
+    var n=parseInt(String(el.value).replace(/[^0-9]/g,''),10);
+    return (isNaN(n)||n<=0)?def:n;
+  }
+  function getFtp(){ return riderNum(ftpIn, RIDER_DEF.ftp); }
+  function getMaxHr(){ return riderNum(hrIn, RIDER_DEF.hr); }
+
+  function band(range, base, unit){
+    var lo=range[0]==null?null:Math.round(range[0]*base),
+        hi=range[1]==null?null:Math.round(range[1]*base);
+    if(lo==null) return '< '+hi+(unit?' '+unit:'');
+    if(hi==null) return lo+(unit?' '+unit:'')+' +';
+    return lo+'–'+hi+(unit?' '+unit:'');
+  }
+
+  function renderZones(){
+    var t=document.getElementById('zoneTable'); if(!t)return;
+    var ftp=getFtp(), hr=getMaxHr();
+    t.innerHTML='<tr><th>Zone</th><th>Power</th><th>Heart rate</th><th>Feel</th></tr>'+
+      ZONES.map(function(z,i){
+        return '<tr><td>'+z.name+'</td><td>'+band(z.p,ftp,'W')+'</td><td>'+
+               band(z.h,hr,i?'':'bpm')+'</td><td>'+z.feel+'</td></tr>';
+      }).join('');
+  }
+
+  function saveRider(){
+    try{ localStorage.setItem(RIDERKEY, JSON.stringify({ftp:getFtp(), hr:getMaxHr()})); }catch(e){}
+  }
+  function applyRider(r){
+    if(!r||typeof r!=='object')return;
+    if(+r.ftp>0) ftpIn.value=Math.round(+r.ftp);
+    if(+r.hr>0)  hrIn.value =Math.round(+r.hr);
+    saveRider(); renderZones();
+  }
+  (function(){
+    var r=null;
+    try{ r=JSON.parse(localStorage.getItem(RIDERKEY)||'null'); }catch(e){}
+    if(r&&+r.ftp>0) ftpIn.value=Math.round(+r.ftp);
+    if(r&&+r.hr>0)  hrIn.value =Math.round(+r.hr);
+    renderZones();
+  })();
+  [ftpIn,hrIn].forEach(function(el){
+    el.addEventListener('input',function(){
+      var c=el.value.replace(/[^0-9]/g,''); if(c!==el.value)el.value=c;
+      renderZones();                       // the table follows as you type
+    });
+    // an empty or silly box falls back to the default rather than stay broken
+    el.addEventListener('blur',function(){
+      el.value=(el===ftpIn?getFtp():getMaxHr());
+      saveRider(); renderZones();
+    });
   });
 
   /* ---- whole-sheet transfer code (desktop ↔ phone) ---- */
@@ -731,7 +803,7 @@
 
   bkBtn.addEventListener('click',function(){
     var payload={kind:'s60-sheet-backup', v:1, saved:new Date().toISOString(),
-                 drift:driftIn.value||'0', data:data, lib:lib, drills:drills, dgroups:DRILL_GROUPS};
+                 drift:driftIn.value||'0', rider:{ftp:getFtp(),hr:getMaxHr()}, data:data, lib:lib, drills:drills, dgroups:DRILL_GROUPS};
     try{
       var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
       var url=URL.createObjectURL(blob);
@@ -774,6 +846,7 @@
         });
       });
       if(p.drift!==undefined){driftIn.value=String(p.drift); try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}}
+      if(p.rider) applyRider(p.rider);
       if(Array.isArray(p.lib)){
         var have={}; lib.forEach(function(e){have[e.id]=true;});
         p.lib.forEach(function(e){ if(e&&e.id&&!have[e.id])lib.push(e); });
@@ -796,7 +869,7 @@
   });
 
   sendSheetBtn.addEventListener('click',function(){
-    var payload={v:1,kind:'s60sheet',t:Date.now(),drift:driftIn.value||'0',data:data,lib:lib,drills:drills,dgroups:DRILL_GROUPS};
+    var payload={v:1,kind:'s60sheet',t:Date.now(),drift:driftIn.value||'0',rider:{ftp:getFtp(),hr:getMaxHr()},data:data,lib:lib,drills:drills,dgroups:DRILL_GROUPS};
     sheetCopy('S60B'+btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
   });
 
@@ -896,6 +969,7 @@
       });
     });
     if(p.drift!==undefined){driftIn.value=String(p.drift); try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}}
+      if(p.rider) applyRider(p.rider);
     if(Array.isArray(p.lib)){
       var have={}; lib.forEach(function(e){have[e.id]=true;});
       p.lib.forEach(function(e){ if(e&&e.id&&!have[e.id])lib.push(e); });

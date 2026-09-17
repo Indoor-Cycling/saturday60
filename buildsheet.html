@@ -56,6 +56,24 @@
   .seg-head{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:6px 10px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;letter-spacing:.03em;}
   .seg-head .time{font-family:var(--mono);font-size:11px;font-weight:600;}
   .seg-note{font-size:10.5px;color:var(--muted);padding:5px 2px 7px;line-height:1.45;}
+  /* The title and note are editable in place. They carry no chrome until you
+     put a cursor in one, so the sheet still reads as a printed document. */
+  .seg-headl{display:flex;align-items:center;gap:4px;flex:1;min-width:0;}
+  .seg-title{flex:1;min-width:60px;background:transparent;border:1px solid transparent;border-radius:5px;
+    color:#fff;font:inherit;font-weight:700;letter-spacing:.03em;padding:1px 4px;}
+  .seg-title:hover{border-color:rgba(255,255,255,.45);}
+  .seg-title:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.16);}
+  textarea.seg-note{display:block;width:100%;resize:none;overflow:hidden;background:transparent;
+    border:1px solid transparent;border-radius:5px;font-family:inherit;}
+  textarea.seg-note:hover{border-color:var(--line);}
+  textarea.seg-note:focus{outline:none;border-color:var(--warm);background:var(--paper);}
+  .secswap{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.45);
+    border-radius:5px;font-size:11px;padding:1px 3px;margin-right:8px;cursor:pointer;}
+  .secswap option{color:var(--ink);}
+  @media print{
+    .seg-title,textarea.seg-note{border-color:transparent!important;background:none!important;padding:0;}
+    .secswap{display:none!important;}
+  }
   table.slots{width:100%;border-collapse:collapse;}
   .slots th,.slots td{border:1px solid var(--line);padding:3px 4px;vertical-align:top;font-size:11px;}
   .slots th{background:var(--paper);font-weight:700;font-size:10px;letter-spacing:.03em;text-align:left;padding:5px 5px;}
@@ -411,11 +429,14 @@
   (function(){
     var defsById={};
     DEFAULTS.forEach(function(d){defsById[d.id]=d;});
-    // titles/notes/colors aren't user-editable, so refresh them from the file's
-    // definitions on every load; times are NOT synced (swaps keep them positional)
+    // Stock titles, notes and colours are refreshed from this file's own
+    // definitions on every load, so template wording improvements reach a sheet
+    // that is already saved. A section the rider has renamed or switched carries
+    // seg.custom and is left exactly as they left it. Times are NOT synced —
+    // they describe the slot in the ride, not the block's identity.
     data.forEach(function(seg){
       var d=defsById[seg.id];
-      if(d){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
+      if(d&&!seg.custom){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
     });
     var defRoles={};
     DEFAULTS.forEach(function(seg){defRoles[seg.id]=seg.rows.map(function(r){return r.role;});});
@@ -837,7 +858,7 @@
       var defsById={}; DEFAULTS.forEach(function(d){defsById[d.id]=d;});
       data.forEach(function(seg){
         var d=defsById[seg.id];
-        if(d){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
+        if(d&&!seg.custom){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
         var dr=d?d.rows.map(function(x){return x.role;}):[];
         seg.rows=Array.isArray(seg.rows)?seg.rows:[];
         seg.rows.forEach(function(row,i){
@@ -960,7 +981,7 @@
     var defsById={}; DEFAULTS.forEach(function(d){defsById[d.id]=d;});
     data.forEach(function(seg){
       var d=defsById[seg.id];
-      if(d){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
+      if(d&&!seg.custom){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
       var dr=d?d.rows.map(function(r){return r.role;}):[];
       seg.rows=Array.isArray(seg.rows)?seg.rows:[];
       seg.rows.forEach(function(row,i){
@@ -1213,7 +1234,21 @@
   }
 
   var SHORT={warmup:'W-Up',seg1:'Seg 1',br1:'Br 1',seg2:'Seg 2',br2:'Br 2',seg3:'Seg 3',seg4:'Seg 4',cool:'Cool'};
-  function shortName(seg,idx){return SHORT[seg.id]||('Sec '+(idx+1));}
+  function stockTitle(seg,idx){
+    var d=DEFAULTS.filter(function(g){return g.id===seg.id;})[0];
+    return d?d.title:('SECTION '+(idx+1));
+  }
+  function shortName(seg,idx){
+    // A renamed section answers to its own name everywhere it is listed.
+    if(seg.custom&&(seg.title||'').trim()){
+      // Drop a leading "SEGMENT n —", which the header renumbers by position
+      // anyway, and label the section by the name the rider actually gave it.
+      var t=seg.title.replace(/^\s*SEGMENT\s+\d+\s*[\u2014\-\u00b7:]?\s*/i,'').trim();
+      t=t.split('\u2014')[0].split(' - ')[0].split('(')[0].trim() || seg.title.trim();
+      if(t) return t.length>18?t.slice(0,17).trim()+'\u2026':t;
+    }
+    return SHORT[seg.id]||('Sec '+(idx+1));
+  }
 
   var GKEY='s60_drillgroups_v1';
   var DEFAULT_GROUPS=['Steady / tempo','Climb','Sprint','Recovery','My drills'];
@@ -1284,7 +1319,7 @@
     var html='';
     var songNum=0, segOrd=0;
     data.forEach(function(seg,si){
-      var dispTitle=seg.title;
+      var dispTitle=(seg.title||'').trim()||stockTitle(seg,si);
       if(/^SEGMENT\s+\d+/.test(dispTitle)){segOrd++; dispTitle=dispTitle.replace(/^SEGMENT\s+\d+/,'SEGMENT '+segOrd);}
       var posOptsSec=data.map(function(_,gi){return '<option value="'+gi+'"'+(gi===si?' selected':'')+'>'+(gi+1)+'</option>';}).join('');
       var secArrows='<select class="secpos" data-secpos="'+si+'" title="Section position (1–'+data.length+')">'+posOptsSec+'</select>'+
@@ -1292,9 +1327,20 @@
                     (si<data.length-1?'<button class="smv" data-secdn="'+si+'" title="Move section down">▼</button>':'')+
                     '<button class="smv" data-libsave="'+si+'" title="Save this section to the library">Save</button>'+
                     (data.length>1?'<button class="smv" data-secdel="'+si+'" title="Remove this section">×</button>':'');
+      // The title is a field, not a label: rename a block without disturbing a
+      // single song. The ⇄ menu trades one section's whole identity — title,
+      // note and colour — with another's, leaving both sets of songs put.
+      var swapOpts='<option value="">\u21c4</option>'+
+        data.map(function(g,gi){
+          return gi===si?'':'<option value="'+gi+'">Switch with '+(gi+1)+' \u00b7 '+esc(shortName(g,gi))+'</option>';
+        }).join('')+
+        (seg.custom&&SHORT[seg.id]?'<option value="__stock__">\u21ba Back to the stock title</option>':'');
       html+='<div class="seg">'+
-        '<div class="seg-head" style="background:'+seg.color+'"><span>'+secArrows+esc(dispTitle)+'</span><span><span class="segsum" id="segsum_'+si+'"></span><span class="time">'+esc(seg.time)+'</span></span></div>'+
-        '<div class="seg-note">'+esc(seg.note)+'</div>'+
+        '<div class="seg-head" style="background:'+seg.color+'"><span class="seg-headl">'+secArrows+
+          '<input class="seg-title" data-segtitle="'+si+'" value="'+esc(dispTitle)+'" title="Rename this section. The songs in it stay exactly where they are."></span>'+
+          '<span><select class="secswap" data-secswap="'+si+'" title="Trade this section\u2019s title, note and colour with another section \u2014 no song moves">'+swapOpts+'</select>'+
+          '<span class="segsum" id="segsum_'+si+'"></span><span class="time">'+esc(seg.time)+'</span></span></div>'+
+        '<textarea class="seg-note" rows="1" data-segnote="'+si+'" title="The working note for this block. Yours to rewrite.">'+esc(seg.note)+'</textarea>'+
         '<table class="slots"><colgroup><col class="c-slot"><col class="c-song"><col class="c-len"><col class="c-bpm"><col class="c-mode"><col class="c-rpm"><col class="c-pos"><col class="c-int"><col class="c-pow"><col class="c-hr"><col class="c-drops"><col class="c-sum"><col class="c-rm"></colgroup>'+
         '<tr><th>#</th><th>Song</th><th>Len</th><th>BPM</th><th>Ride</th><th>RPM</th><th>Pos</th><th>Intervals in song</th><th>Power target</th><th>HR guide</th><th>Drop times</th><th>Σ ride</th><th></th></tr>';
       seg.rows.forEach(function(row,ri){
@@ -1446,6 +1492,52 @@
       var s=data[a]; data[a]=data[b]; data[b]=s;
       save(); render();
     }
+    /* ---- renaming a section, and trading two sections' identities ----
+       Both leave every song exactly where it sits. Moving a section (▲▼ or the
+       position dropdown) still carries its songs; this is the other half of
+       that pair — the label moves, the music does not. */
+    function fitNote(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+    sheet.querySelectorAll('.seg-title').forEach(function(el){
+      var si=+el.getAttribute('data-segtitle');
+      el.addEventListener('input',function(){
+        data[si].title=el.value; data[si].custom=true; save();
+      });
+      // re-render on the way out so the jump lists pick the new name up
+      el.addEventListener('blur',function(){
+        if(!(el.value||'').trim()){                 // an empty header helps nobody
+          data[si].title=stockTitle(data[si],si);
+          if(DEFAULTS.some(function(g){return g.id===data[si].id;})) delete data[si].custom;
+          save();
+        }
+        render(); updateSums();
+      });
+    });
+    sheet.querySelectorAll('textarea.seg-note').forEach(function(el){
+      fitNote(el);
+      var si=+el.getAttribute('data-segnote');
+      el.addEventListener('input',function(){
+        data[si].note=el.value; data[si].custom=true; fitNote(el); save();
+      });
+    });
+    sheet.querySelectorAll('.secswap').forEach(function(sel){
+      sel.addEventListener('change',function(){
+        var si=+sel.getAttribute('data-secswap'), v=sel.value;
+        sel.value='';
+        if(v==='__stock__'){
+          var d=DEFAULTS.filter(function(g){return g.id===data[si].id;})[0];
+          if(d){ data[si].title=d.title; data[si].note=d.note; data[si].color=d.color; delete data[si].custom; }
+          save(); render(); updateSums(); sheetStatus('Stock title restored ✓');
+          return;
+        }
+        var di=parseInt(v,10);
+        if(isNaN(di)||di===si||!data[di])return;
+        var a=data[si], b=data[di];
+        ['title','note','color'].forEach(function(f){var t=a[f]; a[f]=b[f]; b[f]=t;});
+        a.custom=true; b.custom=true;      // neither is stock any more
+        save(); render(); updateSums();
+        sheetStatus('Titles switched — songs stayed put ✓');
+      });
+    });
     sheet.querySelectorAll('[data-secup]').forEach(function(btn){
       btn.addEventListener('click',function(){var si=+btn.getAttribute('data-secup'); if(si>0)swapSections(si,si-1);});
     });

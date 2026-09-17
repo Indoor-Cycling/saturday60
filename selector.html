@@ -54,7 +54,18 @@
   .readout-unit{font-family:var(--mono);font-size:14px;color:var(--muted);letter-spacing:.1em;margin-top:2px;}
   .phrase-strip{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--muted);}
   .phrase-strip b{display:block;color:var(--text);font-size:13px;font-weight:700;}
-  .phrase-strip span{text-align:center;}
+  .phrase-strip span{text-align:center;cursor:pointer;border-radius:6px;padding:2px 4px;}
+  .phrase-strip span:hover{background:var(--surface-2);}
+  /* Any number of bars, not just 8/16/32 — the answer follows the gauge above. */
+  .barcalc{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;
+    margin-top:12px;font-size:11.5px;color:var(--muted);}
+  .barcalc input{width:66px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+    padding:6px 7px;font-family:var(--mono);font-size:13px;text-align:center;color:var(--text);}
+  .barcalc input:focus{outline:none;border-color:var(--lock);}
+  .bc-lbl{letter-spacing:.02em;}
+  .barcalc b{font-family:var(--mono);font-size:14px;color:var(--text);font-variant-numeric:tabular-nums;}
+  .bc-x{background:none;border:none;color:var(--dim);font-size:15px;line-height:1;padding:2px 4px;cursor:pointer;}
+  .bc-x:hover{color:var(--text);}
   .dt-downbeat{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;margin:10px 0 4px;font-size:11.5px;color:var(--muted);}
   .dt-downbeat input{width:62px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
     color:var(--text);font-family:var(--mono);font-size:13px;text-align:center;padding:6px;}
@@ -291,6 +302,13 @@
     <span class="readout" id="readout" contenteditable="true" inputmode="numeric" role="textbox" aria-label="Song BPM">120</span>
     <div class="readout-unit">BPM</div>
     <div class="phrase-strip" id="phraseStrip"></div>
+    <div class="barcalc" id="barCalc">
+      <input id="barsIn" inputmode="decimal" placeholder="64" aria-label="Number of bars"
+             title="Type any number of bars and see how long it runs at this tempo. Fractions like 8.5 are fine.">
+      <span class="bc-lbl">bars run</span>
+      <b id="barsOut">—</b>
+      <button class="bc-x" id="barsClr" type="button" title="Clear the bar count">×</button>
+    </div>
     <div class="steppers">
       <div class="col"><div class="step step-fine" data-d="-5">−5</div><small>5</small></div>
       <div class="col"><div class="step" data-d="-1">−</div><small>1</small></div>
@@ -776,15 +794,69 @@
     return {at:at, delta:sec-at, n:idx};
   }
   function renderPhraseStrip(){
+    renderBars();                    // the answer depends on the tempo above
     var el=document.getElementById('phraseStrip'); if(!el)return;
     var bpm=getBpm();
     if(!bpm){ el.innerHTML=''; return; }
     var b=barSec(bpm);
     function f(x){ return x<10 ? x.toFixed(2)+'s' : fmtTime(Math.round(x)); }
-    el.innerHTML='<span><b>'+f(b)+'</b>1 bar</span>'+
-                 '<span><b>'+f(b*8)+'</b>8 bars</span>'+
-                 '<span><b>'+f(b*16)+'</b>16 bars</span>'+
-                 '<span><b>'+f(b*32)+'</b>32 bars</span>';
+    el.innerHTML=[1,8,16,32].map(function(n){
+      return '<span data-bars="'+n+'" title="Load '+n+' bar'+(n===1?'':'s')+
+             ' into the bar calculator"><b>'+f(b*n)+'</b>'+n+' bar'+(n===1?'':'s')+'</span>';
+    }).join('');
+  }
+
+  /* ---- how long does N bars run? ----
+     The phrase strip above covers 1, 8, 16 and 32 bars. This answers any
+     number: a 12-bar bridge, a 6-bar build, 8.5 bars if a track is odd. It
+     reads the gauge, so it re-answers the moment the BPM changes. */
+  var BARSKEY='s60-bars-v1';
+  var barsIn=document.getElementById('barsIn'), barsOut=document.getElementById('barsOut'),
+      barsClr=document.getElementById('barsClr');
+
+  function fmtSpan(sec){
+    // Under a minute the decimal is what matters for a cue; past that, m:ss.
+    if(sec<60) return sec.toFixed(1).replace(/\.0$/,'')+'s';
+    var whole=Math.floor(sec), tenth=Math.round((sec-whole)*10);
+    if(tenth===10){whole++;tenth=0;}
+    var m=Math.floor(whole/60), r=whole%60;
+    return m+':'+(r<10?'0'+r:r)+(tenth?'.'+tenth:'');
+  }
+
+  function renderBars(){
+    if(!barsIn||!barsOut)return;
+    var bpm=getBpm(), n=parseFloat(barsIn.value);
+    if(!bpm){ barsOut.textContent='set a BPM first'; return; }
+    if(isNaN(n)||n<=0){ barsOut.textContent='\u2014'; return; }
+    var sec=barSec(bpm)*n, beats=n*4;
+    barsOut.textContent=fmtSpan(sec)+'  \u00b7  '+(beats%1?beats.toFixed(1):beats)+' beats';
+  }
+
+  if(barsIn){
+    try{ barsIn.value=localStorage.getItem(BARSKEY)||''; }catch(e){}
+    barsIn.addEventListener('input',function(){
+      var c=barsIn.value.replace(/[^0-9.]/g,'');
+      var bits=c.split('.');
+      if(bits.length>2) c=bits[0]+'.'+bits[1];      // 8.5.5 means 8.5
+      if(c!==barsIn.value)barsIn.value=c;
+      try{ localStorage.setItem(BARSKEY,barsIn.value); }catch(e){}
+      renderBars();
+    });
+    barsClr.addEventListener('click',function(){
+      barsIn.value=''; try{ localStorage.removeItem(BARSKEY); }catch(e){}
+      renderBars(); barsIn.focus();
+    });
+    // tapping a figure in the strip above loads that bar count down here
+    var strip=document.getElementById('phraseStrip');
+    if(strip) strip.addEventListener('click',function(e){
+      var sp=e.target&&e.target.closest?e.target.closest('span'):null;
+      if(!sp)return;
+      var n=sp.getAttribute('data-bars');
+      if(!n)return;
+      barsIn.value=n;
+      try{ localStorage.setItem(BARSKEY,barsIn.value); }catch(e){}
+      renderBars();
+    });
   }
 
   /* ---- drops library: song title -> drop times, kept across weeks ---- */

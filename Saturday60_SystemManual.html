@@ -72,7 +72,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 26 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 27 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar">0 · THE PHILOSOPHY AND THE THREE RULES</div>
@@ -107,6 +107,15 @@ the Build Sheet reads. Data still lives per device. See Section 9.</p>
 <p>Type a BPM or nudge with the −5 / −1 / +1 / +5 steppers. Cards list every block that tempo fits with its beat-locked
 RPM; anything faster than the cap gets the half-time rescue note. Beneath the number, the <b>phrase strip</b> shows how
 long 1, 8, 16 and 32 bars run at that tempo — at 126 BPM a bar is 1.90 s and a 32-bar phrase is 61 s.</p>
+
+<h3>The bar calculator<span class="new">REV 27</span></h3>
+<table>
+  <tr><td class="k">Where</td><td>Inside the Song tempo box, under the 1 / 8 / 16 / 32-bar strip. Type any number of bars and it answers at the tempo showing above — change the BPM and the answer follows.</td></tr>
+  <tr><td class="k">What it answers</td><td>The run time and the beat count: at 126 BPM, 12 bars reads <b>22.9s · 48 beats</b>. Under a minute it keeps one decimal, because half a second decides whether a cue lands on the phrase; past a minute it switches to m:ss.</td></tr>
+  <tr><td class="k">Why it exists</td><td>The strip covers the phrase lengths that matter most, but real tracks hold 12-bar bridges, 6-bar builds and the odd half bar. This is for those — sizing a drill to a section you have counted by ear, or checking whether an effort will fit before the next chorus.</td></tr>
+  <tr><td class="k">Shortcuts</td><td>Tap any figure in the strip above to load that bar count. Fractions like 8.5 are accepted. The × clears it. The count is remembered on the device between visits.</td></tr>
+  <tr><td class="k">The arithmetic</td><td>One bar is 240 ÷ BPM seconds (4/4 assumed, as everywhere in these tools), so N bars is N × 240 ÷ BPM, and the beats are N × 4.</td></tr>
+</table>
 
 <h3>The tap-tester</h3>
 <p>Tap the TAP pad in time with the music (4+ taps; keep going to refine). A 2-second pause resets it. <b>Use</b> sends

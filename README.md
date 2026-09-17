@@ -20,7 +20,7 @@ not let it rebuild one from memory. Every tool here carries shared machinery tha
 an older copy will silently lack:
 
 - the app shell — `app.js`, the manifest and the icons, which provide the
-  back-to-hub bar, the Save to… buttons and the offline install
+  back-to-hub bar, the save-destination prompts and the offline install
 - colour coding on drops, which the Build Sheet and the Drops Library Editor
   carry through without displaying
 - song length, which travels from the Selector into the Build Sheet
@@ -44,14 +44,20 @@ older one leaves every installed copy unaware anything changed.
 
 | File | What it is |
 |---|---|
-| `index.html` | The hub — the screen you land on, linking the three tools |
+| `index.html` | The hub — the screen you land on, linking the three tools and the two documents |
 | `selector.html` | Song BPM Selector (phone-first) |
 | `buildsheet.html` | MOWL-style Build Sheet (desktop-first) |
 | `drops.html` | Drops Library Editor |
-| `app.js` | Shared shell: offline worker, back bar, Save to… buttons |
+| `app.js` | Shared shell: offline worker, back bar, save-destination prompts |
 | `sw.js` | Service worker — stores the app for offline use. **Version lives here** |
+| `Saturday60_WeeklyWorkflow.html` / `.pdf` | The one-page weekly checklist |
+| `Saturday60_SystemManual.html` / `.pdf` | The full system manual |
 | `manifest.webmanifest` | Name, icon and colours the phone installs with |
 | `icons/` | App icons |
+
+Both documents are linked from the hub and stored for offline reading. When you
+change one, re-render its PDF from the HTML so the pair never disagree, and
+upload both.
 
 ---
 
@@ -68,7 +74,8 @@ The browser stores each tool's data against the *web address*, so:
 - Deleting the installed app can clear its storage on some phones. Press
   **Backup** now and then and keep the file somewhere safe.
 
-**Backup** downloads the file as usual. **Save to…** beside it opens the phone's
-share sheet (or the save dialog on a computer) so the file can go somewhere other
-than the downloads folder. A phone shares it as `.txt` rather than `.json` —
-identical contents, and Restore accepts either.
+Every button that writes a file — **Backup**, **Export file**, **Save file**,
+**Export CSV** — asks where the file should go: the share sheet on a phone, so it
+can reach Drive, Files or mail, and the ordinary save dialog on a computer. A
+phone shares a backup as `.txt` rather than `.json` — identical contents, and
+Restore and Import accept either.

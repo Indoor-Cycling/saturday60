@@ -1,0 +1,491 @@
+<!--
+  ============================================================================
+  THE SATURDAY 60 — System Manual (screen + print)
+  THIS FILE IS THE LIVE VERSION. It is served from
+  https://indoor-cycling.github.io/saturday60/
+
+  If you are an AI assistant revising this document: start from THIS file, not
+  from an older copy. Raise the revision number in the subtitle when you change
+  it, and re-render Saturday60_SystemManual.pdf from this file so the two match.
+
+  After replacing any file, raise the version on the VERSION line near the top of sw.js so installed
+  copies notice the change.
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Saturday 60 — System Manual</title>
+<style>
+  @page { size: letter; margin: 0.75in 0.7in; }
+  :root{
+    --ink:#1a1d23; --mid:#3d444f; --grey:#7b8593; --line:#c9ced6; --panel:#f4f5f7;
+    --s0:#1a1d23; --s2:#2f80c2; --s3:#c07a10; --s4:#1e8e5a; --s5:#166b45;
+    --s6:#c0392b; --s7:#5b5fc7; --s8:#6b7280; --s9:#0e7fb8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; color:var(--ink); background:#fff;
+    font-family:Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+    font-size:9.6pt; line-height:1.42;
+  }
+  h1{font-size:22pt;margin:0 0 3px;letter-spacing:-.01em;font-weight:700;}
+  .sub{color:var(--grey);font-size:8.6pt;line-height:1.5;margin:0 0 16px;}
+  .sub b{color:var(--mid);font-weight:600;}
+
+  .bar{
+    color:#fff;font-weight:700;font-size:9.2pt;letter-spacing:.06em;
+    padding:5px 9px;margin:16px 0 9px;background:var(--s0);
+    break-after:avoid;page-break-after:avoid;
+  }
+  .bar.b2{background:var(--s2);} .bar.b3{background:var(--s3);}
+  .bar.b4{background:var(--s4);} .bar.b5{background:var(--s5);}
+  .bar.b6{background:var(--s6);} .bar.b7{background:var(--s7);}
+  .bar.b8{background:var(--s8);} .bar.b9{background:var(--s9);}
+
+  h3{font-size:11pt;margin:13px 0 5px;font-weight:700;break-after:avoid;page-break-after:avoid;}
+  p{margin:0 0 8px;}
+  table{width:100%;border-collapse:collapse;margin:0 0 9px;break-inside:auto;}
+  tr{break-inside:avoid;page-break-inside:avoid;}
+  td{border:1px solid var(--line);padding:5px 8px;vertical-align:top;}
+  td.k{background:var(--panel);font-weight:700;width:29%;}
+  .note{color:var(--grey);font-size:8.4pt;line-height:1.5;margin:-4px 0 10px;}
+  .foot{color:var(--grey);font-size:8.4pt;line-height:1.55;margin-top:14px;
+        border-top:1px solid var(--line);padding-top:9px;}
+  code{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:8.6pt;
+       background:var(--panel);padding:1px 4px;border-radius:3px;}
+  .url{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:9pt;}
+  .new{color:var(--s9);font-weight:700;font-size:7.6pt;letter-spacing:.08em;
+       vertical-align:2px;margin-left:5px;}
+  .avoid{break-inside:avoid;page-break-inside:avoid;}
+  /* Screen only — the printed pages take their margins from @page. */
+  .nav{margin:0 0 10px;font-size:9.5pt;}
+  .nav a{color:var(--s2);text-decoration:none;font-weight:700;}
+  .nav a:hover{text-decoration:underline;}
+  @media screen{ body{padding:18px 20px;max-width:8.1in;margin:0 auto;} }
+  @media print{ .nav{display:none;} }
+</style>
+</head>
+<body>
+
+<p class="nav"><a href="index.html">‹ Saturday 60</a></p>
+<h1>THE SATURDAY 60 — System Manual</h1>
+<p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 25 · September 2026<br>
+The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
+
+<div class="bar">0 · THE PHILOSOPHY AND THE THREE RULES</div>
+<p>Every tool is built around one idea: <b>PLAYLIST FIRST — MUSIC LEADS.</b> Song structure (drops, choruses, builds)
+dictates interval timing; the clock follows the music on work segments, and only the fixed pieces — warm-up, bridges,
+cool-down — hold clean clock time.</p>
+<table>
+  <tr><td class="k">Beat-locked RPM</td><td>Legs ride the beat one of exactly two ways: <b>1:1</b> (RPM = BPM) or <b>½</b> (RPM = BPM ÷ 2). Nothing else. On import, anything over 110 BPM is set to ½ automatically — unless a per-song override says otherwise.</td></tr>
+  <tr><td class="k">110 RPM ceiling</td><td>Every interval is capped at 110. Songs may be faster; legs never are.</td></tr>
+  <tr><td class="k">Rider zones<span class="new">REV 24</span></td><td>Power and HR targets derive from your FTP and maximum heart rate, set in the Build Sheet’s header line and stored on the device (Keiser M3 / M3i Studio Plus, 72 gears). The template ships with FTP 158 W and Max HR 164 bpm.</td></tr>
+</table>
+
+<div class="bar">1 · THE PIECES</div>
+<table>
+  <tr><td class="k">Song BPM Selector</td><td>Phone-first. Tap-tester, phrase strip, block matching, playlist, drop capture with colour coding, song length, drops library, transfer codes, backup.</td></tr>
+  <tr><td class="k">Build Sheet Template</td><td>Desktop-first. The 60-minute plan: reorderable sections, auto RPM, clock math, ride-clock drops, drill presets, Section Library, exports.</td></tr>
+  <tr><td class="k">Build Sheet · no targets</td><td>The same sheet without the Power target and HR guide columns, with that width given to Song and Intervals. Separate storage from the full sheet; shares the drops library and drill catalog.</td></tr>
+  <tr><td class="k">Drops Library Editor</td><td>Standalone. Opens a drops .json to view or edit outside the two tools: times in m:ss, drills alongside, merge two libraries, save back out, and <b>Export CSV</b> for a printable copy.<span class="new">REV 21</span></td></tr>
+  <tr><td class="k">Spin Class Pro workbook</td><td>Excel backup and visuals: My Playlist + Intervals → Charts (segment pie, cadence bands, two load curves) and a two-sided fold-up Playlist Print.</td></tr>
+  <tr><td class="k">Weekly Workflow</td><td>The one-page checklist of the six phases — now a card on the hub, readable in the app with a link back, plus a print-ready PDF that opens in its own window.<span class="new">REV 21</span></td></tr>
+  <tr><td class="k">System Manual<span class="new">REV 25</span></td><td>This document, now a card on the hub as well — readable in the app, stored for offline use, with a link back and a print-ready PDF beside it. The repository holds both the HTML and the PDF; change the HTML and re-render the PDF from it so the pair never disagree.</td></tr>
+  <tr><td class="k">External tools</td><td>Spotify, Chosic Playlist Analyzer, Spotlistr, MOWL Session Designer, Musixmatch / YouTube heatmap.</td></tr>
+</table>
+<p class="note">The three HTML tools are no longer loose files. They are published together as an installable web app —
+one icon, working offline, with a hub screen linking the Selector, the Build Sheet and the Drops Library Editor. Because
+they now share one web address, they also share one storage area: a drops library saved in the Selector is the same one
+the Build Sheet reads. Data still lives per device. See Section 9.</p>
+
+<div class="bar b2">2 · THE SONG BPM SELECTOR</div>
+
+<h3>The gauge and the phrase strip</h3>
+<p>Type a BPM or nudge with the −5 / −1 / +1 / +5 steppers. Cards list every block that tempo fits with its beat-locked
+RPM; anything faster than the cap gets the half-time rescue note. Beneath the number, the <b>phrase strip</b> shows how
+long 1, 8, 16 and 32 bars run at that tempo — at 126 BPM a bar is 1.90 s and a 32-bar phrase is 61 s.</p>
+
+<h3>The tap-tester</h3>
+<p>Tap the TAP pad in time with the music (4+ taps; keep going to refine). A 2-second pause resets it. <b>Use</b> sends
+the measured BPM to the gauge and the playlist form. This is the referee whenever a database's BPM looks doubled or
+halved.</p>
+
+<h3>Playlist builder</h3>
+<p>Add title + BPM; songs file under their best block and move with the per-song block dropdown. <b>Copy list</b> exports
+everything grouped by block, drops and overrides included.</p>
+<table>
+  <tr><td class="k">Removing a song<span class="new">REV 19</span></td><td>The × takes two taps. The first turns it into a red <b>Delete?</b>; the second removes the song. It disarms itself after four seconds, if you tap anything else, or if you arm a different song's ×. Only one is ever armed at a time.</td></tr>
+  <tr><td class="k">Hover help<span class="new">REV 19</span></td><td>Every button in all three tools carries a plain-language tooltip describing what it does. These appear on hover, so they help on a computer; a phone has nothing to hover with.</td></tr>
+</table>
+
+<h3>Per-song ride mode — the 1:1 / ½ button</h3>
+<p>Each song has its own ride-mode button that cycles three ways: <i>follow the block</i> (the default, unstyled),
+<b>1:1</b> forced, <b>½</b> forced. An overridden song lights up in the block's colour and its line reads "set". The
+override travels in transfer codes and beats the Build Sheet's automatic over-110 rule, so a deliberate choice is never
+silently undone.</p>
+
+<h3>Song length<span class="new">REV 19</span></h3>
+<p>On each song's drop-marker screen, under the downbeat field, is a <b>song length</b> box in m:ss, with a
+<b>from timer</b> button that takes whatever the stopwatch is showing. It is optional — leave it blank and nothing
+changes.</p>
+<table>
+  <tr><td class="k">Why it exists</td><td>Runtime used to live only on the Build Sheet, so importing a playlist could not fill it. A length set here travels with the song and lands in the sheet's Len column on import.</td></tr>
+  <tr><td class="k">Where it shows</td><td>On the playlist row after the RPM — "126 BPM · 63 RPM · 3:42".</td></tr>
+  <tr><td class="k">Where it travels</td><td>Transfer codes, backups, and Import ← Selector. Not stored in the drops library.</td></tr>
+  <tr><td class="k">Bad input</td><td>Anything unreadable is refused and the previous value returns. Clearing the box removes the length.</td></tr>
+</table>
+
+<h3>Drop markers — the ◎ button</h3>
+<table>
+  <tr><td class="k">Capturing</td><td>Stopwatch (Start/Pause/Reset) plus a big Mark drop button; chips show what you caught, each removable. Add by hand takes typed times.</td></tr>
+  <tr><td class="k">Five ways to capture<span class="new">REV 23</span></td><td>Split-screen with Spotify and mark live · split-screen with Musixmatch and tap when the lyrics flip to Chorus (the drop sheet fits a half-height window) · read Spotify’s elapsed clock and type it (most accurate) · scout the YouTube most-replayed peak in advance · <b>hold a phrase boundary</b> in the grid and take the time straight off it.</td></tr>
+  <tr><td class="k">Simultaneous start</td><td>Tap the song's restart control and the stopwatch's Start together on your own count — you are launching both from zero, not catching a moving song.</td></tr>
+  <tr><td class="k">Phrase boundaries</td><td>An 8 / 16 / 32 toggle lists every boundary time in the song — the natural places a drill can start or end. On the 8-bar view every fourth marker is brightened because it is also a 32-bar boundary; any boundary near one of your drops is highlighted. The list runs eight phrases ahead of the downbeat and extends as you mark drops past it; switch to 32 bars to see further into the track at a glance.</td></tr>
+  <tr><td class="k">Holding a boundary<span class="new">REV 23</span></td><td>Press and hold any time in the phrase grid for half a second and it becomes a captured drop — no stopwatch, no typing. A bar sweeps across the chip as you hold, the phone gives a short buzz when it takes, and the boundary turns green to show it is now one of your drops. Hold a green one and it comes back out again, so the same gesture is its own undo. A short tap does nothing and sliding your finger cancels, so scrolling the grid never captures by accident. This is the fastest route when you already know the structure and are choosing where a drill should start.</td></tr>
+  <tr><td class="k">Snapping</td><td>Each captured drop shows the boundary to snap to and the gap: "1:16 (−2.2s)", or "on the 8" in green when it lands square (drops are held in whole seconds, so anything inside that half-second of rounding counts as square). A drop sitting well off the grid is telling you that moment is not phrase-aligned — choose deliberately rather than assume.</td></tr>
+  <tr><td class="k">First downbeat at</td><td>The grid assumes bar 1 starts at 0:00, which is wrong for tracks with an intro. Set this field (per song) and the whole grid shifts. It travels in the drops library and the transfer codes, so it is set once per song, not once per week.</td></tr>
+  <tr><td class="k">Song-relative</td><td>Drops are stored as positions inside the song — durable, reusable, unaffected by playlist position or crossfade.</td></tr>
+  <tr><td class="k">On a short screen<span class="new">REV 20</span></td><td>The sheet never grows taller than the screen; if its content does not fit it scrolls inside itself. The title row and the × stay pinned at the top while you scroll, and a full-width <b>Done</b> button sits at the foot. This matters in split screen — at half height the sheet used to overflow upward and take the × off the screen with it.</td></tr>
+</table>
+
+<h3>Colour-coding the drops<span class="new">REV 19</span></h3>
+<p>Tap a drop chip and it steps to the next colour in the key. Seven taps takes it all the way round and back to plain,
+so a mis-tap is undone by carrying on tapping. The chip shows the time as before, tinted — no words are added, and
+nothing about the colours reaches the Build Sheet or the Cue Notes.</p>
+<table>
+  <tr><td class="k">The key</td><td>Six colours sit above the chips with their names, shown once a song has drops. Defaults: Intro · Build · Drop · Chorus · Hook · Breakdown.</td></tr>
+  <tr><td class="k">Edit key</td><td>Rename any entry and recolour it from the phone's colour picker. <b>Reset</b> returns all six names and colours to the originals.</td></tr>
+  <tr><td class="k">Restyling repaints</td><td>A drop stores a slot number, not a colour. Recolour slot 1 and every drop coded slot 1 changes with it, across every song.</td></tr>
+  <tr><td class="k">Very dark colours</td><td>A near-black choice would vanish against the dark screen, so the editor names any entry at risk. It does not stop you.</td></tr>
+  <tr><td class="k">Where it travels</td><td>Backups, transfer codes and the drops library. The Build Sheet and the Drops Library Editor carry the coding through untouched without displaying it.</td></tr>
+</table>
+
+<h3>Bands, defaults, transfer and backup</h3>
+<table>
+  <tr><td class="k">Bands &amp; RPM settings</td><td>Every block's BPM range and ride mode, plus the universal RPM cap. Save as my defaults sets your baseline; Reset to my defaults returns to it; Factory reset restores the originals.</td></tr>
+  <tr><td class="k">Send to sheet / Import code</td><td>A transfer code carrying playlist, BPMs, blocks, per-song modes, drops, colour coding, song lengths, band settings and saved defaults. Paste a Build Sheet code in by mistake and it tells you which button to use instead.</td></tr>
+  <tr><td class="k">Backup / Restore</td><td>Downloads or reloads a dated .json of everything. Works after the fact — the old copy of the tool need not still exist.</td></tr>
+  <tr><td class="k">Where a saved file goes<span class="new">REV 22</span></td><td>There is no separate Save to… button any more — every Backup, Export file, Save file and Export CSV button asks where the file should go. On a phone that is the share sheet, so it can go to Drive, Files or mail; on a computer it is the ordinary save dialog, so it lands in a folder you pick. A browser that can do neither still downloads as before. See Section 7.</td></tr>
+</table>
+
+<div class="bar b3">3 · THE BUILD SHEET</div>
+
+<h3>Structure</h3>
+<p>Factory layout: Warm-Up · Segment 1 Rolling Opener (endurance) · Recovery Bridge · Segment 2 The Grinder (climb) ·
+Recovery Bridge · Segment 3 The Challenge (sprint) · Segment 4 Finisher · Cool-Down. Segment numbers renumber themselves
+to match ride order. <b>Add section</b> creates a named custom section; each header's × removes one; <b>Reset to
+defaults</b> always restores the factory eight, and the library and drills survive it.</p>
+
+<h3>FTP and Max HR<span class="new">REV 24</span></h3>
+<table>
+  <tr><td class="k">Where</td><td>The header line under the title: <b>Rider: FTP [158] W · Max HR [164] bpm</b>. Both are boxes you can type in. They print as plain text, so a printed sheet still reads as a sentence.</td></tr>
+  <tr><td class="k">What they drive</td><td>The whole zone table underneath. Power columns are shares of FTP — Z1 under 55% · Z2 56–75 · Z3 76–90 · Sweet Spot 88–94 · Z4 95–105 · Z5 106 and up — and heart-rate columns are shares of maximum: Z1 under 60% · Z2 60–70 · Z3 70–80 · Sweet Spot 76–84 · Z4 80–90 · Z5 90–100. The table redraws as you type.</td></tr>
+  <tr><td class="k">Where they live</td><td>On the device, like the drift setting, and they travel inside sheet backups and Send → Build Sheet codes. <b>Reset to defaults</b> rebuilds the template but leaves your numbers alone — they are yours, not part of the ride.</td></tr>
+  <tr><td class="k">Bad input</td><td>Clearing a box or typing nonsense puts the shipped default back when you click away. There is no way to leave the table broken.</td></tr>
+  <tr><td class="k">Retesting</td><td>An FTP test changes one number and the whole sheet’s targets follow. The per-song Power and HR cells are free text and do not recalculate — they are your written cues, so check any that quote absolute watts after a big change.</td></tr>
+</table>
+
+<h3>Per-song rows</h3>
+<table>
+  <tr><td class="k">#</td><td>Continuous song count across the sheet — also the Spotify playlist position.</td></tr>
+  <tr><td class="k">Song / Intervals / Drops / Power / HR</td><td>Wrapping fields; long text grows the row rather than truncating.</td></tr>
+  <tr><td class="k">Len</td><td>Song length (m:ss); auto-fills on import from a CSV, and from the Selector when the song carries one. Feeds all clock math. A row that has a song but no length is tinted amber until you fill it — on screen only, never on the printout.<span class="new">REV 19</span></td></tr>
+  <tr><td class="k">BPM → Ride → RPM</td><td>Type the BPM, pick 1:1 or ½; RPM computes under the 110 cap. The beat-lock cannot be broken here.</td></tr>
+  <tr><td class="k">Pos</td><td>Seat / Stand / S-St.</td></tr>
+  <tr><td class="k">Σ ride</td><td>Running total through that song, crossfade-aware. Matches MOWL's interval timeline.</td></tr>
+  <tr><td class="k">◉ ride / ◉ 8-bar</td><td>Under the drops: each drop as an absolute class minute (drift-corrected), then the 8-bar phrase boundary it snaps to and the gap — "1:16 −2.2".</td></tr>
+</table>
+
+<h3>Drill presets and the drill catalog</h3>
+<p>Each Intervals cell has a ▾ drills dropdown. Picking a drill fills the cell in one tap, and the text stays fully
+editable afterward — a preset is a starting point, not a lock.</p>
+<table>
+  <tr><td class="k">The list itself</td><td>Four groups — Steady/Tempo, Climb, Sprint, Recovery — plus <i>My drills</i> once you add your own.</td></tr>
+  <tr><td class="k">— clear this cell —</td><td>Empties the Intervals cell. The way back to blank.</td></tr>
+  <tr><td class="k">▾ Save this row's text as a drill</td><td>Shelves whatever you have typed into the My drills group, so a wording you invented becomes reusable. It will not save a duplicate.</td></tr>
+  <tr><td class="k">✎ Manage drills…</td><td>Opens the catalog panel (below).</td></tr>
+  <tr><td class="k">What a drill is</td><td>Always a resistance, position or effort pattern keyed to song structure — a chorus, a drop, a verse. Never a cadence change, because cadence is set by the beat-lock.</td></tr>
+</table>
+
+<h3>The Manage drills panel</h3>
+<p>Opens from the ▾ drills dropdown. The whole catalog — built-in drills and your own — is editable here, in two
+sections: the <b>groups</b>, then the <b>drills</b> inside them.</p>
+<p><b>Groups</b></p>
+<table>
+  <tr><td class="k">Rename</td><td>Type over a group's name and every drill in it follows. The starting names — Steady/Tempo, Climb, Sprint, Recovery, My drills — are only a suggestion.</td></tr>
+  <tr><td class="k">Reorder</td><td>The ▲ on each row moves a group up, which changes the order the groups appear in the dropdown.</td></tr>
+  <tr><td class="k">Delete</td><td>The × removes a group. Its drills move to another group rather than disappearing, and the confirm tells you how many will move.</td></tr>
+  <tr><td class="k">＋ Add group</td><td>Names a new one. New drills you save land in the LAST group, so keep your catch-all at the bottom.</td></tr>
+  <tr><td class="k">Drill count</td><td>Each row shows how many drills it holds, so an empty group is obvious.</td></tr>
+</table>
+<p><b>Drills</b></p>
+<table>
+  <tr><td class="k">Reword</td><td>Type straight into a drill's text box. Changes save as you type and appear in every Intervals dropdown.</td></tr>
+  <tr><td class="k">Regroup</td><td>Each row has a group selector, listing whatever groups you currently have.</td></tr>
+  <tr><td class="k">Delete</td><td>The × removes a drill, built-in ones included.</td></tr>
+  <tr><td class="k">＋ Add drill</td><td>Creates a blank entry to type into directly, without needing a row on the sheet to save from.</td></tr>
+  <tr><td class="k">Restore built-ins</td><td>Puts back any original drills you have deleted — and any default groups you have removed — while keeping everything you have added. Never creates duplicates.</td></tr>
+  <tr><td class="k">Done</td><td>Closes the panel and refreshes every dropdown on the sheet.</td></tr>
+</table>
+<p class="note">Groups are your own filing system: they do NOT map to anything in the workbook. Excel's Segment column
+comes from the Build Sheet's section, role and position; a drill's TEXT goes to Cue Notes and its group never leaves the
+dropdown. Rename them to suit how you think.</p>
+<p class="note">Both the groups and the drills are stored on the device and shared by the two Build Sheet variants. They
+ride inside sheet transfer codes and sheet backups, and MERGE rather than replacing on import — new items are added,
+nothing you have is wiped, and no drill is ever left in a group that does not exist. A drill also travels with its song
+in the drops library, so a song's wording comes back with its drop times.</p>
+
+<h3>Reordering</h3>
+<p><b>Songs:</b> ▲▼ move within a section and across boundaries; the per-row section dropdown teleports a song.
+<b>Sections:</b> a position dropdown (1–8) plus ▲▼. Clock windows stay attached to positions, so the timeline stays
+ascending no matter what moves.</p>
+
+<h3>Totals and buttons</h3>
+<table>
+  <tr><td class="k">Header tallies</td><td>"3 songs · Σ 13:36 · thru 24:07" — count, section length, cumulative ride time; +n? flags missing lengths.</td></tr>
+  <tr><td class="k">Grand bar</td><td>The whole playlist against 60:00, crossfades included, green under / red over.</td></tr>
+  <tr><td class="k">Print / Save as PDF</td><td>Clean printout; edit chrome hidden, colours and wrapped text kept, amber length tints suppressed.</td></tr>
+  <tr><td class="k">Import Spotify export</td><td>A Chosic/Exportify CSV or pasted text (Section 4).</td></tr>
+  <tr><td class="k">Import ← Selector</td><td>The Selector's playlist by feed or code; fills matching slots by block role. Lengths sent from the Selector are written in; where a slot changes to a different song and no length was sent, the old runtime is cleared rather than left attached to the wrong track, and the box is flagged amber.<span class="new">REV 19</span></td></tr>
+  <tr><td class="k">Import drops only</td><td>Merges ONLY the Drop times, matching songs by title. Everything else untouched; it reports any titles it could not match.</td></tr>
+  <tr><td class="k">Send → Selector</td><td>Packages the sheet's songs, BPMs, ride modes and drops as a Selector code.</td></tr>
+  <tr><td class="k">Send / Import ← Build Sheet</td><td>Whole-sheet clone, sheet to sheet only. Buttons name their destination so the two code types cannot be confused.</td></tr>
+  <tr><td class="k">Drops library</td><td>The shared song → drops (and drill) file. <b>Fill from library</b> inside it fills this sheet from what the device already knows; Add this sheet's drops banks the week. See Section 4.<span class="new">REV 21</span></td></tr>
+  <tr><td class="k">Phrase map</td><td>Every song's 8/16/32-bar boundaries converted to the ride clock, so an interval in Session Designer can start and end on the music. Needs only BPM and Len — no drops required. A <b>match MOWL / real audio</b> switch decides whether drift is applied; a per-song offset field handles tracks with an intro. Copy as text puts the whole map on the clipboard.</td></tr>
+  <tr><td class="k">Export for Excel</td><td>Copies the sheet as tab-separated rows for the workbook (Section 5).</td></tr>
+  <tr><td class="k">Backup / Restore</td><td>A dated .json of the whole sheet, Section Library, drill catalog and drift.</td></tr>
+  <tr><td class="k">Save (header) + Section Library</td><td>Shelve a section as a named block; the bottom panel loads blocks into any section by Replace or Append, or deletes them.</td></tr>
+  <tr><td class="k">Drift __ s/song</td><td>Fractional-seconds correction applied to ◉ ride times only (Section 6).</td></tr>
+  <tr><td class="k">Reset / Clear</td><td>Reset to defaults restores the factory 8-section sheet; Clear songs &amp; drops keeps your targets.</td></tr>
+</table>
+
+<div class="bar b4">4 · HOW EVERYTHING CONNECTS</div>
+<p><b>Data flow:</b> Spotify → Chosic CSV → Build Sheet → (printed PDF · Excel workbook · MOWL Session Designer), with
+the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
+<table>
+  <tr><td class="k">Chosic CSV carries</td><td>Song, Artist, BPM, Duration — plus Camelot (key matching) and Explicit (clean audit).</td></tr>
+  <tr><td class="k">Spotify-export import</td><td>Fills top-to-bottom in ride order, bridges included: titles, artists, BPMs, lengths. Over 110 BPM becomes ½ automatically. Playlist order = sheet order.</td></tr>
+  <tr><td class="k">Selector ↔ Sheet</td><td>Selector code → sheet fills by block role. Sheet's Send → Selector maps sections back to blocks (Segment 4 → Finisher; bridges and cool-down → Cool-Down) and carries drops and ride modes both ways. Song lengths travel Selector → Sheet.</td></tr>
+  <tr><td class="k">Sheet ↔ Sheet</td><td>Sheet codes clone everything. Sheet content REPLACES on import; the Section Library and drill catalog MERGE.</td></tr>
+  <tr><td class="k">Two import routes</td><td>Chosic route = fast skeleton with BPMs/lengths. Selector route = complete data including drops, colour coding and any lengths you set. Pick ONE per week.</td></tr>
+  <tr><td class="k">Sheet → MOWL</td><td>Σ matches Session Designer's interval timeline to the second (verified). Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
+</table>
+
+<h3>Getting drops into the sheet — which route</h3>
+<p>Three routes exist and they overlap. The choice depends on where the ride was built:</p>
+<table>
+  <tr><td class="k">Sheet built from a CSV</td><td><b>Import drops only.</b> In the Selector tap Send to sheet, move the code across, then paste it into the Import drops box. It fills the Drop times column and nothing else — BPM, ride mode, position, intervals and targets are left exactly as they are.</td></tr>
+  <tr><td class="k">Ride built on the phone</td><td><b>Import ← Selector.</b> Same code, different button: it fills songs, BPMs, ride modes, drops and lengths into matching slots by block role.</td></tr>
+  <tr><td class="k">Different devices, or for reuse</td><td><b>Drops library.</b> Export the .json from one tool and import it in the other. Slower, but it accumulates week to week and also carries the drill, the downbeat offset and the colour coding.</td></tr>
+  <tr><td class="k">Both tools on one device</td><td>Skip the transfer — the clipboard code goes straight from one to the other, and both tools now read the same storage.</td></tr>
+  <tr><td class="k">Do not do both</td><td>Import drops only and Import ← Selector read the SAME code. Run one or the other, not both.</td></tr>
+</table>
+
+<h3>The drops library — moving it between the tools</h3>
+<p>Both tools read and write the same file, <b>Saturday60-Drops-YYYY-MM-DD.json</b>. Since the tools moved to one web
+address they also share one stored library on a given device, so the file is only needed to move between devices or to
+keep an archive. An entry holds the song, its drop times, its colour coding and its drill.</p>
+<table>
+  <tr><td class="k">Fill from library<span class="new">REV 21</span></td><td>In <b>both</b> tools, inside the Drops library panel. It looks up every song — the Selector's playlist, or the Build Sheet's rows — and fills whatever that song has not got yet, then reports the split: "Filled 4 songs from the library. 2 songs already had their drops. 1 song is not in the library yet." The Selector fills drops, colour coding and the downbeat offset; the Build Sheet fills drop times, the drill and the downbeat. Nothing already filled is touched. Adding a song does not fill it automatically — this button is the trigger.</td></tr>
+  <tr><td class="k">Phone → desktop</td><td>In the Selector: Drops library → Add this playlist → Export file. Move the file across. In the Build Sheet: Drops library → Import file. Every matching song gets its drops (and drill) filled in.</td></tr>
+  <tr><td class="k">Desktop → phone</td><td>The same in reverse: Add this sheet's drops → Export file → Import file in the Selector.</td></tr>
+  <tr><td class="k">The one rule</td><td><b>Load before you Save.</b> Import the file into a tool before exporting from it. Each export writes that tool's own accumulated library, so exporting from a copy that was never loaded would produce a thinner file than the one you already have.</td></tr>
+  <tr><td class="k">What it will not overwrite</td><td>Only songs with NO drops yet are filled; anything already marked is left alone. The report gives the split.</td></tr>
+  <tr><td class="k">Matching</td><td>By title, with the artist suffix, capitalisation and punctuation ignored — "Titanium" and "Titanium — David Guetta, Sia" are the same song. A different edit in the title — "(Radio Edit)" — is a different song to the matcher.</td></tr>
+  <tr><td class="k">Editing outside the tools</td><td>The Drops Library Editor opens the file directly: times shown in m:ss, drills alongside, add or delete songs, merge two libraries (richer entry wins), then save back out. Renaming a title rebuilds its matching key automatically. Colour coding is preserved through the round trip without being shown. <b>Export CSV</b> writes Saturday60-Drops.csv — Song, Artist, BPM, Drops, Drill — as a copy to read or print; the tools still read only the .json, so keep using Save file for anything that has to travel.<span class="new">REV 21</span></td></tr>
+</table>
+
+<div class="bar b5">5 · THE SPIN CLASS PRO WORKBOOK</div>
+<p>Purpose: <b>Charts</b> gives a visual read of the ride's shape, and <b>Playlist Print</b> is the paper fold-up backup
+for when MOWL malfunctions or isn't available.</p>
+
+<h3>Getting the ride in</h3>
+<p>Build Sheet → <b>Export for Excel</b>, then click <b>B2 on My Playlist</b> and paste. The export carries no quote
+characters — Excel's clipboard parser treats quotes as text qualifiers and would mangle anything containing them, so even
+the Elapsed formula is written quote-free.</p>
+<table>
+  <tr><td class="k">A · #</td><td>Not pasted — numbers itself, blank on empty rows.</td></tr>
+  <tr><td class="k">B · Song Name</td><td>Title only; the artist is split off at the " — " separator.</td></tr>
+  <tr><td class="k">C · Artist</td><td>The other half of that split.</td></tr>
+  <tr><td class="k">D · Runtime</td><td>Zero-padded mm:ss, right-aligned.</td></tr>
+  <tr><td class="k">E · Elapsed Time</td><td>A live formula, pasted with the block; empty rows show blank.</td></tr>
+  <tr><td class="k">F · RPM</td><td>The beat-locked cadence.</td></tr>
+  <tr><td class="k">G · Gear (M3) / H · Gear (M3i)</td><td>Blanked on paste — re-pick from the 1–24 and 1–72 dropdowns.</td></tr>
+  <tr><td class="k">I · Segment</td><td>Warm-up · Fast-Flat · Seated/Standing-Climb (by position) · Sprint/Standing-Attack (by position) · Recovery (bridges) · Cool-down.</td></tr>
+  <tr><td class="k">J · Cue Notes</td><td>Intervals text, then " | drops 1:05, 2:47" when the row has drop times. Colour coding is never written here.</td></tr>
+  <tr><td class="k">K · Pointers</td><td>NEVER pasted over — yours for coaching phrases.</td></tr>
+  <tr><td class="k">L · Avg RPM</td><td>NEVER pasted over — weighted average from the Intervals sheet; falls back to column F.</td></tr>
+  <tr><td class="k">M · _TimeValue</td><td>Hidden helper formula; not pasted.</td></tr>
+</table>
+<p class="note">The paste block is B:J. If a column ever moves, the export's Elapsed formula must be re-checked against
+the sheet — that is the one place the two files have to agree exactly.</p>
+
+<h3>The Intervals sheet</h3>
+<p>Eight slots per song, each a <b>seconds + RPM</b> pair, plus Total sec, <b>Avg RPM</b> (time-weighted), Song sec and
+<b>Covered</b>. Leave a song blank and it uses its headline RPM.</p>
+<table>
+  <tr><td class="k">One slot per cadence</td><td>Order and repetition don't matter — only total seconds at each RPM. A Tabata of 8 × (20s on / 10s off) is two slots: 160s at the work cadence, 80s at the recovery cadence.</td></tr>
+  <tr><td class="k">What it drives</td><td>Avg RPM feeds the M3 / M3i Load Curves, and each interval's seconds land in its own cadence band.</td></tr>
+  <tr><td class="k">Keyed to row position</td><td>Intervals belong to a row, not a title. New week, new songs — clear them (ClearPlaylist does).</td></tr>
+</table>
+
+<h3>Cadence bands — not power zones</h3>
+<p><b>Time in Cadence Bands</b> (Low under 70 · Mid 70–89 · High 90+) measures <i>legs turning, not watts</i>, and is
+named that way to avoid confusion with the true power zones on the Build Sheet. A light-geared song can sit in the High
+band while barely taxing you.</p>
+<p class="note">A watts-per-interval version with real Z1–Z5 and a planned TSS is possible but not built: it roughly
+doubles data entry, and normalized power computed from interval blocks overstates short efforts because it skips the
+30-second smoothing real NP uses. Any such figure would be planned load, not what the bike measures.</p>
+
+<h3>Playlist Print — two sides</h3>
+<table>
+  <tr><td class="k">Page 1</td><td>Ride detail, three lines per song: title (with Pointer), a stats strip — RPM, both gears, runtime, elapsed, segment — then the cue.</td></tr>
+  <tr><td class="k">Page 2</td><td>Song and artist in larger type. Print double-sided, flip on the LONG edge, and the same songs land on the same half front and back.</td></tr>
+  <tr><td class="k">Geometry</td><td>0.25in margin | 3.66in panel | 0.60in gutter | 3.66in panel | 0.25in margin. The 4.25in fold falls inside the empty gutter. Top/bottom 0.75in, header/footer 0.3in. Content sits just under the page so fit-to-page never shrinks it — a shrink would slide the fold off position.</td></tr>
+  <tr><td class="k">Empty slots</td><td>Dropped entirely. 24 songs prints at about 13pt titles, 19 at about 16pt, 12 at the 26pt ceiling.</td></tr>
+</table>
+
+<h3>The three macros</h3>
+<table>
+  <tr><td class="k">Install (once)</td><td>Save as .xlsm, enable the Developer tab, Visual Basic → remove any older SaturdaySixty module → File › Import File… → the .bas. Close and save.</td></tr>
+  <tr><td class="k">Weekly rhythm</td><td><b>ClearPlaylist</b> → paste at B2 → pick the gears → <b>FormatPlaylistPrint</b> → print.</td></tr>
+  <tr><td class="k">1 · ClearPlaylist</td><td>Wipes only last week: paste block (B2:J33), Pointers (K2:K33), intervals (Intervals C2:R33) — all keyed to row position. Formulas, charts, drills and the drops library untouched. Runs RepairFormulas silently.</td></tr>
+  <tr><td class="k">2 · FormatPlaylistPrint</td><td>Counts songs, splits them evenly, drops empty slots, scales rows and fonts, builds both pages, resets page breaks, sets margins and print area.</td></tr>
+  <tr><td class="k">3 · RepairFormulas</td><td>Rebuilds A, E, L, M on My Playlist and the Intervals formulas. Columns A, L and M sit OUTSIDE the paste block, so if a row loses them they never return on their own — while E is inside and gets rewritten by every paste. The result is an Elapsed formula with no input: no error, just a blank cell on that row.</td></tr>
+  <tr><td class="k">Why the .bas is ASCII</td><td>The VBA editor imports as Windows-1252; a UTF-8 dash arrives as strange characters, so special characters are built with ChrW().</td></tr>
+  <tr><td class="k">Raw times</td><td>The workbook's Elapsed does NOT subtract crossfades, so its total runs ~2–3 minutes longer than the Build Sheet's. Intended.</td></tr>
+</table>
+
+<div class="bar b6">6 · THE TIMING AND PHRASE MATH</div>
+
+<h3>Crossfade</h3>
+<p>With a 10 s crossfade, real clock time = sum of lengths −10 s per transition. A 16-song hour plays ~2:30 faster than
+its raw sum. All Σ figures use this, and MOWL was verified to use the same convention.</p>
+
+<h3>Song-relative vs ride-clock drops</h3>
+<p>Stored drop times are positions <i>inside the song</i>. The ◉ ride line converts them to class minutes: song start =
+Σ −length, drop = start + offset.</p>
+
+<h3>Fractional drift</h3>
+<p>Tracks carry fractional seconds that whole-second interval maps truncate, so music falls ~0.4–0.5 s further behind the
+intervals each transition — measured at 6.5 s over 15 transitions. The <b>Drift s/song</b> field (0.43 measured; 0 = show
+MOWL's clock) corrects ◉ times only; Σ stays matched to MOWL. Recalibrate: gap at the last song ÷ transitions. In MOWL,
+stretching every other interval by +1 s holds the hour within ~half a second.</p>
+
+<h3>Bars and phrase boundaries</h3>
+<p>Assuming 4/4: one beat = 60 ÷ BPM, one bar = 240 ÷ BPM. At 126 BPM a bar is 1.90 s, 8 bars 15.2 s, 32 bars 61.0 s. The
+tools work in <b>boundary times</b> rather than bar numbers, because what you need is where a drill can start, not where
+you happen to be.</p>
+<table>
+  <tr><td class="k">8 is the working grid</td><td>Dance and pop is built in 8-bar sections, with 16 and 32 as the bigger groupings. Most drops land on an 8; 32-bar alignment is much rarer, since a 32-bar phrase runs about a minute and a 3½-minute song holds only three or four.</td></tr>
+  <tr><td class="k">When a drop misses the 8</td><td>Every drop off by the same amount → the downbeat offset is wrong, not the music (by far the most common cause). One drop off by a beat → you marked the impact, not the downbeat. Off by 2 or 4 bars from a point onward → the song has an odd-length section, common in remixes and sped-up edits. Scattered fractions → stopwatch noise; a waveform editor removes it.</td></tr>
+  <tr><td class="k">What actually matters</td><td>It matters less that the drop sits on a boundary than that your effort STARTS on one. Begin a sprint at the 8-bar mark before the drop and the drop lands inside the effort — riders get a bar or two to load up rather than reacting cold.</td></tr>
+</table>
+
+<h3>The phrase map — boundaries on the ride clock</h3>
+<p>The Build Sheet's <b>Phrase map</b> converts every song's boundaries into class time using the same crossfade and
+drift maths as the ◉ ride column, so a boundary can be typed straight into Session Designer. It needs only BPM and Len,
+so a ride is programmable from the CSV alone — drops become refinement rather than a prerequisite.</p>
+<table>
+  <tr><td class="k">match MOWL (default)</td><td>Ignores drift. These times line up with Session Designer.</td></tr>
+  <tr><td class="k">real audio</td><td>Applies your drift setting. These match what the room hears, and run later than MOWL's clock — at 1.0 s/song the third song is already 2 s adrift, which is how a mismatch usually announces itself.</td></tr>
+  <tr><td class="k">Per-song offset</td><td>A small field on each row of the map, for tracks that open before bar 1.</td></tr>
+</table>
+<p class="note">This is the arithmetic half of what a DJ phrase counter does. The other half — finding the true first
+downbeat and confirming the tempo holds — needs the audio file, and is worth doing in a waveform tool for the songs where
+phrasing really matters; read the downbeat there and type it into the offset field.</p>
+
+<div class="bar b7">7 · DATA, DEVICES AND BACKUP</div>
+<table>
+  <tr><td class="k">Where data lives<span class="new">REV 19</span></td><td>In the browser's storage on the device where you typed it, keyed to the web address. All three tools now share one address, so they share one storage area on that device — the Selector's drops library is the Build Sheet's drops library. Nothing is uploaded; there is no account and no server.</td></tr>
+  <tr><td class="k">Per device, still</td><td>Storage does not follow you between phone and laptop. Backups and transfer codes are how work moves.</td></tr>
+  <tr><td class="k">Data from the old loose files<span class="new">REV 19</span></td><td>A browser kept separate storage for every file path, so nothing saved in the standalone HTML files carries over. Open the old file, press <b>Backup</b>, then press <b>Restore</b> in the app. Do it for the Selector and the Build Sheet once.</td></tr>
+  <tr><td class="k">Backup files (best)</td><td>Each tool's Backup button writes a dated .json; Restore reads it back on any device at any time, and unlike clipboard codes it works AFTER the fact. The drops library exports the same way.</td></tr>
+  <tr><td class="k">Saving to the cloud, and .txt<span class="new">REV 22</span></td><td>On a phone the save buttons hand the file to the share sheet, because that is the only route to Drive, Files or mail — the phone’s own file picker sees local storage only, and Chrome on Android offers no download-folder choice on a handset with no SD card. Phone share sheets refuse .json on security grounds, so the shared copy is named .txt — identical contents, and Restore and Import accept either. On a computer the same buttons open a real save dialog instead.</td></tr>
+  <tr><td class="k">Transfer codes (quick)</td><td>Selector ↔ Selector, Sheet ↔ Sheet, and Sheet → Selector. Snapshot, not live sync — the device you Send from wins. The paste box accepts codes of any size and cleans line breaks from email wrapping.</td></tr>
+  <tr><td class="k">What a full backup is</td><td>A Selector backup + a sheet backup + the drops library: playlist, drops, colour coding, song lengths, bands, defaults, ride modes, the whole sheet, the Section Library, the drill catalog and the drift calibration.</td></tr>
+  <tr><td class="k">When to back up</td><td>Monthly, and always before uninstalling the app or clearing browsing data. Removing an installed app can clear its storage on some phones.</td></tr>
+</table>
+
+<div class="bar b8">8 · TROUBLESHOOTING</div>
+<table>
+  <tr><td class="k">Import says "No songs found"</td><td>The CSV header wasn't recognised. The importer knows Chosic (Song/Artist/BPM/Duration) and Exportify (Track Name/Artist Name(s)/Duration (ms)).</td></tr>
+  <tr><td class="k">"That code could not be read"</td><td>Usually the tail was cut in transit, or it's the wrong code type. Re-copy with the whole block selected; compare the last 10 characters on both devices.</td></tr>
+  <tr><td class="k">An Elapsed Time is blank</td><td>Run RepairFormulas. See Section 5.</td></tr>
+  <tr><td class="k">Three print pages instead of two</td><td>Stale page breaks from an earlier run. Fixed — FormatPlaylistPrint now resets them every time.</td></tr>
+  <tr><td class="k">A BPM looks doubled or halved</td><td>Spotify-derived tempo data does this. Tap-test and edit the BPM.</td></tr>
+  <tr><td class="k">Times don't match a database</td><td>Databases (and AI memory) get durations wrong; the Chosic CSV is the referee.</td></tr>
+  <tr><td class="k">Key/Camelot codes</td><td>Key detection runs well under 50% accurate on some services. Match within segments only; bridges are free reset points.</td></tr>
+  <tr><td class="k">Explicit versions</td><td>Spotify search and Spotlistr default to the ▪ version. Audit the Chosic Explicit column.</td></tr>
+  <tr><td class="k">Smart Reorder</td><td>Premium, mobile-only. Useful within a block; it will sand off the deliberate tempo cliffs between blocks.</td></tr>
+  <tr><td class="k">Intervals drift from the music</td><td>Section 6. Growing drift = fractional seconds (set Drift); constant steps = crossfade mismatch; irregular = Automix snuck on.</td></tr>
+  <tr><td class="k">Boundaries look wrong</td><td>The track opens with an intro — set the downbeat offset for that song.</td></tr>
+  <tr><td class="k">Phrase map disagrees with MOWL</td><td>The map is on the real-audio clock. Switch it to match MOWL, and check the drift value is your measured one (0.43), not a guess.</td></tr>
+  <tr><td class="k">Only nine phrase boundaries listed</td><td>Working as designed: the grid runs eight phrases past the downbeat and grows as you mark drops. Switch to 32 bars to see further ahead.</td></tr>
+  <tr><td class="k">Lengths went blank after an import<span class="new">REV 19</span></td><td>A slot that changed to a different song loses the old song's runtime, because it would otherwise corrupt the ride clock. Amber boxes mark what to fill. Set lengths in the Selector and they arrive with the songs instead.</td></tr>
+  <tr><td class="k">Cannot see the × on the drops screen<span class="new">REV 20</span></td><td>Fixed in s60-v13. Before that the sheet had no height limit, so on a half-height window (split screen) its top scrolled off and the close button went with it. The × is now pinned and there is a Done button at the bottom. If you are still stuck on an old version, the back gesture or turning the phone landscape gets you out.</td></tr>
+  <tr><td class="k">Drops did not fill in<span class="new">REV 19</span></td><td>Adding a song does not consult the library. Open Drops library → <b>Fill from library</b>. If a song is still skipped, its title differs from the stored one by more than the artist suffix.</td></tr>
+  <tr><td class="k">Excel: run-time error 429</td><td>VBA cannot create ThisWorkbook — a fault in the Office install, not the workbook. Use the primary macro module, which avoids ThisWorkbook entirely; keep only one copy of the workbook open when running macros. Quick Repair then Online Repair (Settings › Apps › Microsoft 365 › Modify) fixes it properly; a later 365 update may too.</td></tr>
+  <tr><td class="k">Sections look scrambled</td><td>Reset to defaults is always one button home.</td></tr>
+</table>
+
+<div class="bar b9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</div>
+<p>The three HTML tools are published as one installable web app at
+<b class="url">https://indoor-cycling.github.io/saturday60/</b>. Opening that address gives a hub screen with the three
+tools on it. The whole app is stored on the device the first time you visit, so it runs with no signal at all — a
+basement studio or a phone in aeroplane mode makes no difference.</p>
+<table>
+  <tr><td class="k">Installing · iPhone / iPad</td><td>Open the address <b>in Safari</b> (Chrome on iOS cannot do this). Share button → Add to Home Screen → Add. A "Sat 60" icon appears with your other apps.</td></tr>
+  <tr><td class="k">Installing · Android / desktop</td><td>The hub's <b>Install on this device</b> button appears when the browser is ready. Otherwise: Chrome ⋮ → Add to Home screen, or the install icon at the end of a desktop address bar.</td></tr>
+  <tr><td class="k">Do you have to install it?</td><td>No. It works the same in an ordinary tab, offline included. Installing gives it its own window and icon, and browsers protect an installed app's storage more carefully. Both read the same data on that device.</td></tr>
+  <tr><td class="k">Which version am I on?</td><td>The hub shows it — "Version s60-v12" — with a <b>Check for updates</b> button beside it. Or open <span class="url">…/saturday60/sw.js</span> and read the VERSION line near the top.</td></tr>
+</table>
+
+<h3>The files in the repository are the only source of truth<span class="new">REV 21</span></h3>
+<p>A copy in a downloads folder, attached to an old message, or pasted into a chat weeks ago is not. Before asking
+anyone — or any AI assistant — to revise a tool, fetch the current file from the repository and hand over <i>that</i>.
+Every tool carries shared machinery an older copy will silently lack: the app shell (<code>app.js</code>, the manifest
+and icons, which provide the back-to-hub bar, the save-destination prompts and the offline install), the drops colour coding,
+and the song length that travels into the Build Sheet. A revision built from an earlier copy removes those without
+saying so, and the loss shows up later as missing colours or a page that no longer works offline. The repository's
+<code>README.md</code> says this, and every file opens with a comment saying the same, so the warning travels with the
+file even when nobody thinks to mention it.</p>
+
+<h3>Publishing a change</h3>
+<p>The app is hosted from a GitHub repository. Editing it is uploading files.</p>
+<table>
+  <tr><td class="k">1 · Replace the files</td><td>In the repository: <b>Add file → Upload files</b>, drag in what changed, <b>Commit changes</b>. A matching filename overwrites; nothing duplicates. When in doubt, upload the whole folder — it costs one extra drag and removes any doubt about which version is live.</td></tr>
+  <tr><td class="k">2 · Bump the version</td><td>Open <code>sw.js</code> and raise the number on the <code>VERSION</code> line near the top: <code>var VERSION = 's60-v13';</code>. That one word is what tells installed copies there is something new. Forget it and the update still lands, just a launch or two later.</td></tr>
+  <tr><td class="k">3 · Take it on the phone</td><td>Wait about a minute for GitHub to republish, open the app, and tap <b>Update now</b> on the bar that slides up. Your songs, drops and sheets live on the phone and are never touched by an update.</td></tr>
+  <tr><td class="k">If no bar appears</td><td>Check the repository finished publishing (green tick), then open …/sw.js and confirm the VERSION line near the top shows the new number, then tap Check for updates, then close the app fully and reopen it.</td></tr>
+</table>
+
+<h3>Rolling back</h3>
+<p>A version number only ever goes forward. To undo a change you upload the older files under a <i>higher</i> version
+number — re-uploading an older number would leave every installed copy unaware anything had changed.</p>
+<table>
+  <tr><td class="k">How</td><td>Upload the previous files with <code>sw.js</code> stamped higher than the current one, for example <code>'s60-v13-rollback'</code>. Commit, wait, tap Update now.</td></tr>
+  <tr><td class="k">Your data</td><td>Untouched. A feature that stored something extra leaves that data dormant rather than deleting it, and rolling forward again brings it back.</td></tr>
+  <tr><td class="k">Keep the zips</td><td>The simplest safety net is keeping the last known-good folder somewhere. There is no version history to fall back on beyond what GitHub itself records.</td></tr>
+</table>
+
+<h3>Privacy</h3>
+<p>The repository is public, which is what free hosting requires — so the tools' code is readable by anyone with the
+address. Your content is not: songs, BPMs, drop times, colour coding and build sheets are written to storage on the
+device you typed them on and never leave it. The app has no server and asks for no account.</p>
+
+<p class="foot">
+Quick values: crossfade 10 s · drift 0.43 s/song · RPM cap 110 · FTP 158 W and Max HR 164 (both editable) · TSS ~65–70 · bar = 240 ÷ BPM ·
+current app version s60-v19.<br>
+The app: <span class="url">https://indoor-cycling.github.io/saturday60/</span> — index.html · selector.html ·
+buildsheet.html · drops.html · Saturday60_WeeklyWorkflow.html and .pdf · app.js · sw.js ·
+manifest.webmanifest · icons/ · README.md.
+Alongside it: Spin_Class_ProV4 workbook · SaturdaySixty_PlaylistPrint.bas · Saturday-60_Weekly-Workflow.pdf.
+When any tool changes, ask Claude for a manual revision to match.
+</p>
+
+</body>
+</html>

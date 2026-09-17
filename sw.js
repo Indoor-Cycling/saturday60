@@ -4,7 +4,7 @@
    not an older one.
    Bump VERSION below whenever you upload changed files. That forces every
    installed copy to re-download the whole app on its next launch. */
-var VERSION = 's60-v26';
+var VERSION = 's60-v27';
 var CACHE = 'saturday60-' + VERSION;
 
 var ASSETS = [
@@ -15,6 +15,8 @@ var ASSETS = [
   'drops.html',
   'Saturday60_WeeklyWorkflow.html',
   'Saturday60_WeeklyWorkflow.pdf',
+  'Saturday60_SystemManual.html',
+  'Saturday60_SystemManual.pdf',
   'app.js',
   'manifest.webmanifest',
   'icons/icon-192.png',

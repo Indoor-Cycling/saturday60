@@ -53,25 +53,29 @@
 
   /* segment blocks */
   .seg{margin-bottom:18px;}
-  .seg-head{display:flex;justify-content:space-between;align-items:center;color:#fff;padding:6px 10px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;letter-spacing:.03em;}
+  .seg-head{display:flex;flex-wrap:wrap;gap:4px;justify-content:space-between;align-items:center;color:#fff;padding:6px 10px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;letter-spacing:.03em;}
   .seg-head .time{font-family:var(--mono);font-size:11px;font-weight:600;}
   .seg-note{font-size:10.5px;color:var(--muted);padding:5px 2px 7px;line-height:1.45;}
   /* The title and note are editable in place. They carry no chrome until you
      put a cursor in one, so the sheet still reads as a printed document. */
-  .seg-headl{display:flex;align-items:center;gap:4px;flex:1;min-width:0;}
-  .seg-title{flex:1;min-width:60px;background:transparent;border:1px solid transparent;border-radius:5px;
-    color:#fff;font:inherit;font-weight:700;letter-spacing:.03em;padding:1px 4px;}
-  .seg-title:hover{border-color:rgba(255,255,255,.45);}
-  .seg-title:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.16);}
+  .seg-headl{display:flex;align-items:center;gap:4px;flex:1 1 60%;min-width:0;}
+  /* A textarea, not an input: a long title wraps here exactly as the old plain
+     label did, on screen and on paper. It grows to fit its own text. */
+  textarea.seg-title{flex:1 1 auto;min-width:60px;width:100%;resize:none;overflow:hidden;
+    background:transparent;border:1px solid transparent;border-radius:5px;color:#fff;
+    font:inherit;font-weight:700;letter-spacing:.03em;padding:1px 4px;line-height:1.25;}
+  textarea.seg-title:hover{border-color:rgba(255,255,255,.45);}
+  textarea.seg-title:focus{outline:none;border-color:#fff;background:rgba(255,255,255,.16);}
   textarea.seg-note{display:block;width:100%;resize:none;overflow:hidden;background:transparent;
     border:1px solid transparent;border-radius:5px;font-family:inherit;}
   textarea.seg-note:hover{border-color:var(--line);}
   textarea.seg-note:focus{outline:none;border-color:var(--warm);background:var(--paper);}
-  .secswap{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.45);
-    border-radius:5px;font-size:11px;padding:1px 3px;margin-right:8px;cursor:pointer;}
+  .secswap{width:34px;flex:0 0 34px;background:rgba(255,255,255,.18);color:#fff;
+    border:1px solid rgba(255,255,255,.45);border-radius:5px;font-size:11px;
+    padding:1px 0 1px 3px;margin-right:8px;cursor:pointer;text-align:center;}
   .secswap option{color:var(--ink);}
   @media print{
-    .seg-title,textarea.seg-note{border-color:transparent!important;background:none!important;padding:0;}
+    textarea.seg-title,textarea.seg-note{border-color:transparent!important;background:none!important;padding:0;}
     .secswap{display:none!important;}
   }
   table.slots{width:100%;border-collapse:collapse;}
@@ -1337,7 +1341,7 @@
         (seg.custom&&SHORT[seg.id]?'<option value="__stock__">\u21ba Back to the stock title</option>':'');
       html+='<div class="seg">'+
         '<div class="seg-head" style="background:'+seg.color+'"><span class="seg-headl">'+secArrows+
-          '<input class="seg-title" data-segtitle="'+si+'" value="'+esc(dispTitle)+'" title="Rename this section. The songs in it stay exactly where they are."></span>'+
+          '<textarea class="seg-title" rows="1" data-segtitle="'+si+'" title="Rename this section. The songs in it stay exactly where they are.">'+esc(dispTitle)+'</textarea></span>'+
           '<span><select class="secswap" data-secswap="'+si+'" title="Trade this section\u2019s title, note and colour with another section \u2014 no song moves">'+swapOpts+'</select>'+
           '<span class="segsum" id="segsum_'+si+'"></span><span class="time">'+esc(seg.time)+'</span></span></div>'+
         '<textarea class="seg-note" rows="1" data-segnote="'+si+'" title="The working note for this block. Yours to rewrite.">'+esc(seg.note)+'</textarea>'+
@@ -1492,16 +1496,31 @@
       var s=data[a]; data[a]=data[b]; data[b]=s;
       save(); render();
     }
+    // border-box: scrollHeight is the content box, so the 1px borders have to be
+    // added back or every header sits two pixels short and clips its last line.
+    function fitNote(el){
+      var cs=getComputedStyle(el);
+      var edge=(parseFloat(cs.borderTopWidth)||0)+(parseFloat(cs.borderBottomWidth)||0);
+      el.style.height='auto'; el.style.height=(el.scrollHeight+edge)+'px';
+    }
     /* ---- renaming a section, and trading two sections' identities ----
        Both leave every song exactly where it sits. Moving a section (▲▼ or the
        position dropdown) still carries its songs; this is the other half of
        that pair — the label moves, the music does not. */
-    function fitNote(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
     sheet.querySelectorAll('.seg-title').forEach(function(el){
       var si=+el.getAttribute('data-segtitle');
+      fitNote(el);
       el.addEventListener('input',function(){
-        data[si].title=el.value; data[si].custom=true; save();
+        // it is one line of prose, however it arrives — a pasted newline would
+        // otherwise leave an invisible break in a printed header
+        if(el.value.indexOf('\n')>=0){
+          var at=el.selectionStart;
+          el.value=el.value.replace(/[\r\n]+/g,' ');
+          try{el.setSelectionRange(at,at);}catch(e){}
+        }
+        data[si].title=el.value; data[si].custom=true; fitNote(el); save();
       });
+      el.addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault(); el.blur();} });
       // re-render on the way out so the jump lists pick the new name up
       el.addEventListener('blur',function(){
         if(!(el.value||'').trim()){                 // an empty header helps nobody

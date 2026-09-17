@@ -1235,7 +1235,25 @@
         (missingAll?' <span style="color:var(--muted);font-weight:500">· '+missingAll+' song'+(missingAll===1?'':'s')+' without a length</span>':'')+
         '</span><span class="delta '+cls+'">'+deltaTxt+'</span>';
     }
+    fitHeaders();   // the summary just changed width; the titles must re-measure
   }
+
+  /* A section header is one flex row: a longer Σ summary on the right leaves the
+     title less room, and a title measured before that summary arrived would keep
+     a one-line height while its text had wrapped to two — silently cutting the
+     end off. Re-measure whenever anything can change that width. */
+  function fitHeaders(){
+    document.querySelectorAll('.seg-title,textarea.seg-note').forEach(function(el){
+      var cs=getComputedStyle(el);
+      var edge=(parseFloat(cs.borderTopWidth)||0)+(parseFloat(cs.borderBottomWidth)||0);
+      el.style.height='auto'; el.style.height=(el.scrollHeight+edge)+'px';
+    });
+  }
+  var fitT=null;
+  window.addEventListener('resize',function(){
+    clearTimeout(fitT); fitT=setTimeout(fitHeaders,120);
+  });
+  window.addEventListener('beforeprint',fitHeaders);
 
   var SHORT={warmup:'W-Up',seg1:'Seg 1',br1:'Br 1',seg2:'Seg 2',br2:'Br 2',seg3:'Seg 3',seg4:'Seg 4',cool:'Cool'};
   function stockTitle(seg,idx){

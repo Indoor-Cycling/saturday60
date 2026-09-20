@@ -72,7 +72,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 27 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 29 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar">0 · THE PHILOSOPHY AND THE THREE RULES</div>
@@ -287,6 +287,8 @@ the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
   <tr><td class="k">Selector ↔ Sheet</td><td>Selector code → sheet fills by block role. Sheet's Send → Selector maps sections back to blocks (Segment 4 → Finisher; bridges and cool-down → Cool-Down) and carries drops and ride modes both ways. Song lengths travel Selector → Sheet.</td></tr>
   <tr><td class="k">Sheet ↔ Sheet</td><td>Sheet codes clone everything. Sheet content REPLACES on import; the Section Library and drill catalog MERGE.</td></tr>
   <tr><td class="k">Two import routes</td><td>Chosic route = fast skeleton with BPMs/lengths. Selector route = complete data including drops, colour coding and any lengths you set. Pick ONE per week.</td></tr>
+  <tr><td class="k">Seeing that it landed<span class="new">REV 29</span></td><td>When an import runs, the rows it wrote are tinted blue for a few seconds and the first of them is scrolled into view, so the result is visible wherever you were on the sheet. The toolbar line reports the counts for eight seconds. If an import changes nothing at all — the same file imported twice — it says so outright rather than looking like a dead button.</td></tr>
+  <tr><td class="k">An import replaces the playlist<span class="new">REV 28</span></td><td>Importing a Spotify or Chosic export fills the sheet in ride order and then <b>empties every slot past the last imported song</b>, so what is on the sheet is this playlist and nothing else. The prompt says how many old slots will be cleared before you commit, and Cancel leaves the sheet untouched. Before v31 those slots kept last week’s songs, lengths and drops, which left a sheet mixing two rides and a ride clock adding up both. More songs than slots still extends the cool-down, as it always has.</td></tr>
   <tr><td class="k">Sheet → MOWL</td><td>Σ matches Session Designer's interval timeline to the second (verified). Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
 </table>
 
@@ -428,6 +430,8 @@ phrasing really matters; read the downbeat there and type it into the offset fie
 
 <div class="bar b8">8 · TROUBLESHOOTING</div>
 <table>
+  <tr><td class="k">Import looks like it did nothing<span class="new">REV 29</span></td><td>Check the toolbar line at the top of the sheet and look for the blue-tinted rows. From s60-v33 the sheet scrolls to the first imported row, so this should answer itself. If the rows really are unchanged, the file held the same songs in the same order and the app now says so. If the file was never read, the prompt would have said “No songs found” instead.</td></tr>
+  <tr><td class="k">Import left last week’s songs behind<span class="new">REV 28</span></td><td>Fixed in s60-v32. Before that, an import only overwrote as many slots as it had songs and left the rest alone, so a short playlist landed on top of a full sheet and the two mixed. Update, then import again.</td></tr>
   <tr><td class="k">Import says "No songs found"</td><td>The CSV header wasn't recognised. The importer knows Chosic (Song/Artist/BPM/Duration) and Exportify (Track Name/Artist Name(s)/Duration (ms)).</td></tr>
   <tr><td class="k">"That code could not be read"</td><td>Usually the tail was cut in transit, or it's the wrong code type. Re-copy with the whole block selected; compare the last 10 characters on both devices.</td></tr>
   <tr><td class="k">An Elapsed Time is blank</td><td>Run RepairFormulas. See Section 5.</td></tr>

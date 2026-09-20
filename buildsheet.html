@@ -56,6 +56,13 @@
   .seg-head{display:flex;flex-wrap:wrap;gap:4px;justify-content:space-between;align-items:center;color:#fff;padding:6px 10px;border-radius:6px 6px 0 0;font-weight:700;font-size:12px;letter-spacing:.03em;}
   .seg-head .time{font-family:var(--mono);font-size:11px;font-weight:600;}
   .seg-note{font-size:10.5px;color:var(--muted);padding:5px 2px 7px;line-height:1.45;}
+  /* a few seconds of "this row is what just arrived" */
+  /* The colour must land at once and fade on the way OUT, so the transition
+     belongs on the plain row, not on the highlighted one. */
+  .slots tbody tr td{transition:background .9s ease;}
+  .slots tr.justimported td{background:#cfe8f7;transition:none;}
+  .slots tr.justimported td:first-child{box-shadow:inset 3px 0 0 var(--warm);}
+  @media print{ .slots tr.justimported td{background:none!important;box-shadow:none!important;} }
   /* The title and note are editable in place. They carry no chrome until you
      put a cursor in one, so the sheet still reads as a printed document. */
   .seg-headl{display:flex;align-items:center;gap:4px;flex:1 1 60%;min-width:0;}
@@ -1718,18 +1725,58 @@
     return songs;
   }
 
+  /* Show, for a few seconds, exactly which rows an import wrote — and put the
+     first of them on screen. Without this the only proof an import happened is
+     a status line that may be scrolled out of view. */
+  function flagImported(keys){
+    if(!keys||!keys.length)return;
+    var first=null;
+    keys.forEach(function(k){
+      var cell=document.querySelector('[data-s="'+k.split('_')[0]+'"][data-r="'+k.split('_')[1]+'"][data-f="song"]');
+      var tr=cell&&cell.closest?cell.closest('tr'):null;
+      if(!tr)return;
+      if(!first)first=tr;
+      tr.classList.add('justimported');
+      setTimeout(function(){tr.classList.remove('justimported');},4000);
+    });
+    if(first&&first.scrollIntoView){
+      try{ first.scrollIntoView({block:'center',behavior:'smooth'}); }
+      catch(e){ first.scrollIntoView(); }
+    }
+  }
+
   impGo.addEventListener('click',function(){
     var songs=parseSpotifyExport(impText.value);
     if(!songs.length){alert('No songs found. Paste an Exportify/Chosic CSV or one song per line.');return;}
     var withBpm=songs.filter(function(s){return s.bpm;}).length;
     var bpmNote=withBpm? withBpm+' of them carry BPMs from the file — those fill in automatically.' : 'This export has no BPM column — fill BPMs with the lookup sites or the tap-tester.';
-    if(!confirm('Fill the sheet with '+songs.length+' song'+(songs.length===1?'':'s')+' in ride order (top to bottom, bridges included)?\n\n'+bpmNote+'\nDrop times are cleared; ride modes, positions and targets keep their defaults.'))return;
-    var q=songs.slice();
+
+    // An import is a whole playlist, not a patch. Count what is already on the
+    // sheet past the end of it, because those slots are about to be emptied —
+    // leaving last week's songs sitting under this week's would give a sheet
+    // that mixes two rides and a ride clock built from both.
+    var slots=0, filledPast=0;
     data.forEach(function(seg){seg.rows.forEach(function(row){
-      if(!q.length)return;
-      var s=q.shift();
-      row.song=s.title; row.bpm=s.bpm?String(s.bpm):''; row.len=s.len||''; row.drops='';
-      if(s.bpm&&s.bpm>CAP)row.mode='half';
+      slots++;
+      if(slots>songs.length && (row.song||'').trim()) filledPast++;
+    });});
+    var clearNote=filledPast
+      ? '\n\n' + filledPast + ' slot' + (filledPast===1?'':'s') + ' further down still hold' + (filledPast===1?'s':'') +
+        ' a song from before. They will be emptied so the sheet is this playlist and nothing else.'
+      : '';
+    if(!confirm('Fill the sheet with '+songs.length+' song'+(songs.length===1?'':'s')+' in ride order (top to bottom, bridges included)?\n\n'+bpmNote+'\nDrop times are cleared; ride modes, positions and targets keep their defaults.'+clearNote))return;
+    var q=songs.slice(), touched=[], changed=0;
+    data.forEach(function(seg,si){seg.rows.forEach(function(row,ri){
+      var was=[row.song,row.bpm,row.len,row.drops].join('\u0001');
+      if(!q.length){                      // past the end of the import
+        row.song=''; row.bpm=''; row.len=''; row.drops='';
+      } else {
+        var s=q.shift();
+        row.song=s.title; row.bpm=s.bpm?String(s.bpm):''; row.len=s.len||''; row.drops='';
+        if(s.bpm&&s.bpm>CAP)row.mode='half';
+        touched.push(si+'_'+ri);
+      }
+      if([row.song,row.bpm,row.len,row.drops].join('\u0001')!==was) changed++;
     });});
     // extras become new rows in the cool-down section
     if(q.length){
@@ -1741,8 +1788,17 @@
     }
     impBack.classList.remove('open');
     save(); render();
-    statusEl.textContent='Imported '+songs.length+' songs'+(withBpm?' ('+withBpm+' with BPM)':'')+' ✓';
-    setTimeout(function(){statusEl.textContent='';},2500);
+
+    // Land it where the rider can see it. The sheet is long; an import that
+    // quietly rewrote rows above or below the fold reads as "nothing happened".
+    flagImported(touched);
+    statusEl.textContent='Imported '+songs.length+' song'+(songs.length===1?'':'s')+(withBpm?' ('+withBpm+' with BPM)':'')+
+      (filledPast?' · '+filledPast+' old slot'+(filledPast===1?'':'s')+' cleared':'')+' ✓';
+    clearTimeout(saveT);
+    saveT=setTimeout(function(){statusEl.textContent='';},8000);
+    if(!changed){
+      alert('Those '+songs.length+' song'+(songs.length===1?'':'s')+' were already on the sheet, in that order — so nothing changed.\n\nThe import did run.');
+    }
   });
 
   /* ---- Import from the Selector's playlist ---- */

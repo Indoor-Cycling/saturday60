@@ -72,7 +72,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 29 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 30 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar">0 · THE PHILOSOPHY AND THE THREE RULES</div>
@@ -288,7 +288,7 @@ the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
   <tr><td class="k">Sheet ↔ Sheet</td><td>Sheet codes clone everything. Sheet content REPLACES on import; the Section Library and drill catalog MERGE.</td></tr>
   <tr><td class="k">Two import routes</td><td>Chosic route = fast skeleton with BPMs/lengths. Selector route = complete data including drops, colour coding and any lengths you set. Pick ONE per week.</td></tr>
   <tr><td class="k">Seeing that it landed<span class="new">REV 29</span></td><td>When an import runs, the rows it wrote are tinted blue for a few seconds and the first of them is scrolled into view, so the result is visible wherever you were on the sheet. The toolbar line reports the counts for eight seconds. If an import changes nothing at all — the same file imported twice — it says so outright rather than looking like a dead button.</td></tr>
-  <tr><td class="k">An import replaces the playlist<span class="new">REV 28</span></td><td>Importing a Spotify or Chosic export fills the sheet in ride order and then <b>empties every slot past the last imported song</b>, so what is on the sheet is this playlist and nothing else. The prompt says how many old slots will be cleared before you commit, and Cancel leaves the sheet untouched. Before v31 those slots kept last week’s songs, lengths and drops, which left a sheet mixing two rides and a ride clock adding up both. More songs than slots still extends the cool-down, as it always has.</td></tr>
+  <tr><td class="k">An import replaces the playlist<span class="new">REV 30</span></td><td>Importing a Spotify or Chosic export fills the sheet in ride order and then puts the sheet back to its normal shape: every slot past the last imported song is emptied, and any <b>spare rows</b> beyond a section’s factory count are removed outright — so a short playlist gives a short sheet, not a tail of blank rows. A section never drops below its factory row count (one row for a section you added yourself), so the ride structure survives. The prompt says how many slots will be cleared and how many rows removed before you commit, and Cancel leaves the sheet untouched. More songs than slots still extends the cool-down, as it always has — and the next smaller import shrinks it back.</td></tr>
   <tr><td class="k">Sheet → MOWL</td><td>Σ matches Session Designer's interval timeline to the second (verified). Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
 </table>
 

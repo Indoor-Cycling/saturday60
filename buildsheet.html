@@ -1751,33 +1751,56 @@
     var withBpm=songs.filter(function(s){return s.bpm;}).length;
     var bpmNote=withBpm? withBpm+' of them carry BPMs from the file — those fill in automatically.' : 'This export has no BPM column — fill BPMs with the lookup sites or the tap-tester.';
 
-    // An import is a whole playlist, not a patch. Count what is already on the
-    // sheet past the end of it, because those slots are about to be emptied —
-    // leaving last week's songs sitting under this week's would give a sheet
-    // that mixes two rides and a ride clock built from both.
-    var slots=0, filledPast=0;
-    data.forEach(function(seg){seg.rows.forEach(function(row){
-      slots++;
-      if(slots>songs.length && (row.song||'').trim()) filledPast++;
-    });});
-    var clearNote=filledPast
-      ? '\n\n' + filledPast + ' slot' + (filledPast===1?'':'s') + ' further down still hold' + (filledPast===1?'s':'') +
-        ' a song from before. They will be emptied so the sheet is this playlist and nothing else.'
-      : '';
+    /* An import is a whole playlist, not a patch. Work out first how the sheet
+       should be shaped afterwards, so the prompt can say it before anything is
+       touched. Each section keeps whichever is larger: the rows this import
+       actually fills, or the section's factory row count. Everything past that
+       is a leftover from a longer week and is removed, not just blanked — so a
+       short playlist gives a short sheet instead of a tail of empty rows. */
+    var defCounts={};
+    DEFAULTS.forEach(function(d){defCounts[d.id]=d.rows.length;});
+
+    var offset=0, plan=[], toRemove=0, filledPast=0;
+    data.forEach(function(seg){
+      var L=seg.rows.length;
+      var fill=Math.max(0, Math.min(L, songs.length-offset));   // rows this import fills here
+      var floorRows=(defCounts[seg.id]!==undefined)?defCounts[seg.id]:1;
+      var keep=Math.max(fill, floorRows, 1);
+      if(keep>L)keep=L;
+      plan.push(keep);
+      for(var i=keep;i<L;i++){ if((seg.rows[i].song||'').trim()) filledPast++; }
+      for(var j=fill;j<keep;j++){ if((seg.rows[j].song||'').trim()) filledPast++; }
+      toRemove+=L-keep;
+      offset+=L;
+    });
+
+    var clearNote='';
+    if(filledPast||toRemove){
+      clearNote='\n\n'+filledPast+' slot'+(filledPast===1?'':'s')+' further down still hold'+(filledPast===1?'s':'')+
+                ' a song from before.';
+      clearNote+= toRemove
+        ? ' '+toRemove+' spare row'+(toRemove===1?'':'s')+' will be removed and the rest emptied, so the sheet comes back to its normal shape.'
+        : ' They will be emptied so the sheet is this playlist and nothing else.';
+    }
     if(!confirm('Fill the sheet with '+songs.length+' song'+(songs.length===1?'':'s')+' in ride order (top to bottom, bridges included)?\n\n'+bpmNote+'\nDrop times are cleared; ride modes, positions and targets keep their defaults.'+clearNote))return;
+
     var q=songs.slice(), touched=[], changed=0;
-    data.forEach(function(seg,si){seg.rows.forEach(function(row,ri){
-      var was=[row.song,row.bpm,row.len,row.drops].join('\u0001');
-      if(!q.length){                      // past the end of the import
-        row.song=''; row.bpm=''; row.len=''; row.drops='';
-      } else {
-        var s=q.shift();
-        row.song=s.title; row.bpm=s.bpm?String(s.bpm):''; row.len=s.len||''; row.drops='';
-        if(s.bpm&&s.bpm>CAP)row.mode='half';
-        touched.push(si+'_'+ri);
-      }
-      if([row.song,row.bpm,row.len,row.drops].join('\u0001')!==was) changed++;
-    });});
+    data.forEach(function(seg,si){
+      seg.rows.length=plan[si];                 // drop the spare rows first
+      seg.rows.forEach(function(row,ri){
+        var was=[row.song,row.bpm,row.len,row.drops].join('\u0001');
+        if(!q.length){                          // past the end of the import
+          row.song=''; row.bpm=''; row.len=''; row.drops='';
+        } else {
+          var s=q.shift();
+          row.song=s.title; row.bpm=s.bpm?String(s.bpm):''; row.len=s.len||''; row.drops='';
+          if(s.bpm&&s.bpm>CAP)row.mode='half';
+          touched.push(si+'_'+ri);
+        }
+        if([row.song,row.bpm,row.len,row.drops].join('\u0001')!==was) changed++;
+      });
+    });
+    if(toRemove) changed+=toRemove;             // a removed row is a change too
     // extras become new rows in the cool-down section
     if(q.length){
       var seg=data.filter(function(g){return g.id==='cool';})[0];
@@ -1793,7 +1816,8 @@
     // quietly rewrote rows above or below the fold reads as "nothing happened".
     flagImported(touched);
     statusEl.textContent='Imported '+songs.length+' song'+(songs.length===1?'':'s')+(withBpm?' ('+withBpm+' with BPM)':'')+
-      (filledPast?' · '+filledPast+' old slot'+(filledPast===1?'':'s')+' cleared':'')+' ✓';
+      (filledPast?' · '+filledPast+' old slot'+(filledPast===1?'':'s')+' cleared':'')+
+      (toRemove?' · '+toRemove+' spare row'+(toRemove===1?'':'s')+' removed':'')+' ✓';
     clearTimeout(saveT);
     saveT=setTimeout(function(){statusEl.textContent='';},8000);
     if(!changed){

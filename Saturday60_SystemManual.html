@@ -72,7 +72,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 31 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 32 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar">0 · THE PHILOSOPHY AND THE THREE RULES</div>
@@ -242,6 +242,7 @@ sections: the <b>groups</b>, then the <b>drills</b> inside them.</p>
 <table>
   <tr><td class="k">Export to Excel</td><td>In <b>Manage drills</b>. Writes <span class="url">Saturday60-Drills-YYYY-MM-DD.xlsx</span> — a real workbook, not a CSV, that opens without a warning. No internet needed: the app builds the file itself, so it works with no signal like everything else here.</td></tr>
   <tr><td class="k">The layout</td><td>Two sheets mirroring the panel. <b>Groups</b> — Order, Group — one row per heading in the order the app lists them. <b>Drills</b> — Group, Drill — one row per drill, which is exactly the pair of controls on each row of the panel. Both have a frozen header, a filter and sized columns. A third sheet, <b>Read me</b>, states the rules; the importer ignores it.</td></tr>
+  <tr><td class="k">The Group dropdown<span class="new">REV 32</span></td><td>Click any cell in the Drills sheet’s Group column and Excel offers a dropdown listing the groups from the Groups sheet — nothing to type, and no drill stranded under a misspelled heading. Excel refuses anything not on the list and says why. Add a group on the Groups sheet and it joins the dropdown at once; there is room for twenty more than you currently have, so the last few entries in the list may be blank until you use them.</td></tr>
   <tr><td class="k">Import from Excel</td><td>Reads a .xlsx back. It replaces <b>every</b> group and drill on that device, so export first if you want a copy of what is there. The prompt counts the drills and groups, names any group the Drills sheet invented, and says how many empty rows it skipped. Cancel changes nothing. Drill text already typed into the Build Sheet is never touched — this is the catalogue, not the ride.</td></tr>
   <tr><td class="k">Renaming a group</td><td>Change it on <b>both</b> sheets. Matching is by the name spelled in the Drills column, so renaming only on the Groups sheet gives you an empty new heading and leaves the drills under the old one. Find and Replace down the Drills column is the quick way. The Order column is what sets the order — re-sort in Excel and the app follows.</td></tr>
   <tr><td class="k">What it will not read</td><td>.xls, .csv, or a Numbers file. It says so rather than failing quietly. The sheets must still be called Groups and Drills.</td></tr>

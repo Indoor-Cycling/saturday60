@@ -332,6 +332,9 @@
       <button title="Add a new heading to group your drills under" id="dmAddGroup">＋ Add group</button>
       <button title="Add a drill to this group" id="dmAdd">＋ Add drill</button>
       <button title="Bring back the drills the app shipped with, keeping your own" id="dmRestore">Restore built-ins</button>
+      <button title="Write the groups and drills to an .xlsx workbook laid out like this page" id="dmXlsOut">Export to Excel</button>
+      <button title="Read a drill workbook back in, replacing this catalogue" id="dmXlsIn">Import from Excel</button>
+      <input type="file" id="dmXlsFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style="display:none">
       <span class="grow"></span>
       <button title="Close the drill catalogue" class="primary" id="dmDone">Done</button>
     </div>
@@ -1145,6 +1148,124 @@
       });
     });
   }
+  /* ---- the drill catalogue, to and from a workbook ----
+     The sheet layout mirrors this page: a Groups sheet in the order the
+     groups are listed here, and a Drills sheet of group + wording, which is
+     exactly the pair of controls on each row. Edit either in Excel, import it
+     back, and the page reads the same. */
+  function drillSheets(){
+    return [
+      { name:'Groups', widths:[8,34],
+        rows:[['Order','Group']].concat(DRILL_GROUPS.map(function(g,i){ return [i+1, g]; })) },
+      { name:'Drills', widths:[26,76],
+        rows:[['Group','Drill']].concat(drills.map(function(d){ return [d.g||'', d.t||'']; })) },
+      { name:'Read me', widths:[104], header:false, rows:[
+        ['THE SATURDAY 60 — drill catalogue'],
+        [''],
+        ['This workbook is the Manage drills page, laid out as two sheets.'],
+        [''],
+        ['GROUPS   One row per heading, in the order they appear in the app.'],
+        ['         The Order column is there so you can re-sort in Excel; the app reads it.'],
+        ['         A group with no drills is kept.'],
+        [''],
+        ['DRILLS   One row per drill: which group it sits under, and its wording.'],
+        ['         The wording is what lands in the Intervals cell on the sheet.'],
+        ['         A row with no drill text is ignored. A row whose group is not on the'],
+        ['         Groups sheet creates that group.'],
+        [''],
+        ['RENAMING A GROUP   Change it on BOTH sheets. The app matches by the name'],
+        ['         spelled in the Drills column, so renaming it only on the Groups sheet'],
+        ['         leaves an empty new heading and the drills where they were.'],
+        ['         Excel\u2019s Find and Replace across the Drills column is the quick way.'],
+        [''],
+        ['IMPORTING   Manage drills \u2192 Import from Excel. It replaces every group and'],
+        ['         drill on that device, so export first if you want a copy of what is there.'],
+        ['         Drill text already typed into the Build Sheet is never touched.'],
+        [''],
+        ['Sheet names matter. Keep them Groups and Drills; this sheet is ignored.']
+      ]}
+    ];
+  }
+
+  document.getElementById('dmXlsOut').addEventListener('click',function(){
+    try{
+      var bytes=S60XLSX.write(drillSheets());
+      var blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download='Saturday60-Drills-'+dateStamp()+'.xlsx';
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
+      sheetStatus('Drill workbook saved ✓');
+    }catch(e){ alert('Could not build the workbook: '+(e&&e.message||e)); }
+  });
+
+  var dmXlsFile=document.getElementById('dmXlsFile');
+  document.getElementById('dmXlsIn').addEventListener('click',function(){ dmXlsFile.value=''; dmXlsFile.click(); });
+  dmXlsFile.addEventListener('change',function(){
+    var f=dmXlsFile.files&&dmXlsFile.files[0]; if(!f)return;
+    var rd=new FileReader();
+    rd.onerror=function(){ alert('That file could not be read.'); };
+    rd.onload=function(){
+      S60XLSX.read(rd.result).then(function(book){
+        applyDrillBook(book);
+      }).catch(function(err){
+        alert('That workbook could not be read.\n\n'+((err&&err.message)||'')+
+              '\n\nIt must be a .xlsx saved from Excel — not .xls, .csv or a numbers file.');
+      });
+    };
+    rd.readAsArrayBuffer(f);
+  });
+
+  function sheetByName(book, want){
+    for(var k in book){ if(k.toLowerCase().trim()===want) return book[k]; }
+    return null;
+  }
+
+  function applyDrillBook(book){
+    var gRows=sheetByName(book,'groups'), dRows=sheetByName(book,'drills');
+    if(!dRows){ alert('No sheet called “Drills” in that workbook.\n\nExport the catalogue first and edit that file — the sheet names are what the importer looks for.'); return; }
+
+    // Groups sheet: honour its order. Order column is a convenience for sorting
+    // in Excel, so use it when it holds numbers and fall back to row order.
+    var groups=[];
+    if(gRows&&gRows.length>1){
+      var g=gRows.slice(1).map(function(r,i){
+        return { n:(r[1]!=null&&String(r[1]).trim())?String(r[1]).trim():'', o:parseFloat(r[0]) };
+      }).filter(function(x){ return x.n; });
+      if(g.every(function(x){ return !isNaN(x.o); })) g.sort(function(a,b){ return a.o-b.o; });
+      g.forEach(function(x){ if(groups.indexOf(x.n)<0) groups.push(x.n); });
+    }
+
+    var head=(dRows[0]||[]).map(function(h){ return String(h||'').toLowerCase().trim(); });
+    var gi=head.indexOf('group'), ti=head.indexOf('drill');
+    if(gi<0)gi=0; if(ti<0)ti=1;
+
+    var out=[], invented=[], blank=0;
+    dRows.slice(1).forEach(function(r){
+      var t=String(r[ti]==null?'':r[ti]).trim();
+      if(!t){ blank++; return; }
+      var gname=String(r[gi]==null?'':r[gi]).trim();
+      if(!gname) gname=groups[0]||DRILL_GROUPS[0]||'My drills';
+      if(groups.indexOf(gname)<0){ groups.push(gname); invented.push(gname); }
+      out.push({ g:gname, t:t });
+    });
+
+    if(!out.length){ alert('That workbook has a Drills sheet but no drills in it.'); return; }
+    if(!groups.length) groups=DRILL_GROUPS.slice();
+
+    var note='Replace the drill catalogue with what is in this workbook?\n\n'+
+      out.length+' drill'+(out.length===1?'':'s')+' in '+groups.length+' group'+(groups.length===1?'':'s')+'.';
+    if(invented.length) note+='\n\nNew group'+(invented.length===1?'':'s')+' from the Drills sheet: '+invented.join(', ')+'.';
+    if(blank) note+='\n'+blank+' empty row'+(blank===1?'':'s')+' ignored.';
+    note+='\n\nThis replaces every group and drill on this device. Drill text already typed into the sheet is not touched.';
+    if(!confirm(note)) return;
+
+    DRILL_GROUPS.length=0; groups.forEach(function(g){ DRILL_GROUPS.push(g); });
+    drills.length=0; out.forEach(function(d){ drills.push(d); });
+    saveGroups(); saveDrills(); renderDrillManager(); render(); updateSums();
+    sheetStatus('Imported '+out.length+' drills in '+groups.length+' groups ✓');
+  }
+
   function openDrillManager(){renderDrillManager(); drillBack.classList.add('open');}
   document.getElementById('dmAddGroup').addEventListener('click',function(){
     var n=prompt('Name the new group:','New group');
@@ -1322,6 +1443,284 @@
     BUILTIN_DRILLS.forEach(function(g){g[1].forEach(function(t){out.push({g:g[0],t:t});});});
     return out;
   }
+
+  /* ============================================================
+     A small .xlsx writer and reader, built in rather than pulled
+     from a CDN: this app has to keep working with no signal, and
+     an offline page cannot fetch a library. The writer stores its
+     parts uncompressed (valid zip, Excel is happy); the reader
+     handles the deflated parts Excel writes back, using the
+     browser’s own DecompressionStream.
+     ============================================================ */
+/* ===== minimal .xlsx writer and reader, no libraries ===== */
+var S60XLSX = (function () {
+  function utf8(str) {
+    if (typeof TextEncoder === 'function') return new TextEncoder().encode(str);
+    var s = unescape(encodeURIComponent(str)), a = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
+    return a;
+  }
+  var CRCT = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) { var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0; }
+    return t;
+  })();
+  function crc32(buf) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < buf.length; i++) c = CRCT[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '');   // XML forbids these outright
+  }
+  function colName(i) { var s = ''; i++; while (i > 0) { var m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = (i - m - 1) / 26; } return s; }
+
+  /* ---- write ---- */
+  function sheetXml(sheet) {
+    var cols = (sheet.widths || []).map(function (w, i) {
+      return '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>';
+    }).join('');
+    var rows = sheet.rows.map(function (row, r) {
+      var cells = row.map(function (v, c) {
+        var ref = colName(c) + (r + 1);
+        var style = (r === 0 && sheet.header !== false) ? ' s="1"' : '';
+        if (v == null || v === '') return '<c r="' + ref + '"' + style + '/>';
+        if (typeof v === 'number' && isFinite(v)) return '<c r="' + ref + '"' + style + '><v>' + v + '</v></c>';
+        return '<c r="' + ref + '"' + style + ' t="inlineStr"><is><t xml:space="preserve">' + esc(v) + '</t></is></c>';
+      }).join('');
+      return '<row r="' + (r + 1) + '">' + cells + '</row>';
+    }).join('');
+    var freeze = (sheet.header === false) ? '' :
+      '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>';
+    var auto = (sheet.header === false || !sheet.rows.length) ? '' :
+      '<autoFilter ref="A1:' + colName(sheet.rows[0].length - 1) + sheet.rows.length + '"/>';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+      freeze + (cols ? '<cols>' + cols + '</cols>' : '') +
+      '<sheetData>' + rows + '</sheetData>' + auto + '</worksheet>';
+  }
+
+  function write(sheets) {
+    var files = [];
+    function add(name, text) { files.push({ name: name, data: utf8(text) }); }
+
+    add('[Content_Types].xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+      sheets.map(function (s, i) {
+        return '<Override PartName="/xl/worksheets/sheet' + (i + 1) + '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+      }).join('') +
+      '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' +
+      '</Types>');
+
+    add('_rels/.rels',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>' +
+      '</Relationships>');
+
+    add('xl/workbook.xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
+      'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>' +
+      sheets.map(function (s, i) {
+        return '<sheet name="' + esc(s.name) + '" sheetId="' + (i + 1) + '" r:id="rId' + (i + 1) + '"/>';
+      }).join('') + '</sheets></workbook>');
+
+    add('xl/_rels/workbook.xml.rels',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      sheets.map(function (s, i) {
+        return '<Relationship Id="rId' + (i + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + (i + 1) + '.xml"/>';
+      }).join('') +
+      '<Relationship Id="rId' + (sheets.length + 1) + '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+      '</Relationships>');
+
+    add('xl/styles.xml',
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+      '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font>' +
+      '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts>' +
+      '<fills count="3"><fill><patternFill patternType="none"/></fill>' +
+      '<fill><patternFill patternType="gray125"/></fill>' +
+      '<fill><patternFill patternType="solid"><fgColor rgb="FF0E7FB8"/><bgColor indexed="64"/></patternFill></fill></fills>' +
+      '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+      '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+      '<cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+      '<xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1">' +
+      '<alignment vertical="center"/></xf></cellXfs>' +
+      '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>');
+
+    sheets.forEach(function (s, i) { add('xl/worksheets/sheet' + (i + 1) + '.xml', sheetXml(s)); });
+
+    return zip(files);
+  }
+
+  function zip(files) {
+    var chunks = [], central = [], offset = 0;
+    function u16(n) { return [n & 255, (n >> 8) & 255]; }
+    function u32(n) { return [n & 255, (n >> 8) & 255, (n >> 16) & 255, (n >>> 24) & 255]; }
+    files.forEach(function (f) {
+      var name = utf8(f.name), crc = crc32(f.data), n = f.data.length;
+      var local = [].concat([80, 75, 3, 4], u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+        u32(crc), u32(n), u32(n), u16(name.length), u16(0));
+      chunks.push(new Uint8Array(local), name, f.data);
+      central.push([].concat([80, 75, 1, 2], u16(20), u16(20), u16(0x0800), u16(0), u16(0), u16(0),
+        u32(crc), u32(n), u32(n), u16(name.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset)), name);
+      offset += local.length + name.length + n;
+    });
+    var cdStart = offset, cd = [];
+    central.forEach(function (part) {
+      var a = (part instanceof Uint8Array) ? part : new Uint8Array(part);
+      cd.push(a); offset += a.length;
+    });
+    var end = new Uint8Array([].concat([80, 75, 5, 6], u16(0), u16(0),
+      u16(files.length), u16(files.length), u32(offset - cdStart), u32(cdStart), u16(0)));
+    var all = chunks.concat(cd, [end]);
+    var total = all.reduce(function (a, b) { return a + b.length; }, 0);
+    var out = new Uint8Array(total), p = 0;
+    all.forEach(function (a) { out.set(a, p); p += a.length; });
+    return out;
+  }
+
+  /* ---- read ---- */
+  function dv(buf) { return new DataView(buf.buffer, buf.byteOffset, buf.byteLength); }
+
+  function entries(buf) {
+    var d = dv(buf), i = buf.length - 22;
+    for (; i >= 0; i--) if (d.getUint32(i, true) === 0x06054b50) break;
+    if (i < 0) throw new Error('That file is not a .xlsx workbook.');
+    var count = d.getUint16(i + 10, true), start = d.getUint32(i + 16, true), out = [], p = start;
+    for (var n = 0; n < count; n++) {
+      if (d.getUint32(p, true) !== 0x02014b50) break;
+      var method = d.getUint16(p + 10, true),
+          csize = d.getUint32(p + 20, true),
+          usize = d.getUint32(p + 24, true),
+          nlen = d.getUint16(p + 28, true),
+          elen = d.getUint16(p + 30, true),
+          clen = d.getUint16(p + 32, true),
+          lho = d.getUint32(p + 42, true);
+      var name = '';
+      for (var c = 0; c < nlen; c++) name += String.fromCharCode(buf[p + 46 + c]);
+      try { name = decodeURIComponent(escape(name)); } catch (e) {}
+      out.push({ name: name, method: method, csize: csize, usize: usize, lho: lho });
+      p += 46 + nlen + elen + clen;
+    }
+    return out;
+  }
+
+  function raw(buf, e) {
+    var d = dv(buf), nlen = d.getUint16(e.lho + 26, true), elen = d.getUint16(e.lho + 28, true);
+    var start = e.lho + 30 + nlen + elen;
+    return buf.subarray(start, start + e.csize);
+  }
+
+  function inflate(bytes) {
+    if (typeof DecompressionStream !== 'function') {
+      return Promise.reject(new Error('This browser cannot read compressed spreadsheets.'));
+    }
+    var ds = new DecompressionStream('deflate-raw');
+    var w = ds.writable.getWriter(); w.write(bytes); w.close();
+    return new Response(ds.readable).arrayBuffer().then(function (ab) { return new Uint8Array(ab); });
+  }
+
+  function text(buf, e) {
+    var body = raw(buf, e);
+    var done = (e.method === 0) ? Promise.resolve(body) : inflate(body);
+    return done.then(function (bytes) {
+      return (typeof TextDecoder === 'function') ? new TextDecoder('utf-8').decode(bytes)
+        : String.fromCharCode.apply(null, bytes);
+    });
+  }
+
+  function unesc(s) {
+    return String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'").replace(/&#(\d+);/g, function (m, n) { return String.fromCharCode(+n); })
+      .replace(/&amp;/g, '&');
+  }
+
+  function parseSheet(xml, shared) {
+    var rows = [];
+    var rowRe = /<row[^>]*>([\s\S]*?)<\/row>|<row[^>]*\/>/g, rm;
+    while ((rm = rowRe.exec(xml))) {
+      var inner = rm[1] || '', cells = [];
+      var cRe = /<c\s([^>]*?)(\/>|>([\s\S]*?)<\/c>)/g, cm;
+      while ((cm = cRe.exec(inner))) {
+        var attrs = cm[1] || '', body = cm[3] || '';
+        var refM = /r="([A-Z]+)\d+"/.exec(attrs);
+        var col = 0;
+        if (refM) { var L = refM[1]; for (var i = 0; i < L.length; i++) col = col * 26 + (L.charCodeAt(i) - 64); col--; }
+        else col = cells.length;
+        var t = (/t="([^"]+)"/.exec(attrs) || [])[1] || 'n', val = '';
+        if (t === 'inlineStr') {
+          var ts = body.match(/<t[^>]*>([\s\S]*?)<\/t>/g) || [];
+          val = ts.map(function (x) { return unesc(x.replace(/<[^>]+>/g, '')); }).join('');
+        } else if (t === 's') {
+          var iv = (/<v>([\s\S]*?)<\/v>/.exec(body) || [])[1];
+          val = shared[+iv] != null ? shared[+iv] : '';
+        } else if (t === 'str') {
+          val = unesc(((/<v>([\s\S]*?)<\/v>/.exec(body) || [])[1] || '').replace(/<[^>]+>/g, ''));
+        } else {
+          val = ((/<v>([\s\S]*?)<\/v>/.exec(body) || [])[1] || '');
+        }
+        while (cells.length < col) cells.push('');
+        cells[col] = val;
+      }
+      rows.push(cells);
+    }
+    return rows;
+  }
+
+  function read(arrayBuffer) {
+    try { return readInner(arrayBuffer); }
+    catch (e) { return Promise.reject(e); }     // a non-zip throws before any promise exists
+  }
+  function readInner(arrayBuffer) {
+    var buf = new Uint8Array(arrayBuffer), list = entries(buf), byName = {};
+    list.forEach(function (e) { byName[e.name] = e; });
+    if (!byName['xl/workbook.xml']) return Promise.reject(new Error('That is not an Excel workbook.'));
+    var shared = [];
+    var first = byName['xl/sharedStrings.xml']
+      ? text(buf, byName['xl/sharedStrings.xml']).then(function (xml) {
+          var re = /<si[^>]*>([\s\S]*?)<\/si>/g, m;
+          while ((m = re.exec(xml))) {
+            var ts = m[1].match(/<t[^>]*>([\s\S]*?)<\/t>/g) || [];
+            shared.push(ts.map(function (x) { return unesc(x.replace(/<[^>]+>/g, '')); }).join(''));
+          }
+        })
+      : Promise.resolve();
+
+    return first
+      .then(function () { return text(buf, byName['xl/workbook.xml']); })
+      .then(function (wb) {
+        var names = [], re = /<sheet[^>]*name="([^"]*)"[^>]*\/>/g, m;
+        while ((m = re.exec(wb))) names.push(unesc(m[1]));
+        var rels = byName['xl/_rels/workbook.xml.rels'];
+        return (rels ? text(buf, rels) : Promise.resolve('')).then(function () {
+          var out = {}, chain = Promise.resolve();
+          names.forEach(function (nm, i) {
+            var e = byName['xl/worksheets/sheet' + (i + 1) + '.xml'];
+            if (!e) return;
+            chain = chain.then(function () {
+              return text(buf, e).then(function (xml) { out[nm] = parseSheet(xml, shared); });
+            });
+          });
+          return chain.then(function () { return out; });
+        });
+      });
+  }
+
+  return { write: write, read: read };
+})();
+
   var DKEY2='s60_drills_v1';
   var drills=loadDrills();
   function loadDrills(){

@@ -128,6 +128,8 @@
   col.c-slot{width:24px;} col.c-song{width:138px;} col.c-len{width:44px;} col.c-bpm{width:40px;} col.c-mode{width:58px;}
   col.c-rpm{width:38px;} col.c-pos{width:66px;} col.c-int{width:122px;} col.c-pow{width:86px;}
   col.c-hr{width:52px;} col.c-drops{width:70px;} col.c-sum{width:46px;} col.c-rm{width:56px;}
+  /* targets hidden: the width they held goes to the two columns that carry words */
+  .slots.wide col.c-song{width:210px;} .slots.wide col.c-int{width:180px;}
 
   .jump{width:100%;font-size:9.5px;border:1px solid var(--line);border-radius:5px;background:var(--paper);color:var(--muted);margin-top:2px;padding:2px 0;font-family:var(--sans);}
   .dm-list{max-height:300px;overflow-y:auto;margin:4px 0 10px;}
@@ -225,6 +227,8 @@
     <button id="toSelectorBtn" title="Sends songs, BPMs and drops to the phone Selector">Send → Selector</button>
     <button id="phraseBtn" title="Every song’s 8/16/32-bar boundaries on the ride clock">Phrase map</button>
     <button title="Copy the sheet as Excel rows, ready to paste into the workbook at B2" id="excelBtn">Export for Excel</button>
+    <button title="Rescale the Power and HR cells that still hold the shipped wording to your FTP and Max HR. Anything you have typed yourself is left alone." id="tgtBtn">Refresh targets</button>
+    <button title="Hide the Power target and HR guide columns and give that width to Song and Intervals. Nothing is deleted — the wording comes back when you show them again." id="noTgtBtn">Hide targets</button>
     <button title="Discard this sheet and start again from the default Build Sheet" id="resetBtn">Reset to defaults</button>
     <button title="Empty the song titles, lengths and drop times, keeping every other setting" id="clearSongsBtn">Clear songs &amp; drops only</button>
     <span class="drift-ctl">Drift <input id="driftIn" inputmode="decimal" title="Average fractional seconds each song runs past its whole-second length. Applied to ◉ ride times only; Σ stays matched to MOWL."> s/song</span>
@@ -569,6 +573,103 @@
       el.value=(el===ftpIn?getFtp():getMaxHr());
       saveRider(); renderZones();
     });
+  });
+
+  /* ---- the targets column switch ----
+     This replaces what used to be a second HTML file, "Build Sheet · no
+     targets". A separate file meant two sheets to keep in step and two
+     storage areas that drifted apart; a switch on the one sheet gives the
+     same narrow layout with the same songs, drops and drills underneath.
+     Nothing is deleted — the wording is still on the rows, just not shown. */
+  var NOTGT='s60_notargets_v1';
+  var noTgt=false;
+  try{ noTgt=localStorage.getItem(NOTGT)==='1'; }catch(e){}
+  var noTgtBtn=document.getElementById('noTgtBtn');
+  function paintTgtBtn(){
+    if(!noTgtBtn)return;
+    noTgtBtn.textContent = noTgt ? 'Show targets' : 'Hide targets';
+    noTgtBtn.title = noTgt
+      ? 'Bring back the Power target and HR guide columns. Their wording was never deleted.'
+      : 'Hide the Power target and HR guide columns and give that width to Song and Intervals. Nothing is deleted — the wording comes back when you show them again.';
+  }
+  paintTgtBtn();
+  if(noTgtBtn) noTgtBtn.addEventListener('click',function(){
+    noTgt=!noTgt;
+    try{ localStorage.setItem(NOTGT, noTgt?'1':'0'); }catch(e){}
+    paintTgtBtn(); render(); updateSums();
+    sheetStatus(noTgt?'Targets hidden — the wording is kept ✓':'Targets shown again ✓');
+  });
+
+  /* ---- rescaling the per-row Power and HR cells ----
+     Those cells are free text — your written cues — so nothing rewrites them
+     behind your back. This button rescales only the ones still carrying the
+     wording the template shipped with, which was written for FTP 158 W and a
+     max heart rate of 164. A cell you have typed yourself is never touched,
+     and once a cell is yours it stays yours. */
+  var TGT_FTP0=158, TGT_HR0=164;
+  var STOCK_PW={}, STOCK_HR={};
+  DEFAULTS.forEach(function(seg){seg.rows.forEach(function(r){
+    if(r.power)STOCK_PW[r.power]=1;
+    if(r.hr)STOCK_HR[r.hr]=1;
+  });});
+
+  // Scale the watt figures only. The zone labels carry digits of their own
+  // ("Z1→Z2", "Z5 bursts") and must survive untouched, so only the part after
+  // the middle dot — where the numbers live — is rescaled.
+  function scalePower(text, ftp){
+    var k=ftp/TGT_FTP0, dot=text.indexOf('\u00b7');
+    if(dot<0) return text;
+    var head=text.slice(0,dot+1), tail=text.slice(dot+1);
+    return head+tail.replace(/\d+/g,function(n){ return String(Math.round(+n*k)); });
+  }
+  function scaleHr(text, hr){
+    var k=hr/TGT_HR0;
+    return text.replace(/\d+/g,function(n){ return String(Math.round(+n*k)); });
+  }
+
+  function targetPlan(){
+    var ftp=getFtp(), hr=getMaxHr(), jobs=[], mine=0;
+    data.forEach(function(seg,si){seg.rows.forEach(function(row,ri){
+      var pBase=row.pwBase || (STOCK_PW[row.power]?row.power:null);
+      var hBase=row.hrBase || (STOCK_HR[row.hr]?row.hr:null);
+      var pOk = pBase && (row.power===pBase || row.power===row.pwAuto);
+      var hOk = hBase && (row.hr===hBase   || row.hr===row.hrAuto);
+      if((row.power||'').trim() && !pOk) mine++;
+      else if((row.hr||'').trim() && !hOk) mine++;
+      if(!pOk && !hOk) return;
+      var np = pOk ? scalePower(pBase,ftp) : null;
+      var nh = hOk ? scaleHr(hBase,hr)     : null;
+      if((np!==null&&np!==row.power)||(nh!==null&&nh!==row.hr)){
+        jobs.push({row:row,pBase:pBase,hBase:hBase,np:np,nh:nh,key:si+'_'+ri});
+      } else {
+        if(pOk){row.pwBase=pBase;} if(hOk){row.hrBase=hBase;}
+      }
+    });});
+    return {jobs:jobs, mine:mine, ftp:ftp, hr:hr};
+  }
+
+  document.getElementById('tgtBtn').addEventListener('click',function(){
+    var plan=targetPlan();
+    if(!plan.jobs.length){
+      alert(plan.mine
+        ? 'Nothing to rescale.\n\nEvery Power and HR cell on this sheet is wording you have written yourself, so none of them are touched.'
+        : 'Nothing to rescale — the targets already match FTP '+plan.ftp+' W and Max HR '+plan.hr+' bpm.');
+      return;
+    }
+    var msg='Rescale '+plan.jobs.length+' row'+(plan.jobs.length===1?'':'s')+' to FTP '+plan.ftp+' W and Max HR '+plan.hr+' bpm?\n\n'+
+      'Only cells still holding the shipped wording change.';
+    if(plan.mine) msg+='\n'+plan.mine+' row'+(plan.mine===1?'':'s')+' you have written yourself will be left exactly as you wrote '+(plan.mine===1?'it':'them')+'.';
+    var ex=plan.jobs[0];
+    if(ex.np) msg+='\n\nFor example: “'+ex.pBase+'” becomes “'+ex.np+'”.';
+    if(!confirm(msg))return;
+
+    plan.jobs.forEach(function(j){
+      if(j.np!==null){ j.row.power=j.np; j.row.pwBase=j.pBase; j.row.pwAuto=j.np; }
+      if(j.nh!==null){ j.row.hr=j.nh;   j.row.hrBase=j.hBase; j.row.hrAuto=j.nh; }
+    });
+    save(); render(); updateSums();
+    flagImported(plan.jobs.map(function(j){return j.key;}));
+    sheetStatus('Rescaled '+plan.jobs.length+' row'+(plan.jobs.length===1?'':'s')+' to FTP '+plan.ftp+' ✓');
   });
 
   /* ---- whole-sheet transfer code (desktop ↔ phone) ---- */
@@ -1805,8 +1906,12 @@ var S60XLSX = (function () {
           '<span><select class="secswap" data-secswap="'+si+'" title="Trade this section\u2019s title, note and colour with another section \u2014 no song moves">'+swapOpts+'</select>'+
           '<span class="segsum" id="segsum_'+si+'"></span><span class="time">'+esc(seg.time)+'</span></span></div>'+
         '<textarea class="seg-note" rows="1" data-segnote="'+si+'" title="The working note for this block. Yours to rewrite.">'+esc(seg.note)+'</textarea>'+
-        '<table class="slots"><colgroup><col class="c-slot"><col class="c-song"><col class="c-len"><col class="c-bpm"><col class="c-mode"><col class="c-rpm"><col class="c-pos"><col class="c-int"><col class="c-pow"><col class="c-hr"><col class="c-drops"><col class="c-sum"><col class="c-rm"></colgroup>'+
-        '<tr><th>#</th><th>Song</th><th>Len</th><th>BPM</th><th>Ride</th><th>RPM</th><th>Pos</th><th>Intervals in song</th><th>Power target</th><th>HR guide</th><th>Drop times</th><th>Σ ride</th><th></th></tr>';
+        '<table class="slots'+(noTgt?' wide':'')+'"><colgroup><col class="c-slot"><col class="c-song"><col class="c-len"><col class="c-bpm"><col class="c-mode"><col class="c-rpm"><col class="c-pos"><col class="c-int">'+
+        (noTgt?'':'<col class="c-pow"><col class="c-hr">')+
+        '<col class="c-drops"><col class="c-sum"><col class="c-rm"></colgroup>'+
+        '<tr><th>#</th><th>Song</th><th>Len</th><th>BPM</th><th>Ride</th><th>RPM</th><th>Pos</th><th>Intervals in song</th>'+
+        (noTgt?'':'<th>Power target</th><th>HR guide</th>')+
+        '<th>Drop times</th><th>Σ ride</th><th></th></tr>';
       seg.rows.forEach(function(row,ri){
         var modeOpts=MODES.map(function(m){return '<option value="'+m[0]+'"'+(row.mode===m[0]?' selected':'')+'>'+m[1]+'</option>';}).join('');
         var posOpts=POS.map(function(p){return '<option'+(row.pos===p?' selected':'')+'>'+p+'</option>';}).join('');
@@ -1826,8 +1931,9 @@ var S60XLSX = (function () {
           '<td><select data-s="'+si+'" data-r="'+ri+'" data-f="pos">'+posOpts+'</select></td>'+
           '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="intervals">'+esc(row.intervals)+'</textarea>'+
             '<select class="int-preset" data-ip="'+si+'_'+ri+'">'+buildDrillOpts()+'</select></td>'+
-          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="power">'+esc(row.power)+'</textarea></td>'+
-          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="hr">'+esc(row.hr)+'</textarea></td>'+
+          (noTgt?'':
+            '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="power">'+esc(row.power)+'</textarea></td>'+
+            '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="hr">'+esc(row.hr)+'</textarea></td>')+
           '<td><textarea rows="1" class="drops" data-s="'+si+'" data-r="'+ri+'" data-f="drops" placeholder="1:14, 2:40">'+esc(row.drops)+'</textarea><div class="ridedrops" id="rided_'+si+'_'+ri+'"></div><div class="barpos" id="barp_'+si+'_'+ri+'"></div></td>'+
           '<td class="sum-cell" id="sum_'+si+'_'+ri+'">—</td>'+
           '<td class="rm-cell">'+mv+(seg.rows.length>1?'<button data-del="'+si+'_'+ri+'" title="Remove song">×</button>':'')+

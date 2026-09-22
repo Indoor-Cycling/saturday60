@@ -72,7 +72,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 32 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 34 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar">0 · THE PHILOSOPHY AND THE THREE RULES</div>
@@ -89,7 +89,7 @@ cool-down — hold clean clock time.</p>
 <table>
   <tr><td class="k">Song BPM Selector</td><td>Phone-first. Tap-tester, phrase strip, block matching, playlist, drop capture with colour coding, song length, drops library, transfer codes, backup.</td></tr>
   <tr><td class="k">Build Sheet Template</td><td>Desktop-first. The 60-minute plan: reorderable sections, auto RPM, clock math, ride-clock drops, drill presets, Section Library, exports.</td></tr>
-  <tr><td class="k">Build Sheet · no targets</td><td>The same sheet without the Power target and HR guide columns, with that width given to Song and Intervals. Separate storage from the full sheet; shares the drops library and drill catalog.</td></tr>
+  <tr><td class="k">Build Sheet · no targets<span class="new">REV 34</span></td><td>No longer a separate file. It is now the <b>Hide targets</b> switch on the Build Sheet itself: the same sheet with the Power target and HR guide columns hidden and that width given to Song and Intervals. One sheet, one set of songs, drops and drills — nothing to keep in step and no second storage area to drift.</td></tr>
   <tr><td class="k">Drops Library Editor</td><td>Standalone. Opens a drops .json to view or edit outside the two tools: times in m:ss, drills alongside, merge two libraries, save back out, and <b>Export CSV</b> for a printable copy.<span class="new">REV 21</span></td></tr>
   <tr><td class="k">Spin Class Pro workbook</td><td>Excel backup and visuals: My Playlist + Intervals → Charts (segment pie, cadence bands, two load curves) and a two-sided fold-up Playlist Print.</td></tr>
   <tr><td class="k">Weekly Workflow</td><td>The one-page checklist of the six phases — now a card on the hub, readable in the app with a link back, plus a print-ready PDF that opens in its own window.<span class="new">REV 21</span></td></tr>
@@ -201,7 +201,9 @@ defaults</b> always restores the factory eight, and the library and drills survi
   <tr><td class="k">What they drive</td><td>The whole zone table underneath. Power columns are shares of FTP — Z1 under 55% · Z2 56–75 · Z3 76–90 · Sweet Spot 88–94 · Z4 95–105 · Z5 106 and up — and heart-rate columns are shares of maximum: Z1 under 60% · Z2 60–70 · Z3 70–80 · Sweet Spot 76–84 · Z4 80–90 · Z5 90–100. The table redraws as you type.</td></tr>
   <tr><td class="k">Where they live</td><td>On the device, like the drift setting, and they travel inside sheet backups and Send → Build Sheet codes. <b>Reset to defaults</b> rebuilds the template but leaves your numbers alone — they are yours, not part of the ride.</td></tr>
   <tr><td class="k">Bad input</td><td>Clearing a box or typing nonsense puts the shipped default back when you click away. There is no way to leave the table broken.</td></tr>
-  <tr><td class="k">Retesting</td><td>An FTP test changes one number and the whole sheet’s targets follow. The per-song Power and HR cells are free text and do not recalculate — they are your written cues, so check any that quote absolute watts after a big change.</td></tr>
+  <tr><td class="k">Retesting<span class="new">REV 33</span></td><td>An FTP test changes one number and the zone table follows at once. The per-song Power and HR cells are free text — your written cues — so nothing rewrites them behind your back; <b>Refresh targets</b> in the toolbar rescales them when you are ready.</td></tr>
+  <tr><td class="k">Refresh targets<span class="new">REV 33</span></td><td>Rescales every Power and HR cell that still holds the wording the template shipped with, which was written for FTP 158 W and Max HR 164. “Z4 · 150–166 W” at FTP 200 becomes “Z4 · 190–210 W”. Zone labels keep their own digits — Z1→Z2 and Z5+ are never mistaken for numbers — and a target that is words rather than watts, like “max safe”, is left alone. It scales from the original shipped figures every time, so pressing it at one FTP and then another does not compound rounding: set 158 again and you get the original wording back exactly.</td></tr>
+  <tr><td class="k">What it will not touch<span class="new">REV 33</span></td><td>Any cell you have typed yourself. Once a cell is yours it stays yours, through any number of refreshes. The prompt counts those rows before you commit, shows an example of the change, and Cancel does nothing. The rescaled rows are tinted for a few seconds so you can see what moved.</td></tr>
 </table>
 
 <h3>Per-song rows</h3>
@@ -286,6 +288,14 @@ ascending no matter what moves.</p>
   <tr><td class="k">Save (header) + Section Library</td><td>Shelve a section as a named block; the bottom panel loads blocks into any section by Replace or Append, or deletes them.</td></tr>
   <tr><td class="k">Drift __ s/song</td><td>Fractional-seconds correction applied to ◉ ride times only (Section 6).</td></tr>
   <tr><td class="k">Reset / Clear</td><td>Reset to defaults restores the factory 8-section sheet; Clear songs &amp; drops keeps your targets.</td></tr>
+</table>
+
+<h3>Hiding the targets<span class="new">REV 34</span></h3>
+<table>
+  <tr><td class="k">The switch</td><td><b>Hide targets</b> in the toolbar drops the Power target and HR guide columns; it then reads <b>Show targets</b> to put them back. The choice is remembered on that device, on screen and on the printout.</td></tr>
+  <tr><td class="k">Nothing is lost</td><td>The wording stays on every row, hidden rather than deleted, and comes back exactly as you left it. Imports, backups and transfer codes carry it either way, so a sheet sent with the targets hidden arrives complete.</td></tr>
+  <tr><td class="k">What the width buys</td><td>Song goes from 138 to 212 pixels and Intervals from 122 to 182, so long titles and long drill wording stop wrapping. That is the whole point of the layout: on the bike you are reading the music and the drill, not the watts.</td></tr>
+  <tr><td class="k">History</td><td>This replaces the separate <i>Build Sheet · no targets</i> file that predates the app. That file never received any of the app’s work — no drops colour coding, no song length, no Fill from library — and it kept its own storage, so the two sheets drifted apart. A switch cannot.</td></tr>
 </table>
 
 <div class="bar b4">4 · HOW EVERYTHING CONNECTS</div>

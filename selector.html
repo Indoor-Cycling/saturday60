@@ -267,6 +267,10 @@
   .ckey .khint{flex:1 0 100%;font-size:10.5px;color:var(--dim);line-height:1.4;}
   .ckey .kwarn{flex:1 0 100%;font-size:10.5px;color:var(--climb);line-height:1.4;}
   .ckey .ki.edit{gap:6px;}
+  /* the × on a key you added yourself; the shipped six have none */
+  .ckey .kx{background:none;border:none;color:var(--dim);font-size:15px;line-height:1;
+            padding:0 2px;cursor:pointer;flex:none;}
+  .ckey .kx:hover{color:var(--climb);}
   .ckey input.csw{width:26px;height:22px;padding:0;border:1px solid var(--line);border-radius:5px;
                   background:var(--surface-2);cursor:pointer;flex:none;}
   .ckey input.csw::-webkit-color-swatch-wrapper{padding:2px;}
@@ -1234,18 +1238,37 @@
 
   // A drop stores a slot number, not a colour, so restyling the key
   // repaints every drop already coded with that slot.
+  // Six slots ship with the app; you can add as many more as you like, and
+  // Reset puts the original six back. Slot 0 is "no colour" and is never shown.
+  var KEY_MAX = 14;
+  var SPARE_COLOURS = ['#22d3ee','#a3e635','#fb923c','#f472b6','#c4b5fd','#facc15','#4ade80','#60a5fa'];
+
+  function normKey(names, colours){
+    var n=Math.max(names.length, colours.length, KEY_DEFAULTS.length);
+    if(n>KEY_MAX+1)n=KEY_MAX+1;
+    var outN=[], outC=[];
+    for(var i=0;i<n;i++){
+      outN[i]= (names[i]!=null && String(names[i]).trim()) ? String(names[i]).trim()
+             : (KEY_DEFAULTS[i]!=null ? KEY_DEFAULTS[i] : 'Key '+i);
+      outC[i]= isHex(colours[i]) ? String(colours[i]).toLowerCase()
+             : (COLOUR_DEFAULTS[i] || SPARE_COLOURS[(i-KEY_DEFAULTS.length)%SPARE_COLOURS.length] || '#38bdf8');
+    }
+    outN[0]=''; outC[0]='';
+    return {names:outN, colours:outC};
+  }
+
   function loadKey(){
-    var out={names:KEY_DEFAULTS.slice(), colours:COLOUR_DEFAULTS.slice()};
+    var names=KEY_DEFAULTS.slice(), colours=COLOUR_DEFAULTS.slice();
     try{
       var r=JSON.parse(localStorage.getItem(CKEY)||'null');
       if(Array.isArray(r)){                       // the earlier names-only format
-        if(r.length===KEY_DEFAULTS.length) out.names=r;
+        names=r;
       }else if(r && typeof r==='object'){
-        if(Array.isArray(r.names)   && r.names.length===KEY_DEFAULTS.length)    out.names=r.names;
-        if(Array.isArray(r.colours) && r.colours.length===COLOUR_DEFAULTS.length) out.colours=r.colours;
+        if(Array.isArray(r.names))   names=r.names;
+        if(Array.isArray(r.colours)) colours=r.colours;
       }
     }catch(e){}
-    return out;
+    return normKey(names, colours);
   }
   function saveKey(k){ try{ localStorage.setItem(CKEY, JSON.stringify(k)); }catch(e){} }
   function keyNames(){ return loadKey().names; }
@@ -1259,10 +1282,15 @@
   }
 
   function dropCols(s){ if(!s.dropCols||typeof s.dropCols!=='object') s.dropCols={}; return s.dropCols; }
-  function dropColour(s,sec){ return +(dropCols(s)[sec]||0); }
+  function dropColour(s,sec){
+    var c=+(dropCols(s)[sec]||0);
+    // A file from a device with a longer key can carry a slot this one has
+    // not got; show it plain rather than half-painted.
+    return (c>0 && c<loadKey().colours.length) ? c : 0;
+  }
   function cycleDropColour(s,sec){
     var c=dropColour(s,sec)+1;
-    if(c>=COLOUR_DEFAULTS.length) c=0;
+    if(c>=loadKey().colours.length) c=0;
     if(c) dropCols(s)[sec]=c; else delete dropCols(s)[sec];
     saveSongs();
   }
@@ -1386,6 +1414,72 @@
     renderDropKey();
   }
 
+  /* Read whatever is on screen back into a key object. Used by Done, and by
+     Add and Remove so a half-typed name is not lost when the list redraws. */
+  function commitKey(el, keepEditing){
+    var k=loadKey(), n=Math.max(k.names.length, k.colours.length);
+    var outN=k.names.slice(0,n), outC=k.colours.slice(0,n);
+    el.querySelectorAll('input[data-k]').forEach(function(inp){
+      var i=+inp.getAttribute('data-k');
+      outN[i]=inp.value.trim() || (KEY_DEFAULTS[i]!=null?KEY_DEFAULTS[i]:'Key '+i);
+    });
+    el.querySelectorAll('input[data-c]').forEach(function(inp){
+      var i=+inp.getAttribute('data-c');
+      if(isHex(inp.value)) outC[i]=inp.value.toLowerCase();
+    });
+    var out=normKey(outN,outC);
+    saveKey(out);
+    if(!keepEditing){
+      el.setAttribute('data-editing','0');
+      renderChips();          // repaint every coded drop in the new colours
+    }
+    return out;
+  }
+
+  // How many drops anywhere on this device carry a given key slot.
+  function countCoded(slot){
+    var n=0;
+    songs.forEach(function(s){
+      var c=s.dropCols; if(!c)return;
+      for(var t in c) if(+c[t]===slot) n++;
+    });
+    var lib=dlLoad();
+    for(var key in lib){
+      var c2=lib[key]&&lib[key].cols; if(!c2)continue;
+      for(var t2 in c2) if(+c2[t2]===slot) n++;
+    }
+    return n;
+  }
+
+  // Slot `gone` disappears: anything coded with it becomes plain, anything
+  // above it slides down one. Applied to the playlist and to the library, so
+  // a song filled from the library later still shows the colours you meant.
+  function renumberCodes(gone){
+    function fix(map){
+      var out={}, touched=false;
+      for(var t in map){
+        var c=+map[t];
+        if(c===gone){ touched=true; continue; }
+        out[t]= c>gone ? c-1 : c;
+        if(c>gone) touched=true;
+      }
+      return {map:out, touched:touched};
+    }
+    songs.forEach(function(s){
+      if(!s.dropCols)return;
+      var r=fix(s.dropCols);
+      if(r.touched) s.dropCols=r.map;
+    });
+    saveSongs();
+    var lib=dlLoad(), changed=false;
+    for(var key in lib){
+      if(!lib[key]||!lib[key].cols)continue;
+      var r2=fix(lib[key].cols);
+      if(r2.touched){ lib[key].cols=r2.map; changed=true; }
+    }
+    if(changed) dlSave(lib);
+  }
+
   function renderDropKey(){
     var el=document.getElementById('dropKey'); if(!el)return;
     var s=curSong(), any=s?songDrops(s).length:0;
@@ -1393,14 +1487,20 @@
     var k=loadKey(), names=k.names, pal=k.colours;
 
     if(el.getAttribute('data-editing')==='1'){
-      el.innerHTML='<span class="khint">Tap a swatch to recolour it. Drops already coded follow the change.</span>'+
+      el.innerHTML='<span class="khint">Tap a swatch to recolour it. Drops already coded follow the change. '+
+        'The six the app ships with cannot be removed — Reset brings their names and colours back.</span>'+
         pal.map(function(col,i){
           if(!i)return '';
+          var stock = i < KEY_DEFAULTS.length;
           return '<span class="ki edit">'+
                  '<input type="color" class="csw" data-c="'+i+'" value="'+(isHex(col)?col:COLOUR_DEFAULTS[i])+'" aria-label="Colour '+i+'">'+
-                 '<input type="text" data-k="'+i+'" value="'+escapeHtml(names[i])+'" maxlength="14"></span>';
+                 '<input type="text" data-k="'+i+'" value="'+escapeHtml(names[i])+'" maxlength="14">'+
+                 (stock?'':'<button class="kx" data-kx="'+i+'" title="Remove this key" aria-label="Remove">\u00d7</button>')+
+                 '</span>';
         }).join('')+
-        '<span class="kbtns"><button class="kedit" id="keyReset">Reset</button>'+
+        '<span class="kbtns">'+
+        (pal.length<=KEY_MAX ? '<button class="kedit" id="keyAdd">\uff0b Add key</button>' : '')+
+        '<button class="kedit" id="keyReset">Reset</button>'+
         '<button class="kedit prim" id="keyDone">Done</button></span>'+
         '<span class="kwarn" id="keyWarn" hidden></span>';
 
@@ -1417,23 +1517,45 @@
       checkDark();
 
       el.querySelector('#keyReset').addEventListener('click',function(){
+        // Reset shrinks the key back to six, so anything coded with a key you
+        // added would be left pointing at nothing. Say so, then clear them.
+        var stray=0;
+        for(var n=KEY_DEFAULTS.length;n<loadKey().names.length;n++) stray+=countCoded(n);
+        if(stray && !confirm('Put the six original names and colours back?\n\n'+
+            stray+' drop'+(stray===1?'':'s')+' coded with a key you added '+(stray===1?'becomes':'become')+
+            ' plain again.')) return;
+        for(var m=loadKey().names.length-1;m>=KEY_DEFAULTS.length;m--) renumberCodes(m);
         saveKey({names:KEY_DEFAULTS.slice(), colours:COLOUR_DEFAULTS.slice()});
         el.setAttribute('data-editing','0');
         renderChips();
       });
-      el.querySelector('#keyDone').addEventListener('click',function(){
-        var outN=KEY_DEFAULTS.slice(), outC=COLOUR_DEFAULTS.slice();
-        el.querySelectorAll('input[data-k]').forEach(function(inp){
-          var i=+inp.getAttribute('data-k');
-          outN[i]=inp.value.trim()||KEY_DEFAULTS[i];
+      el.querySelector('#keyDone').addEventListener('click',function(){ commitKey(el); });
+
+      var addBtn=el.querySelector('#keyAdd');
+      if(addBtn) addBtn.addEventListener('click',function(){
+        var k=commitKey(el, true);
+        var i=k.names.length;
+        k.names.push('Key '+i);
+        k.colours.push(SPARE_COLOURS[(i-KEY_DEFAULTS.length)%SPARE_COLOURS.length]);
+        saveKey(k); renderDropKey();
+        var last=el.querySelector('input[data-k="'+i+'"]');
+        if(last){ last.focus(); last.select(); }
+      });
+
+      // Removing a key renumbers the ones above it, in the playlist AND in the
+      // stored library, so no drop is left pointing at a key that moved.
+      el.querySelectorAll('[data-kx]').forEach(function(btn){
+        btn.addEventListener('click',function(){
+          var i=+btn.getAttribute('data-kx');
+          var k=commitKey(el, true);
+          var nm=k.names[i]||('key '+i), used=countCoded(i);
+          if(!confirm('Remove the “'+nm+'” key?'+
+              (used?'\n\n'+used+' drop'+(used===1?'':'s')+' coded with it '+(used===1?'becomes':'become')+' plain again.':'')))
+            return;
+          k.names.splice(i,1); k.colours.splice(i,1);
+          renumberCodes(i);
+          saveKey(k); renderDropKey(); renderChips();
         });
-        el.querySelectorAll('input[data-c]').forEach(function(inp){
-          var i=+inp.getAttribute('data-c');
-          if(isHex(inp.value)) outC[i]=inp.value.toLowerCase();
-        });
-        saveKey({names:outN, colours:outC});
-        el.setAttribute('data-editing','0');
-        renderChips();          // repaint every coded drop in the new colours
       });
       return;
     }

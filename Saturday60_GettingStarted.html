@@ -1,0 +1,101 @@
+<!--
+  ============================================================================
+  THE SATURDAY 60 — Getting Started (screen + print)
+  THIS FILE IS THE LIVE VERSION. It is served from
+  https://indoor-cycling.github.io/saturday60/
+
+  A one-page hand-off sheet for another instructor. If you are an AI assistant
+  revising it: start from THIS file, keep it to one printed page, and
+  re-render Saturday60_GettingStarted.pdf from it so the two match.
+
+  After replacing any file, raise the version on the VERSION line near the top of sw.js so installed
+  copies notice the change.
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Saturday 60 — Getting Started</title>
+<style>
+  @page { size: letter; margin: 0.7in 0.7in 0.5in; }
+  :root{
+    --ink:#1a1d23; --grey:#7b8593; --line:#c9ced6;
+    --p1:#2f80c2; --p2:#1e8e5a; --p3:#c07a10; --p4:#a63a8f;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;color:var(--ink);background:#fff;
+       font-family:Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+       font-size:9pt;line-height:1.34;}
+  h1{font-size:19pt;margin:0 0 2px;font-weight:700;letter-spacing:-.01em;}
+  .sub{color:var(--p1);font-size:8.4pt;line-height:1.4;margin:0 0 9px;}
+  .bar{color:#fff;font-weight:700;font-size:9pt;letter-spacing:.03em;
+       padding:4px 10px;margin:9px 0 5px;background:var(--p1);
+       break-after:avoid;page-break-after:avoid;}
+  .b2{background:var(--p2);} .b3{background:var(--p3);} .b4{background:var(--p4);}
+  table{width:100%;border-collapse:collapse;margin:0;}
+  tr{break-inside:avoid;page-break-inside:avoid;}
+  td{padding:2.4px 7px 2.4px 0;vertical-align:top;border-bottom:1px solid #e8ebee;}
+  td.n{width:20px;text-align:center;font-weight:700;padding-left:5px;color:var(--ink);}
+  td.k{width:104px;font-weight:700;}
+  tr:last-child td{border-bottom:none;}
+  .big{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:11.5pt;font-weight:700;
+       color:var(--p1);letter-spacing:-.01em;display:block;margin:2px 0 1px;}
+  .url{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:8.6pt;}
+  .foot{color:var(--grey);font-size:7.9pt;line-height:1.42;margin-top:8px;
+        border-top:1px solid var(--line);padding-top:6px;}
+  .nav{margin:0 0 8px;font-size:9.5pt;}
+  .nav a{color:var(--p1);text-decoration:none;font-weight:700;}
+  .nav a:hover{text-decoration:underline;}
+  @media screen{ body{padding:18px 20px;max-width:7.6in;margin:0 auto;} }
+  @media print{ .nav{display:none;} body{padding:0;} }
+</style>
+</head>
+<body>
+
+<p class="nav"><a href="index.html">‹ Saturday 60</a></p>
+
+<h1>THE SATURDAY 60 — Getting Started</h1>
+<p class="sub">Three tools for building a 60-minute indoor cycling class around the music: a BPM selector, a
+ride build sheet, and a drops library. Free, no account, nothing uploaded anywhere.<br>
+There is nothing to download or install from a store. It is a web address that turns into an app.</p>
+
+<div class="bar">1 · OPEN IT</div>
+<p style="margin:0"><span class="big">https://indoor-cycling.github.io/saturday60/</span>
+Open that on your phone or your computer. That is the whole thing — you are already using it.</p>
+
+<div class="bar b2">2 · MAKE IT AN APP (30 SECONDS, OPTIONAL BUT WORTH IT)</div>
+<table>
+  <tr><td class="k">Android</td><td>Chrome shows an <b>Install</b> prompt, or menu ⋮ → <b>Add to Home screen</b>. It then opens from your home screen like any other app, with no browser bar.</td></tr>
+  <tr><td class="k">iPhone / iPad</td><td>In Safari, tap <b>Share</b> (the square with the arrow) → <b>Add to Home Screen</b>.</td></tr>
+  <tr><td class="k">Computer</td><td>Chrome or Edge: the install icon at the right of the address bar, or menu → <b>Install</b>. It lands in your Start menu or Applications folder.</td></tr>
+  <tr><td class="k">Why bother</td><td>Installed, it works with <b>no signal</b> — in a studio basement, on a plane, anywhere. Nothing is fetched while you use it.</td></tr>
+</table>
+
+<div class="bar b3">3 · WHAT THE THREE TOOLS DO</div>
+<table>
+  <tr><td class="k">Song BPM Selector</td><td>Phone-first. Tap in a tempo or type it, see where that song fits and what cadence it beat-locks to, mark the drop times as the track plays, and colour-code them. Send the playlist to the Build Sheet.</td></tr>
+  <tr><td class="k">MOWL Build Sheet</td><td>Desktop-first. The ride block by block: songs, lengths, RPM, positions, drills, power and heart-rate cues. It does the clock maths — you see the class land on 60 minutes as you build it. Prints to a sheet you can ride from.</td></tr>
+  <tr><td class="k">Drops Library</td><td>Every drop time you have ever marked, kept by song. Mark a track once and it fills itself in every week you use that track again.</td></tr>
+</table>
+
+<div class="bar b4">4 · THINGS WORTH KNOWING ON DAY ONE</div>
+<table>
+  <tr><td class="n">1</td><td><b>Your data is yours and it is local.</b> Everything lives in the browser on your own device. There is no account, no server, nothing uploaded, and nobody else can see your rides — including whoever gave you this sheet.</td></tr>
+  <tr><td class="n">2</td><td><b>It starts empty.</b> Your drops library, drills and playlists are your own. Nothing arrives with the app.</td></tr>
+  <tr><td class="n">3</td><td><b>Set your own numbers first.</b> On the Build Sheet, the header line has <b>FTP</b> and <b>Max HR</b> boxes. Type yours in; the zone table recalculates. Then press <b>Refresh targets</b> to rescale the per-song power and heart-rate cues to you.</td></tr>
+  <tr><td class="n">4</td><td><b>Back it up now and then.</b> Each tool has a <b>Backup</b> button that writes a dated file, and a <b>Restore</b> that reads it. Deleting the installed app can clear its storage on some phones — a backup file is the only copy that survives that.</td></tr>
+  <tr><td class="n">5</td><td><b>Phone and desktop are separate.</b> Same app, but each device keeps its own data. The transfer codes and backup files are how work moves between them.</td></tr>
+  <tr><td class="n">6</td><td><b>Updates arrive on their own.</b> When the app changes, a bar slides up offering <b>Update now</b>. Your data is never touched by an update.</td></tr>
+</table>
+
+<p class="foot">
+Built for Keiser M3 / M3i bikes and the MOWL (Intelligent Cycling) platform, but the tempo, phrase and clock maths
+apply to any bike. Everything is built around one idea: <b>PLAYLIST FIRST — MUSIC LEADS.</b> Pick the songs, then let
+their structure decide where the efforts go — a drill that starts on a drop feels inevitable; one that starts mid-phrase
+never does. The full <b>System Manual</b> and a one-page <b>Weekly Workflow</b> checklist are linked from the app's home
+screen. <span class="url">https://indoor-cycling.github.io/saturday60/</span>
+</p>
+
+</body>
+</html>

@@ -52,6 +52,7 @@ older one leaves every installed copy unaware anything changed.
 | `sw.js` | Service worker — stores the app for offline use. **Version lives here** |
 | `Saturday60_WeeklyWorkflow.html` / `.pdf` | The one-page weekly checklist |
 | `Saturday60_SystemManual.html` / `.pdf` | The full system manual |
+| `Saturday60_GettingStarted.html` / `.pdf` | One-page hand-off sheet for someone new to the app |
 | `manifest.webmanifest` | Name, icon and colours the phone installs with |
 | `icons/` | App icons |
 

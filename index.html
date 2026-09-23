@@ -61,6 +61,11 @@
   a.card.four:hover{border-left-color:var(--doc);}
   a.card.five{border-left-color:var(--doc);margin-bottom:4px;}
   a.card.five:hover{border-left-color:var(--doc);}
+  a.card.six{border-left-color:var(--doc);margin-bottom:4px;}
+  a.card.six:hover{border-left-color:var(--doc);}
+  .copylink{background:none;border:1px solid var(--line);color:var(--muted);border-radius:7px;
+    font-size:11px;padding:2px 8px;margin-left:10px;cursor:pointer;font-family:inherit;}
+  .copylink:hover{color:var(--text);border-color:var(--dim);}
   .card h2{font-size:15.5px;margin:0 0 4px;font-weight:650;letter-spacing:-.005em;
            display:flex;align-items:center;gap:8px;}
   .card h2 .arrow{margin-left:auto;color:var(--dim);font-size:17px;font-weight:400;}
@@ -134,6 +139,13 @@
     <p>The whole system explained — every tool, the timing maths, the Excel workbook, and what to do when something looks wrong.</p>
   </a>
   <p class="cardnote"><a href="Saturday60_SystemManual.pdf" target="_blank" rel="noopener">Print-ready PDF ›</a></p>
+
+  <a class="card six" href="Saturday60_GettingStarted.html">
+    <h2>Getting Started <span class="arrow">›</span></h2>
+    <p>One page for someone new to all this — the address, how to install it, what the three tools do, and what to know on day one. Made to hand to another instructor.</p>
+  </a>
+  <p class="cardnote"><a href="Saturday60_GettingStarted.pdf" target="_blank" rel="noopener">Print-ready PDF ›</a>
+    <button class="copylink" id="copyLink" type="button" title="Copy this app's address, ready to paste into a message or an email">Copy the link to share</button></p>
 
   <div class="panel">
     <h3>This app</h3>
@@ -234,6 +246,24 @@
       else if(result === 'current'){ verEl.textContent = 'Up to date.'; setTimeout(showVersion, 1500); }
       else { verEl.textContent = 'Could not check just now — try again with a signal.'; }
     });
+  });
+
+  /* Handing the app to someone else is a link, not a download — so make the
+     link easy to get at. The address is the app's own, minus any file name. */
+  var copyBtn=document.getElementById('copyLink');
+  if(copyBtn) copyBtn.addEventListener('click',function(e){
+    e.preventDefault();
+    var url=location.href.replace(/[^/]*$/,'');
+    function done(ok){
+      copyBtn.textContent = ok ? 'Copied ✓' : url;
+      setTimeout(function(){ copyBtn.textContent='Copy the link to share'; }, ok?1800:6000);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(function(){done(true);},function(){done(false);});
+    } else {
+      // older browsers: show it instead, so it can at least be read off or selected
+      done(false);
+    }
   });
 })();
 </script>

@@ -57,22 +57,28 @@
   a.card:active{transform:scale(.995);}
   a.card.two{border-left-color:var(--warn);}
   a.card.three{border-left-color:var(--good);}
-  a.card.four{border-left-color:var(--doc);margin-bottom:4px;}
-  a.card.four:hover{border-left-color:var(--doc);}
-  a.card.five{border-left-color:var(--doc);margin-bottom:4px;}
-  a.card.five:hover{border-left-color:var(--doc);}
-  a.card.six{border-left-color:var(--doc);margin-bottom:4px;}
-  a.card.six:hover{border-left-color:var(--doc);}
+  /* The three documents as one short group. They were three full cards, which
+     pushed the tools and the install panel a screen further down on a phone. */
+  .docs{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--doc);
+        border-radius:13px;padding:12px 14px 11px;margin-bottom:10px;
+        display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:10px;row-gap:2px;}
+  .docs h3{grid-column:1/-1;margin:0 0 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+           color:var(--muted);font-weight:700;}
+  a.doc{display:block;text-decoration:none;color:inherit;padding:5px 0;min-width:0;}
+  a.doc .dn{display:block;font-size:13.5px;font-weight:650;letter-spacing:-.005em;}
+  a.doc .dd{display:block;font-size:11.5px;color:var(--muted);line-height:1.45;}
+  a.doc:hover .dn{color:var(--doc);}
+  a.dpdf{justify-self:end;text-decoration:none;color:var(--muted);font-size:11px;font-weight:600;
+         letter-spacing:.06em;border:1px solid var(--line);border-radius:7px;padding:3px 9px;}
+  a.dpdf:hover{color:var(--text);border-color:var(--dim);}
+  .dshare{grid-column:1/-1;margin:8px 0 0;}
   .copylink{background:none;border:1px solid var(--line);color:var(--muted);border-radius:7px;
-    font-size:11px;padding:2px 8px;margin-left:10px;cursor:pointer;font-family:inherit;}
+    font-size:11px;padding:3px 9px;cursor:pointer;font-family:inherit;}
   .copylink:hover{color:var(--text);border-color:var(--dim);}
   .card h2{font-size:15.5px;margin:0 0 4px;font-weight:650;letter-spacing:-.005em;
            display:flex;align-items:center;gap:8px;}
   .card h2 .arrow{margin-left:auto;color:var(--dim);font-size:17px;font-weight:400;}
   .card p{margin:0;font-size:12.5px;color:var(--muted);line-height:1.55;}
-  .cardnote{margin:0 0 14px;padding-left:17px;font-size:11.5px;}
-  .cardnote a{color:var(--muted);text-decoration:none;}
-  .cardnote a:hover{color:var(--text);}
 
   .panel{background:var(--surface);border:1px solid var(--line);border-radius:13px;
          padding:14px 16px;margin-top:20px;}
@@ -128,24 +134,28 @@
     <p>Open, merge and tidy a Saturday60-Drops file outside the other two tools.</p>
   </a>
 
-  <a class="card four" href="Saturday60_WeeklyWorkflow.html">
-    <h2>Weekly Workflow <span class="arrow">›</span></h2>
-    <p>The whole routine on one page, phase by phase — Spotify and Chosic through drops, print, MOWL and the Excel backup.</p>
-  </a>
-  <p class="cardnote"><a href="Saturday60_WeeklyWorkflow.pdf" target="_blank" rel="noopener">Print-ready PDF ›</a></p>
+  <div class="docs">
+    <h3>Documents</h3>
+    <a class="doc" href="Saturday60_WeeklyWorkflow.html">
+      <span class="dn">Weekly Workflow</span>
+      <span class="dd">The routine, phase by phase, on one page</span>
+    </a>
+    <a class="dpdf" href="Saturday60_WeeklyWorkflow.pdf" target="_blank" rel="noopener" title="Open the print-ready PDF in its own window">PDF</a>
 
-  <a class="card five" href="Saturday60_SystemManual.html">
-    <h2>System Manual <span class="arrow">›</span></h2>
-    <p>The whole system explained — every tool, the timing maths, the Excel workbook, and what to do when something looks wrong.</p>
-  </a>
-  <p class="cardnote"><a href="Saturday60_SystemManual.pdf" target="_blank" rel="noopener">Print-ready PDF ›</a></p>
+    <a class="doc" href="Saturday60_SystemManual.html">
+      <span class="dn">System Manual</span>
+      <span class="dd">Every tool, the timing maths, and what to do when something looks wrong</span>
+    </a>
+    <a class="dpdf" href="Saturday60_SystemManual.pdf" target="_blank" rel="noopener" title="Open the print-ready PDF in its own window">PDF</a>
 
-  <a class="card six" href="Saturday60_GettingStarted.html">
-    <h2>Getting Started <span class="arrow">›</span></h2>
-    <p>One page for someone new to all this — the address, how to install it, what the three tools do, and what to know on day one. Made to hand to another instructor.</p>
-  </a>
-  <p class="cardnote"><a href="Saturday60_GettingStarted.pdf" target="_blank" rel="noopener">Print-ready PDF ›</a>
-    <button class="copylink" id="copyLink" type="button" title="Copy this app's address, ready to paste into a message or an email">Copy the link to share</button></p>
+    <a class="doc" href="Saturday60_GettingStarted.html">
+      <span class="dn">Getting Started</span>
+      <span class="dd">One page to hand to another instructor</span>
+    </a>
+    <a class="dpdf" href="Saturday60_GettingStarted.pdf" target="_blank" rel="noopener" title="Open the print-ready PDF in its own window">PDF</a>
+
+    <p class="dshare"><button class="copylink" id="copyLink" type="button" title="Copy this app's address, ready to paste into a message or an email">Copy the link to share</button></p>
+  </div>
 
   <div class="panel">
     <h3>This app</h3>

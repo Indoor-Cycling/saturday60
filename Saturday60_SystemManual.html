@@ -59,6 +59,24 @@
   .new{color:var(--s9);font-weight:700;font-size:7.6pt;letter-spacing:.08em;
        vertical-align:2px;margin-left:5px;}
   .avoid{break-inside:avoid;page-break-inside:avoid;}
+  /* Contents at the front, index at the back. Page numbers are filled in from
+     the rendered PDF, so they are real printed pages, not guesses. */
+  .toc{margin:0 0 4px;}
+  .toc .tsec{display:flex;align-items:baseline;gap:6px;margin:7px 0 1px;font-weight:700;font-size:9.9pt;}
+  .toc .tsub{display:flex;align-items:baseline;gap:6px;margin:1.5px 0 1.5px 15px;font-size:9pt;color:var(--mid);}
+  .toc a{color:inherit;text-decoration:none;}
+  .toc a:hover{text-decoration:underline;}
+  .toc .dots{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-3px);}
+  .toc .pg{font-variant-numeric:tabular-nums;color:var(--grey);font-weight:400;min-width:1.4em;text-align:right;}
+  .idx{column-count:2;column-gap:26px;font-size:8.8pt;}
+  .idx .ie{break-inside:avoid;page-break-inside:avoid;margin:0 0 1.5px;line-height:1.35;}
+  .idx .ie a{color:inherit;text-decoration:none;}
+  .idx .ie a:hover{text-decoration:underline;}
+  .idx .ip{color:var(--grey);font-variant-numeric:tabular-nums;}
+  .idx .ia{break-inside:avoid;column-break-inside:avoid;font-weight:700;color:var(--s2);
+           font-size:8.4pt;letter-spacing:.1em;margin:7px 0 2px;}
+  .idx .ia:first-child{margin-top:0;}
+  .pagebreak{break-before:page;page-break-before:always;}
   /* Screen only — the printed pages take their margins from @page. */
   .nav{margin:0 0 10px;font-size:9.5pt;}
   .nav a{color:var(--s2);text-decoration:none;font-weight:700;}
@@ -72,10 +90,59 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 38 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 39 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
-<div class="bar">0 · THE PHILOSOPHY AND THE THREE RULES</div>
+<div class="bar" id="contents">CONTENTS</div>
+<div class="toc">
+  <div class="tsec"><a href="#s0">0 · THE PHILOSOPHY AND THE THREE RULES</a><span class="dots"></span><span class="pg" data-pg="s0">2</span></div>
+  <div class="tsec"><a href="#s1">1 · THE PIECES</a><span class="dots"></span><span class="pg" data-pg="s1">2</span></div>
+  <div class="tsec"><a href="#s2">2 · THE SONG BPM SELECTOR</a><span class="dots"></span><span class="pg" data-pg="s2">3</span></div>
+  <div class="tsub"><a href="#the-gauge-and-the-phrase-strip">The gauge and the phrase strip</a><span class="dots"></span><span class="pg" data-pg="the-gauge-and-the-phrase-strip">3</span></div>
+  <div class="tsub"><a href="#the-bar-calculator">The bar calculator</a><span class="dots"></span><span class="pg" data-pg="the-bar-calculator">3</span></div>
+  <div class="tsub"><a href="#the-tap-tester">The tap-tester</a><span class="dots"></span><span class="pg" data-pg="the-tap-tester">3</span></div>
+  <div class="tsub"><a href="#playlist-builder">Playlist builder</a><span class="dots"></span><span class="pg" data-pg="playlist-builder">4</span></div>
+  <div class="tsub"><a href="#per-song-ride-mode-the-1-1-button">Per-song ride mode — the 1:1 / ½ button</a><span class="dots"></span><span class="pg" data-pg="per-song-ride-mode-the-1-1-button">4</span></div>
+  <div class="tsub"><a href="#song-length">Song length</a><span class="dots"></span><span class="pg" data-pg="song-length">4</span></div>
+  <div class="tsub"><a href="#drop-markers-the-button">Drop markers — the ◎ button</a><span class="dots"></span><span class="pg" data-pg="drop-markers-the-button">4</span></div>
+  <div class="tsub"><a href="#colour-coding-the-drops">Colour-coding the drops</a><span class="dots"></span><span class="pg" data-pg="colour-coding-the-drops">5</span></div>
+  <div class="tsub"><a href="#adding-your-own-keys">Adding your own keys</a><span class="dots"></span><span class="pg" data-pg="adding-your-own-keys">5</span></div>
+  <div class="tsub"><a href="#bands-defaults-transfer-and-backup">Bands, defaults, transfer and backup</a><span class="dots"></span><span class="pg" data-pg="bands-defaults-transfer-and-backup">6</span></div>
+  <div class="tsec"><a href="#s3">3 · THE BUILD SHEET</a><span class="dots"></span><span class="pg" data-pg="s3">6</span></div>
+  <div class="tsub"><a href="#structure">Structure</a><span class="dots"></span><span class="pg" data-pg="structure">6</span></div>
+  <div class="tsub"><a href="#ftp-and-max-hr">FTP and Max HR</a><span class="dots"></span><span class="pg" data-pg="ftp-and-max-hr">7</span></div>
+  <div class="tsub"><a href="#per-song-rows">Per-song rows</a><span class="dots"></span><span class="pg" data-pg="per-song-rows">7</span></div>
+  <div class="tsub"><a href="#drill-presets-and-the-drill-catalog">Drill presets and the drill catalog</a><span class="dots"></span><span class="pg" data-pg="drill-presets-and-the-drill-catalog">8</span></div>
+  <div class="tsub"><a href="#the-manage-drills-panel">The Manage drills panel</a><span class="dots"></span><span class="pg" data-pg="the-manage-drills-panel">8</span></div>
+  <div class="tsub"><a href="#the-drill-catalogue-in-excel">The drill catalogue in Excel</a><span class="dots"></span><span class="pg" data-pg="the-drill-catalogue-in-excel">9</span></div>
+  <div class="tsub"><a href="#reordering">Reordering</a><span class="dots"></span><span class="pg" data-pg="reordering">10</span></div>
+  <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">10</span></div>
+  <div class="tsub"><a href="#hiding-the-targets">Hiding the targets</a><span class="dots"></span><span class="pg" data-pg="hiding-the-targets">11</span></div>
+  <div class="tsec"><a href="#s4">4 · HOW EVERYTHING CONNECTS</a><span class="dots"></span><span class="pg" data-pg="s4">11</span></div>
+  <div class="tsub"><a href="#getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</a><span class="dots"></span><span class="pg" data-pg="getting-drops-into-the-sheet-which-route">12</span></div>
+  <div class="tsub"><a href="#the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</a><span class="dots"></span><span class="pg" data-pg="the-drops-library-moving-it-between-the-tool">12</span></div>
+  <div class="tsec"><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">13</span></div>
+  <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">13</span></div>
+  <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">14</span></div>
+  <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">14</span></div>
+  <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">14</span></div>
+  <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">14</span></div>
+  <div class="tsec"><a href="#s6">6 · THE TIMING AND PHRASE MATH</a><span class="dots"></span><span class="pg" data-pg="s6">15</span></div>
+  <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">15</span></div>
+  <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">15</span></div>
+  <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">15</span></div>
+  <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">15</span></div>
+  <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">16</span></div>
+  <div class="tsec"><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">16</span></div>
+  <div class="tsec"><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">17</span></div>
+  <div class="tsec"><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">18</span></div>
+  <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">18</span></div>
+  <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">19</span></div>
+  <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">19</span></div>
+  <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">19</span></div>
+</div>
+
+<div class="bar" id="s0">0 · THE PHILOSOPHY AND THE THREE RULES</div>
 <p>Every tool is built around one idea: <b>PLAYLIST FIRST — MUSIC LEADS.</b> Song structure (drops, choruses, builds)
 dictates interval timing; the clock follows the music on work segments, and only the fixed pieces — warm-up, bridges,
 cool-down — hold clean clock time.</p>
@@ -85,7 +152,7 @@ cool-down — hold clean clock time.</p>
   <tr><td class="k">Rider zones<span class="new">REV 24</span></td><td>Power and HR targets derive from your FTP and maximum heart rate, set in the Build Sheet’s header line and stored on the device (Keiser M3 / M3i Studio Plus, 72 gears). The template ships with FTP 158 W and Max HR 164 bpm.</td></tr>
 </table>
 
-<div class="bar">1 · THE PIECES</div>
+<div class="bar" id="s1">1 · THE PIECES</div>
 <table>
   <tr><td class="k">Song BPM Selector</td><td>Phone-first. Tap-tester, phrase strip, block matching, playlist, drop capture with colour coding, song length, drops library, transfer codes, backup.</td></tr>
   <tr><td class="k">Build Sheet Template</td><td>Desktop-first. The 60-minute plan: reorderable sections, auto RPM, clock math, ride-clock drops, drill presets, Section Library, exports.</td></tr>
@@ -102,14 +169,14 @@ one icon, working offline, with a hub screen linking the Selector, the Build She
 they now share one web address, they also share one storage area: a drops library saved in the Selector is the same one
 the Build Sheet reads. Data still lives per device. See Section 9.</p>
 
-<div class="bar b2">2 · THE SONG BPM SELECTOR</div>
+<div class="bar b2" id="s2">2 · THE SONG BPM SELECTOR</div>
 
-<h3>The gauge and the phrase strip</h3>
+<h3 id="the-gauge-and-the-phrase-strip">The gauge and the phrase strip</h3>
 <p>Type a BPM or nudge with the −5 / −1 / +1 / +5 steppers. Cards list every block that tempo fits with its beat-locked
 RPM; anything faster than the cap gets the half-time rescue note. Beneath the number, the <b>phrase strip</b> shows how
 long 1, 8, 16 and 32 bars run at that tempo — at 126 BPM a bar is 1.90 s and a 32-bar phrase is 61 s.</p>
 
-<h3>The bar calculator<span class="new">REV 27</span></h3>
+<h3 id="the-bar-calculator">The bar calculator<span class="new">REV 27</span></h3>
 <table>
   <tr><td class="k">Where</td><td>Inside the Song tempo box, under the 1 / 8 / 16 / 32-bar strip. Type any number of bars and it answers at the tempo showing above — change the BPM and the answer follows.</td></tr>
   <tr><td class="k">What it answers</td><td>The run time and the beat count: at 126 BPM, 12 bars reads <b>22.9s · 48 beats</b>. Under a minute it keeps one decimal, because half a second decides whether a cue lands on the phrase; past a minute it switches to m:ss.</td></tr>
@@ -118,12 +185,12 @@ long 1, 8, 16 and 32 bars run at that tempo — at 126 BPM a bar is 1.90 s and a
   <tr><td class="k">The arithmetic</td><td>One bar is 240 ÷ BPM seconds (4/4 assumed, as everywhere in these tools), so N bars is N × 240 ÷ BPM, and the beats are N × 4.</td></tr>
 </table>
 
-<h3>The tap-tester</h3>
+<h3 id="the-tap-tester">The tap-tester</h3>
 <p>Tap the TAP pad in time with the music (4+ taps; keep going to refine). A 2-second pause resets it. <b>Use</b> sends
 the measured BPM to the gauge and the playlist form. This is the referee whenever a database's BPM looks doubled or
 halved.</p>
 
-<h3>Playlist builder</h3>
+<h3 id="playlist-builder">Playlist builder</h3>
 <p>Add title + BPM; songs file under their best block and move with the per-song block dropdown. <b>Copy list</b> exports
 everything grouped by block, drops and overrides included.</p>
 <table>
@@ -131,13 +198,13 @@ everything grouped by block, drops and overrides included.</p>
   <tr><td class="k">Hover help<span class="new">REV 19</span></td><td>Every button in all three tools carries a plain-language tooltip describing what it does. These appear on hover, so they help on a computer; a phone has nothing to hover with.</td></tr>
 </table>
 
-<h3>Per-song ride mode — the 1:1 / ½ button</h3>
+<h3 id="per-song-ride-mode-the-1-1-button">Per-song ride mode — the 1:1 / ½ button</h3>
 <p>Each song has its own ride-mode button that cycles three ways: <i>follow the block</i> (the default, unstyled),
 <b>1:1</b> forced, <b>½</b> forced. An overridden song lights up in the block's colour and its line reads "set". The
 override travels in transfer codes and beats the Build Sheet's automatic over-110 rule, so a deliberate choice is never
 silently undone.</p>
 
-<h3>Song length<span class="new">REV 19</span></h3>
+<h3 id="song-length">Song length<span class="new">REV 19</span></h3>
 <p>On each song's drop-marker screen, under the downbeat field, is a <b>song length</b> box in m:ss, with a
 <b>from timer</b> button that takes whatever the stopwatch is showing. It is optional — leave it blank and nothing
 changes.</p>
@@ -148,7 +215,7 @@ changes.</p>
   <tr><td class="k">Bad input</td><td>Anything unreadable is refused and the previous value returns. Clearing the box removes the length.</td></tr>
 </table>
 
-<h3>Drop markers — the ◎ button</h3>
+<h3 id="drop-markers-the-button">Drop markers — the ◎ button</h3>
 <table>
   <tr><td class="k">Capturing</td><td>Stopwatch (Start/Pause/Reset) plus a big Mark drop button; chips show what you caught, each removable. Add by hand takes typed times.</td></tr>
   <tr><td class="k">Five ways to capture<span class="new">REV 23</span></td><td>Split-screen with Spotify and mark live · split-screen with Musixmatch and tap when the lyrics flip to Chorus (the drop sheet fits a half-height window) · read Spotify’s elapsed clock and type it (most accurate) · scout the YouTube most-replayed peak in advance · <b>hold a phrase boundary</b> in the grid and take the time straight off it.</td></tr>
@@ -161,7 +228,7 @@ changes.</p>
   <tr><td class="k">On a short screen<span class="new">REV 20</span></td><td>The sheet never grows taller than the screen; if its content does not fit it scrolls inside itself. The title row and the × stay pinned at the top while you scroll, and a full-width <b>Done</b> button sits at the foot. This matters in split screen — at half height the sheet used to overflow upward and take the × off the screen with it.</td></tr>
 </table>
 
-<h3>Colour-coding the drops<span class="new">REV 19</span></h3>
+<h3 id="colour-coding-the-drops">Colour-coding the drops<span class="new">REV 19</span></h3>
 <p>Tap a drop chip and it steps to the next colour in the key. Seven taps takes it all the way round and back to plain,
 so a mis-tap is undone by carrying on tapping. The chip shows the time as before, tinted — no words are added, and
 nothing about the colours reaches the Build Sheet or the Cue Notes.</p>
@@ -173,7 +240,7 @@ nothing about the colours reaches the Build Sheet or the Cue Notes.</p>
   <tr><td class="k">Where it travels</td><td>Backups, transfer codes and the drops library. The Build Sheet and the Drops Library Editor carry the coding through untouched without displaying it.</td></tr>
 </table>
 
-<h3>Adding your own keys<span class="new">REV 35</span></h3>
+<h3 id="adding-your-own-keys">Adding your own keys<span class="new">REV 35</span></h3>
 <table>
   <tr><td class="k">Add key</td><td>In <b>Edit key</b>, beside Reset. It appends a slot with a fresh colour and puts the cursor in its name, ready to type. Up to fourteen in total; the app ships with six.</td></tr>
   <tr><td class="k">Removing one</td><td>A key you added carries a ×; the six the app ships with do not. Removing one renumbers the keys above it — in the playlist <i>and</i> in the stored drops library — so no drop is left pointing at a key that moved. Drops coded with the key you removed become plain again, and the prompt counts them first.</td></tr>
@@ -182,7 +249,7 @@ nothing about the colours reaches the Build Sheet or the Cue Notes.</p>
   <tr><td class="k">Between devices</td><td>The key lives on the device; the drops carry slot numbers. A drop coded with a key a second device has not got shows plain there rather than half-painted — set the same key up on both, or Reset both, and they agree again.</td></tr>
 </table>
 
-<h3>Bands, defaults, transfer and backup</h3>
+<h3 id="bands-defaults-transfer-and-backup">Bands, defaults, transfer and backup</h3>
 <table>
   <tr><td class="k">Bands &amp; RPM settings</td><td>Every block's BPM range and ride mode, plus the universal RPM cap. Save as my defaults sets your baseline; Reset to my defaults returns to it; Factory reset restores the originals.</td></tr>
   <tr><td class="k">Send to sheet / Import code</td><td>A transfer code carrying playlist, BPMs, blocks, per-song modes, drops, colour coding, song lengths, band settings and saved defaults. Paste a Build Sheet code in by mistake and it tells you which button to use instead.</td></tr>
@@ -190,9 +257,9 @@ nothing about the colours reaches the Build Sheet or the Cue Notes.</p>
   <tr><td class="k">Where a saved file goes<span class="new">REV 22</span></td><td>There is no separate Save to… button any more — every Backup, Export file, Save file and Export CSV button asks where the file should go. On a phone that is the share sheet, so it can go to Drive, Files or mail; on a computer it is the ordinary save dialog, so it lands in a folder you pick. A browser that can do neither still downloads as before. See Section 7.</td></tr>
 </table>
 
-<div class="bar b3">3 · THE BUILD SHEET</div>
+<div class="bar b3" id="s3">3 · THE BUILD SHEET</div>
 
-<h3>Structure</h3>
+<h3 id="structure">Structure</h3>
 <p>Factory layout: Warm-Up · Segment 1 Rolling Opener (endurance) · Recovery Bridge · Segment 2 The Grinder (climb) ·
 Recovery Bridge · Segment 3 The Challenge (sprint) · Segment 4 Finisher · Cool-Down. Segment numbers renumber themselves
 to match ride order. <b>Add section</b> creates a named custom section; each header's × removes one; <b>Reset to
@@ -205,7 +272,7 @@ defaults</b> always restores the factory eight, and the library and drills survi
   <tr><td class="k">Getting the stock title back<span class="new">REV 26</span></td><td>Once you rename or switch a section, this file stops refreshing its title, note and colour from the template — your wording is yours. The ⇄ menu's <b>↺ Back to the stock title</b> hands it back and restores the refresh. Clearing a title and clicking away does the same. A section you never touched keeps picking up template improvements as before.</td></tr>
 </table>
 
-<h3>FTP and Max HR<span class="new">REV 24</span></h3>
+<h3 id="ftp-and-max-hr">FTP and Max HR<span class="new">REV 24</span></h3>
 <table>
   <tr><td class="k">Where</td><td>The header line under the title: <b>Rider: FTP [158] W · Max HR [164] bpm</b>. Both are boxes you can type in. They print as plain text, so a printed sheet still reads as a sentence.</td></tr>
   <tr><td class="k">What they drive</td><td>The whole zone table underneath. Power columns are shares of FTP — Z1 under 55% · Z2 56–75 · Z3 76–90 · Sweet Spot 88–94 · Z4 95–105 · Z5 106 and up — and heart-rate columns are shares of maximum: Z1 under 60% · Z2 60–70 · Z3 70–80 · Sweet Spot 76–84 · Z4 80–90 · Z5 90–100. The table redraws as you type.</td></tr>
@@ -216,7 +283,7 @@ defaults</b> always restores the factory eight, and the library and drills survi
   <tr><td class="k">What it will not touch<span class="new">REV 33</span></td><td>Any cell you have typed yourself. Once a cell is yours it stays yours, through any number of refreshes. The prompt counts those rows before you commit, shows an example of the change, and Cancel does nothing. The rescaled rows are tinted for a few seconds so you can see what moved.</td></tr>
 </table>
 
-<h3>Per-song rows</h3>
+<h3 id="per-song-rows">Per-song rows</h3>
 <table>
   <tr><td class="k">#</td><td>Continuous song count across the sheet — also the Spotify playlist position.</td></tr>
   <tr><td class="k">Song / Intervals / Drops / Power / HR</td><td>Wrapping fields; long text grows the row rather than truncating.</td></tr>
@@ -227,7 +294,7 @@ defaults</b> always restores the factory eight, and the library and drills survi
   <tr><td class="k">◉ ride / ◉ 8-bar</td><td>Under the drops: each drop as an absolute class minute (drift-corrected), then the 8-bar phrase boundary it snaps to and the gap — "1:16 −2.2".</td></tr>
 </table>
 
-<h3>Drill presets and the drill catalog</h3>
+<h3 id="drill-presets-and-the-drill-catalog">Drill presets and the drill catalog</h3>
 <p>Each Intervals cell has a ▾ drills dropdown. Picking a drill fills the cell in one tap, and the text stays fully
 editable afterward — a preset is a starting point, not a lock.</p>
 <table>
@@ -238,7 +305,7 @@ editable afterward — a preset is a starting point, not a lock.</p>
   <tr><td class="k">What a drill is</td><td>Always a resistance, position or effort pattern keyed to song structure — a chorus, a drop, a verse. Never a cadence change, because cadence is set by the beat-lock.</td></tr>
 </table>
 
-<h3>The Manage drills panel</h3>
+<h3 id="the-manage-drills-panel">The Manage drills panel</h3>
 <p>Opens from the ▾ drills dropdown. The whole catalog — built-in drills and your own — is editable here, in two
 sections: the <b>groups</b>, then the <b>drills</b> inside them.</p>
 <p><b>Groups</b></p>
@@ -250,7 +317,7 @@ sections: the <b>groups</b>, then the <b>drills</b> inside them.</p>
   <tr><td class="k">Drill count</td><td>Each row shows how many drills it holds, so an empty group is obvious.</td></tr>
 </table>
 
-<h3>The drill catalogue in Excel<span class="new">REV 31</span></h3>
+<h3 id="the-drill-catalogue-in-excel">The drill catalogue in Excel<span class="new">REV 31</span></h3>
 <table>
   <tr><td class="k">Export to Excel</td><td>In <b>Manage drills</b>. Writes <span class="url">Saturday60-Drills-YYYY-MM-DD.xlsx</span> — a real workbook, not a CSV, that opens without a warning. No internet needed: the app builds the file itself, so it works with no signal like everything else here.</td></tr>
   <tr><td class="k">The layout</td><td>Two sheets mirroring the panel. <b>Groups</b> — Order, Group — one row per heading in the order the app lists them. <b>Drills</b> — Group, Drill — one row per drill, which is exactly the pair of controls on each row of the panel. Both have a frozen header, a filter and sized columns. A third sheet, <b>Read me</b>, states the rules; the importer ignores it.</td></tr>
@@ -276,12 +343,12 @@ ride inside sheet transfer codes and sheet backups, and MERGE rather than replac
 nothing you have is wiped, and no drill is ever left in a group that does not exist. A drill also travels with its song
 in the drops library, so a song's wording comes back with its drop times.</p>
 
-<h3>Reordering</h3>
+<h3 id="reordering">Reordering</h3>
 <p><b>Songs:</b> ▲▼ move within a section and across boundaries; the per-row section dropdown teleports a song.
 <b>Sections:</b> a position dropdown (1–8) plus ▲▼. Clock windows stay attached to positions, so the timeline stays
 ascending no matter what moves.</p>
 
-<h3>Totals and buttons</h3>
+<h3 id="totals-and-buttons">Totals and buttons</h3>
 <table>
   <tr><td class="k">Header tallies</td><td>"3 songs · Σ 13:36 · thru 24:07" — count, section length, cumulative ride time; +n? flags missing lengths.</td></tr>
   <tr><td class="k">Grand bar</td><td>The whole playlist against 60:00, crossfades included, green under / red over.</td></tr>
@@ -300,7 +367,7 @@ ascending no matter what moves.</p>
   <tr><td class="k">Reset / Clear</td><td>Reset to defaults restores the factory 8-section sheet; Clear songs &amp; drops keeps your targets.</td></tr>
 </table>
 
-<h3>Hiding the targets<span class="new">REV 34</span></h3>
+<h3 id="hiding-the-targets">Hiding the targets<span class="new">REV 34</span></h3>
 <table>
   <tr><td class="k">The switch</td><td><b>Hide targets</b> in the toolbar drops the Power target and HR guide columns; it then reads <b>Show targets</b> to put them back. The choice is remembered on that device, on screen and on the printout.</td></tr>
   <tr><td class="k">Nothing is lost</td><td>The wording stays on every row, hidden rather than deleted, and comes back exactly as you left it. Imports, backups and transfer codes carry it either way, so a sheet sent with the targets hidden arrives complete.</td></tr>
@@ -308,7 +375,7 @@ ascending no matter what moves.</p>
   <tr><td class="k">History</td><td>This replaces the separate <i>Build Sheet · no targets</i> file that predates the app. That file never received any of the app’s work — no drops colour coding, no song length, no Fill from library — and it kept its own storage, so the two sheets drifted apart. A switch cannot.</td></tr>
 </table>
 
-<div class="bar b4">4 · HOW EVERYTHING CONNECTS</div>
+<div class="bar b4" id="s4">4 · HOW EVERYTHING CONNECTS</div>
 <p><b>Data flow:</b> Spotify → Chosic CSV → Build Sheet → (printed PDF · Excel workbook · MOWL Session Designer), with
 the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
 <table>
@@ -322,7 +389,7 @@ the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
   <tr><td class="k">Sheet → MOWL</td><td>Σ matches Session Designer's interval timeline to the second (verified). Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
 </table>
 
-<h3>Getting drops into the sheet — which route</h3>
+<h3 id="getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</h3>
 <p>Three routes exist and they overlap. The choice depends on where the ride was built:</p>
 <table>
   <tr><td class="k">Sheet built from a CSV</td><td><b>Import drops only.</b> In the Selector tap Send to sheet, move the code across, then paste it into the Import drops box. It fills the Drop times column and nothing else — BPM, ride mode, position, intervals and targets are left exactly as they are.</td></tr>
@@ -332,7 +399,7 @@ the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
   <tr><td class="k">Do not do both</td><td>Import drops only and Import ← Selector read the SAME code. Run one or the other, not both.</td></tr>
 </table>
 
-<h3>The drops library — moving it between the tools</h3>
+<h3 id="the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</h3>
 <p>Both tools read and write the same file, <b>Saturday60-Drops-YYYY-MM-DD.json</b>. Since the tools moved to one web
 address they also share one stored library on a given device, so the file is only needed to move between devices or to
 keep an archive. An entry holds the song, its drop times, its colour coding and its drill.</p>
@@ -346,11 +413,11 @@ keep an archive. An entry holds the song, its drop times, its colour coding and 
   <tr><td class="k">Editing outside the tools</td><td>The Drops Library Editor opens the file directly: times shown in m:ss, drills alongside, add or delete songs, merge two libraries (richer entry wins), then save back out. Renaming a title rebuilds its matching key automatically. Colour coding is preserved through the round trip without being shown. <b>Export CSV</b> writes Saturday60-Drops.csv — Song, Artist, BPM, Drops, Drill — as a copy to read or print; the tools still read only the .json, so keep using Save file for anything that has to travel.<span class="new">REV 21</span></td></tr>
 </table>
 
-<div class="bar b5">5 · THE SPIN CLASS PRO WORKBOOK</div>
+<div class="bar b5" id="s5">5 · THE SPIN CLASS PRO WORKBOOK</div>
 <p>Purpose: <b>Charts</b> gives a visual read of the ride's shape, and <b>Playlist Print</b> is the paper fold-up backup
 for when MOWL malfunctions or isn't available.</p>
 
-<h3>Getting the ride in</h3>
+<h3 id="getting-the-ride-in">Getting the ride in</h3>
 <p>Build Sheet → <b>Export for Excel</b>, then click <b>B2 on My Playlist</b> and paste. The export carries no quote
 characters — Excel's clipboard parser treats quotes as text qualifiers and would mangle anything containing them, so even
 the Elapsed formula is written quote-free.</p>
@@ -371,7 +438,7 @@ the Elapsed formula is written quote-free.</p>
 <p class="note">The paste block is B:J. If a column ever moves, the export's Elapsed formula must be re-checked against
 the sheet — that is the one place the two files have to agree exactly.</p>
 
-<h3>The Intervals sheet</h3>
+<h3 id="the-intervals-sheet">The Intervals sheet</h3>
 <p>Eight slots per song, each a <b>seconds + RPM</b> pair, plus Total sec, <b>Avg RPM</b> (time-weighted), Song sec and
 <b>Covered</b>. Leave a song blank and it uses its headline RPM.</p>
 <table>
@@ -380,7 +447,7 @@ the sheet — that is the one place the two files have to agree exactly.</p>
   <tr><td class="k">Keyed to row position</td><td>Intervals belong to a row, not a title. New week, new songs — clear them (ClearPlaylist does).</td></tr>
 </table>
 
-<h3>Cadence bands — not power zones</h3>
+<h3 id="cadence-bands-not-power-zones">Cadence bands — not power zones</h3>
 <p><b>Time in Cadence Bands</b> (Low under 70 · Mid 70–89 · High 90+) measures <i>legs turning, not watts</i>, and is
 named that way to avoid confusion with the true power zones on the Build Sheet. A light-geared song can sit in the High
 band while barely taxing you.</p>
@@ -388,7 +455,7 @@ band while barely taxing you.</p>
 doubles data entry, and normalized power computed from interval blocks overstates short efforts because it skips the
 30-second smoothing real NP uses. Any such figure would be planned load, not what the bike measures.</p>
 
-<h3>Playlist Print — two sides</h3>
+<h3 id="playlist-print-two-sides">Playlist Print — two sides</h3>
 <table>
   <tr><td class="k">Page 1</td><td>Ride detail, three lines per song: title (with Pointer), a stats strip — RPM, both gears, runtime, elapsed, segment — then the cue.</td></tr>
   <tr><td class="k">Page 2</td><td>Song and artist in larger type. Print double-sided, flip on the LONG edge, and the same songs land on the same half front and back.</td></tr>
@@ -396,7 +463,7 @@ doubles data entry, and normalized power computed from interval blocks overstate
   <tr><td class="k">Empty slots</td><td>Dropped entirely. 24 songs prints at about 13pt titles, 19 at about 16pt, 12 at the 26pt ceiling.</td></tr>
 </table>
 
-<h3>The three macros</h3>
+<h3 id="the-three-macros">The three macros</h3>
 <table>
   <tr><td class="k">Install (once)</td><td>Save as .xlsm, enable the Developer tab, Visual Basic → remove any older SaturdaySixty module → File › Import File… → the .bas. Close and save.</td></tr>
   <tr><td class="k">Weekly rhythm</td><td><b>ClearPlaylist</b> → paste at B2 → pick the gears → <b>FormatPlaylistPrint</b> → print.</td></tr>
@@ -407,23 +474,23 @@ doubles data entry, and normalized power computed from interval blocks overstate
   <tr><td class="k">Raw times</td><td>The workbook's Elapsed does NOT subtract crossfades, so its total runs ~2–3 minutes longer than the Build Sheet's. Intended.</td></tr>
 </table>
 
-<div class="bar b6">6 · THE TIMING AND PHRASE MATH</div>
+<div class="bar b6" id="s6">6 · THE TIMING AND PHRASE MATH</div>
 
-<h3>Crossfade</h3>
+<h3 id="crossfade">Crossfade</h3>
 <p>With a 10 s crossfade, real clock time = sum of lengths −10 s per transition. A 16-song hour plays ~2:30 faster than
 its raw sum. All Σ figures use this, and MOWL was verified to use the same convention.</p>
 
-<h3>Song-relative vs ride-clock drops</h3>
+<h3 id="song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</h3>
 <p>Stored drop times are positions <i>inside the song</i>. The ◉ ride line converts them to class minutes: song start =
 Σ −length, drop = start + offset.</p>
 
-<h3>Fractional drift</h3>
+<h3 id="fractional-drift">Fractional drift</h3>
 <p>Tracks carry fractional seconds that whole-second interval maps truncate, so music falls ~0.4–0.5 s further behind the
 intervals each transition — measured at 6.5 s over 15 transitions. The <b>Drift s/song</b> field (0.43 measured; 0 = show
 MOWL's clock) corrects ◉ times only; Σ stays matched to MOWL. Recalibrate: gap at the last song ÷ transitions. In MOWL,
 stretching every other interval by +1 s holds the hour within ~half a second.</p>
 
-<h3>Bars and phrase boundaries</h3>
+<h3 id="bars-and-phrase-boundaries">Bars and phrase boundaries</h3>
 <p>Assuming 4/4: one beat = 60 ÷ BPM, one bar = 240 ÷ BPM. At 126 BPM a bar is 1.90 s, 8 bars 15.2 s, 32 bars 61.0 s. The
 tools work in <b>boundary times</b> rather than bar numbers, because what you need is where a drill can start, not where
 you happen to be.</p>
@@ -433,7 +500,7 @@ you happen to be.</p>
   <tr><td class="k">What actually matters</td><td>It matters less that the drop sits on a boundary than that your effort STARTS on one. Begin a sprint at the 8-bar mark before the drop and the drop lands inside the effort — riders get a bar or two to load up rather than reacting cold.</td></tr>
 </table>
 
-<h3>The phrase map — boundaries on the ride clock</h3>
+<h3 id="the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</h3>
 <p>The Build Sheet's <b>Phrase map</b> converts every song's boundaries into class time using the same crossfade and
 drift maths as the ◉ ride column, so a boundary can be typed straight into Session Designer. It needs only BPM and Len,
 so a ride is programmable from the CSV alone — drops become refinement rather than a prerequisite.</p>
@@ -446,7 +513,7 @@ so a ride is programmable from the CSV alone — drops become refinement rather 
 downbeat and confirming the tempo holds — needs the audio file, and is worth doing in a waveform tool for the songs where
 phrasing really matters; read the downbeat there and type it into the offset field.</p>
 
-<div class="bar b7">7 · DATA, DEVICES AND BACKUP</div>
+<div class="bar b7" id="s7">7 · DATA, DEVICES AND BACKUP</div>
 <table>
   <tr><td class="k">Where data lives<span class="new">REV 19</span></td><td>In the browser's storage on the device where you typed it, keyed to the web address. All three tools now share one address, so they share one storage area on that device — the Selector's drops library is the Build Sheet's drops library. Nothing is uploaded; there is no account and no server.</td></tr>
   <tr><td class="k">Per device, still</td><td>Storage does not follow you between phone and laptop. Backups and transfer codes are how work moves.</td></tr>
@@ -458,7 +525,7 @@ phrasing really matters; read the downbeat there and type it into the offset fie
   <tr><td class="k">When to back up</td><td>Monthly, and always before uninstalling the app or clearing browsing data. Removing an installed app can clear its storage on some phones.</td></tr>
 </table>
 
-<div class="bar b8">8 · TROUBLESHOOTING</div>
+<div class="bar b8" id="s8">8 · TROUBLESHOOTING</div>
 <table>
   <tr><td class="k">Import looks like it did nothing<span class="new">REV 29</span></td><td>Check the toolbar line at the top of the sheet and look for the blue-tinted rows. From s60-v33 the sheet scrolls to the first imported row, so this should answer itself. If the rows really are unchanged, the file held the same songs in the same order and the app now says so. If the file was never read, the prompt would have said “No songs found” instead.</td></tr>
   <tr><td class="k">Import left last week’s songs behind<span class="new">REV 28</span></td><td>Fixed in s60-v32. Before that, an import only overwrote as many slots as it had songs and left the rest alone, so a short playlist landed on top of a full sheet and the two mixed. Update, then import again.</td></tr>
@@ -482,7 +549,7 @@ phrasing really matters; read the downbeat there and type it into the offset fie
   <tr><td class="k">Sections look scrambled</td><td>Reset to defaults is always one button home.</td></tr>
 </table>
 
-<div class="bar b9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</div>
+<div class="bar b9" id="s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</div>
 <p>The three HTML tools are published as one installable web app at
 <b class="url">https://indoor-cycling.github.io/saturday60/</b>. Opening that address gives a hub screen with the three
 tools on it. The whole app is stored on the device the first time you visit, so it runs with no signal at all — a
@@ -496,7 +563,7 @@ basement studio or a phone in aeroplane mode makes no difference.</p>
   <tr><td class="k">Which version am I on?</td><td>The hub shows it — "Version s60-v12" — with a <b>Check for updates</b> button beside it. Or open <span class="url">…/saturday60/sw.js</span> and read the VERSION line near the top.</td></tr>
 </table>
 
-<h3>The files in the repository are the only source of truth<span class="new">REV 21</span></h3>
+<h3 id="the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth<span class="new">REV 21</span></h3>
 <p>A copy in a downloads folder, attached to an old message, or pasted into a chat weeks ago is not. Before asking
 anyone — or any AI assistant — to revise a tool, fetch the current file from the repository and hand over <i>that</i>.
 Every tool carries shared machinery an older copy will silently lack: the app shell (<code>app.js</code>, the manifest
@@ -506,7 +573,7 @@ saying so, and the loss shows up later as missing colours or a page that no long
 <code>README.md</code> says this, and every file opens with a comment saying the same, so the warning travels with the
 file even when nobody thinks to mention it.</p>
 
-<h3>Publishing a change</h3>
+<h3 id="publishing-a-change">Publishing a change</h3>
 <p>The app is hosted from a GitHub repository. Editing it is uploading files.</p>
 <table>
   <tr><td class="k">1 · Replace the files</td><td>In the repository: <b>Add file → Upload files</b>, drag in what changed, <b>Commit changes</b>. A matching filename overwrites; nothing duplicates. When in doubt, upload the whole folder — it costs one extra drag and removes any doubt about which version is live.</td></tr>
@@ -515,7 +582,7 @@ file even when nobody thinks to mention it.</p>
   <tr><td class="k">If no bar appears</td><td>Check the repository finished publishing (green tick), then open …/sw.js and confirm the VERSION line near the top shows the new number, then tap Check for updates, then close the app fully and reopen it.</td></tr>
 </table>
 
-<h3>Rolling back</h3>
+<h3 id="rolling-back">Rolling back</h3>
 <p>A version number only ever goes forward. To undo a change you upload the older files under a <i>higher</i> version
 number — re-uploading an older number would leave every installed copy unaware anything had changed.</p>
 <table>
@@ -524,7 +591,7 @@ number — re-uploading an older number would leave every installed copy unaware
   <tr><td class="k">Keep the zips</td><td>The simplest safety net is keeping the last known-good folder somewhere. There is no version history to fall back on beyond what GitHub itself records.</td></tr>
 </table>
 
-<h3>Privacy</h3>
+<h3 id="privacy">Privacy</h3>
 <p>The repository is public, which is what free hosting requires — so the tools' code is readable by anyone with the
 address. Your content is not: songs, BPMs, drop times, colour coding and build sheets are written to storage on the
 device you typed them on and never leave it. The app has no server and asks for no account.</p>
@@ -538,6 +605,120 @@ manifest.webmanifest · icons/ · README.md.
 Alongside it: Spin_Class_ProV4 workbook · SaturdaySixty_PlaylistPrint.bas · Saturday-60_Weekly-Workflow.pdf.
 When any tool changes, ask Claude for a manual revision to match.
 </p>
+
+
+
+
+<div class="bar b8 pagebreak" id="index">INDEX</div>
+<p style="margin:0 0 6px">Page numbers are the printed pages of this manual. On screen every entry is a link.</p>
+<div class="idx">
+  <div class="ia">0–9</div>
+  <div class="ie">110 RPM cap <span class="ip"><a href="#s0">2</a>, <a href="#per-song-rows">7</a></span></div>
+  <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">15</a></span></div>
+  <div class="ia">A</div>
+  <div class="ie">Add drill <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
+  <div class="ie">Add group <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
+  <div class="ie">Add key (drop colours) <span class="ip"><a href="#adding-your-own-keys">5</a></span></div>
+  <div class="ie">Android, installing on <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ia">B</div>
+  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#totals-and-buttons">10</a>, <a href="#s7">16</a></span></div>
+  <div class="ie">Bar calculator <span class="ip"><a href="#the-bar-calculator">3</a></span></div>
+  <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">15</a></span></div>
+  <div class="ie">Beat-lock (1:1 and ½) <span class="ip"><a href="#s0">2</a>, <a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
+  <div class="ie">BPM looks doubled or halved <span class="ip"><a href="#the-tap-tester">3</a>, <a href="#s8">17</a></span></div>
+  <div class="ie">Build Sheet <span class="ip"><a href="#s1">2</a>, <a href="#s3">6</a></span></div>
+  <div class="ia">C</div>
+  <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">14</a></span></div>
+  <div class="ie">Camelot and key codes <span class="ip"><a href="#s4">11</a>, <a href="#s8">17</a></span></div>
+  <div class="ie">Chosic CSV <span class="ip"><a href="#s4">11</a></span></div>
+  <div class="ie">Clock, ride vs MOWL <span class="ip"><a href="#per-song-rows">7</a>, <a href="#fractional-drift">15</a></span></div>
+  <div class="ie">Colour-coding drops <span class="ip"><a href="#colour-coding-the-drops">5</a></span></div>
+  <div class="ie">Crossfade <span class="ip"><a href="#crossfade">15</a></span></div>
+  <div class="ia">D</div>
+  <div class="ie">Downbeat, first <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
+  <div class="ie">Drift, fractional <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#fractional-drift">15</a></span></div>
+  <div class="ie">Drill catalogue <span class="ip"><a href="#drill-presets-and-the-drill-catalog">8</a></span></div>
+  <div class="ie">Drills in Excel <span class="ip"><a href="#the-drill-catalogue-in-excel">9</a></span></div>
+  <div class="ie">Drop markers (◎) <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
+  <div class="ie">Drops library <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-drops-library-moving-it-between-the-tool">12</a></span></div>
+  <div class="ie">Drops Library Editor <span class="ip"><a href="#s1">2</a>, <a href="#the-drops-library-moving-it-between-the-tool">12</a></span></div>
+  <div class="ia">E</div>
+  <div class="ie">Excel workbook <span class="ip"><a href="#s5">13</a></span></div>
+  <div class="ie">Export for Excel <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
+  <div class="ia">F</div>
+  <div class="ie">Fill from library <span class="ip"><a href="#the-drops-library-moving-it-between-the-tool">12</a></span></div>
+  <div class="ie">FTP <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
+  <div class="ia">G</div>
+  <div class="ie">Getting Started sheet <span class="ip"><a href="#s1">2</a></span></div>
+  <div class="ie">Group dropdown (Excel) <span class="ip"><a href="#the-drill-catalogue-in-excel">9</a></span></div>
+  <div class="ia">H</div>
+  <div class="ie">Heart rate, maximum <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
+  <div class="ie">Hiding the targets <span class="ip"><a href="#hiding-the-targets">11</a></span></div>
+  <div class="ie">Holding a phrase boundary <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
+  <div class="ie">Hub screen <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ia">I</div>
+  <div class="ie">Import drops only <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Import Spotify export <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
+  <div class="ie">Import ← Selector <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
+  <div class="ie">Importing does nothing <span class="ip"><a href="#s8">17</a></span></div>
+  <div class="ie">Installing the app <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">14</a></span></div>
+  <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ia">K</div>
+  <div class="ie">Key, drop colour <span class="ip"><a href="#colour-coding-the-drops">5</a></span></div>
+  <div class="ia">L</div>
+  <div class="ie">Length, song <span class="ip"><a href="#song-length">4</a>, <a href="#per-song-rows">7</a></span></div>
+  <div class="ia">M</div>
+  <div class="ie">Macros (Excel) <span class="ip"><a href="#the-three-macros">14</a></span></div>
+  <div class="ie">Manage drills <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
+  <div class="ie">MOWL Session Designer <span class="ip"><a href="#s4">11</a>, <a href="#getting-the-ride-in">13</a></span></div>
+  <div class="ia">O</div>
+  <div class="ie">Offline, working <span class="ip"><a href="#s7">16</a>, <a href="#s9">18</a></span></div>
+  <div class="ia">P</div>
+  <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">15</a></span></div>
+  <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">16</a></span></div>
+  <div class="ie">Phrase strip <span class="ip"><a href="#the-gauge-and-the-phrase-strip">3</a></span></div>
+  <div class="ie">Playlist builder <span class="ip"><a href="#playlist-builder">4</a></span></div>
+  <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">14</a></span></div>
+  <div class="ie">Power targets <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
+  <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Privacy <span class="ip"><a href="#s7">16</a>, <a href="#privacy">19</a></span></div>
+  <div class="ia">R</div>
+  <div class="ie">Refresh targets <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
+  <div class="ie">Removing a song <span class="ip"><a href="#playlist-builder">4</a></span></div>
+  <div class="ie">Renaming a section <span class="ip"><a href="#structure">6</a></span></div>
+  <div class="ie">Reordering songs <span class="ip"><a href="#reordering">10</a></span></div>
+  <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">18</a></span></div>
+  <div class="ie">Reset to defaults <span class="ip"><a href="#structure">6</a>, <a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Ride mode, per song <span class="ip"><a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
+  <div class="ie">Rider zones <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
+  <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">19</a></span></div>
+  <div class="ia">S</div>
+  <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">16</a></span></div>
+  <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Sections, structure of <span class="ip"><a href="#structure">6</a></span></div>
+  <div class="ie">Selector (Song BPM) <span class="ip"><a href="#s1">2</a>, <a href="#s2">3</a></span></div>
+  <div class="ie">Send → Selector <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Snapping to the grid <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
+  <div class="ie">Song length <span class="ip"><a href="#song-length">4</a></span></div>
+  <div class="ie">Spin Class Pro workbook <span class="ip"><a href="#s1">2</a>, <a href="#s5">13</a></span></div>
+  <div class="ie">Spotify export <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
+  <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">16</a></span></div>
+  <div class="ie">Switching two sections <span class="ip"><a href="#structure">6</a></span></div>
+  <div class="ia">T</div>
+  <div class="ie">Tap-tester <span class="ip"><a href="#the-tap-tester">3</a></span></div>
+  <div class="ie">Targets, Power and HR <span class="ip"><a href="#ftp-and-max-hr">7</a>, <a href="#hiding-the-targets">11</a></span></div>
+  <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">16</a></span></div>
+  <div class="ie">Troubleshooting <span class="ip"><a href="#s8">17</a></span></div>
+  <div class="ia">U</div>
+  <div class="ie">Updating the app <span class="ip"><a href="#s9">18</a>, <a href="#publishing-a-change">19</a></span></div>
+  <div class="ia">V</div>
+  <div class="ie">Version number <span class="ip"><a href="#s9">18</a>, <a href="#publishing-a-change">19</a></span></div>
+  <div class="ia">W</div>
+  <div class="ie">Weekly Workflow <span class="ip"><a href="#s1">2</a></span></div>
+  <div class="ia">Z</div>
+  <div class="ie">Zone table <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
+</div>
 
 </body>
 </html>

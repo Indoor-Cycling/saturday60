@@ -4,7 +4,7 @@
    not an older one.
    Bump VERSION below whenever you upload changed files. That forces every
    installed copy to re-download the whole app on its next launch. */
-var VERSION = 's60-v44';
+var VERSION = 's60-v45';
 var CACHE = 'saturday60-' + VERSION;
 
 var ASSETS = [

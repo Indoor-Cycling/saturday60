@@ -63,7 +63,25 @@
      the rendered PDF, so they are real printed pages, not guesses. */
   .toc{margin:0 0 4px;}
   .toc .tsec{display:flex;align-items:baseline;gap:6px;margin:7px 0 1px;font-weight:700;font-size:9.9pt;}
-  .toc .tsub{display:flex;align-items:baseline;gap:6px;margin:1.5px 0 1.5px 15px;font-size:9pt;color:var(--mid);}
+  .toc .tsub{display:flex;align-items:baseline;gap:6px;margin:1.5px 0 1.5px 30px;font-size:9pt;color:var(--mid);}
+  /* On screen the contents folds to its ten sections; a caret opens one.
+     Printing ignores all of it — paper has no buttons, so every line prints. */
+  .toc .tcar{width:15px;height:15px;flex:none;align-self:center;padding:0;cursor:pointer;
+             background:none;border:1px solid var(--line);border-radius:4px;color:var(--grey);
+             font-size:9pt;line-height:1;display:inline-flex;align-items:center;justify-content:center;}
+  .toc .tcar:hover{color:var(--ink);border-color:var(--grey);}
+  .toc .tcar .car{display:block;transition:transform .15s ease;}
+  .toc .tcar[aria-expanded="true"] .car{transform:rotate(90deg);}
+  .toc .tcar.sp{border:none;cursor:default;}
+  .toc .tctl{display:flex;justify-content:flex-end;margin:0 0 2px;}
+  .toc .tctl button{background:none;border:1px solid var(--line);border-radius:5px;color:var(--grey);
+                    font:inherit;font-size:8.2pt;padding:2px 8px;cursor:pointer;}
+  .toc .tctl button:hover{color:var(--ink);border-color:var(--grey);}
+  @media print{
+    .toc .tcar, .toc .tctl{display:none!important;}
+    .toc .tsubs[hidden]{display:block!important;}
+    .toc .tsub{margin-left:15px;}
+  }
   .toc a{color:inherit;text-decoration:none;}
   .toc a:hover{text-decoration:underline;}
   .toc .dots{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-3px);}
@@ -94,52 +112,85 @@ workbook, and the Spotify → Chosic → MOWL pipeline · rev. 39 · September 2
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
-<div class="toc">
-  <div class="tsec"><a href="#s0">0 · THE PHILOSOPHY AND THE THREE RULES</a><span class="dots"></span><span class="pg" data-pg="s0">2</span></div>
-  <div class="tsec"><a href="#s1">1 · THE PIECES</a><span class="dots"></span><span class="pg" data-pg="s1">2</span></div>
-  <div class="tsec"><a href="#s2">2 · THE SONG BPM SELECTOR</a><span class="dots"></span><span class="pg" data-pg="s2">3</span></div>
-  <div class="tsub"><a href="#the-gauge-and-the-phrase-strip">The gauge and the phrase strip</a><span class="dots"></span><span class="pg" data-pg="the-gauge-and-the-phrase-strip">3</span></div>
-  <div class="tsub"><a href="#the-bar-calculator">The bar calculator</a><span class="dots"></span><span class="pg" data-pg="the-bar-calculator">3</span></div>
-  <div class="tsub"><a href="#the-tap-tester">The tap-tester</a><span class="dots"></span><span class="pg" data-pg="the-tap-tester">3</span></div>
-  <div class="tsub"><a href="#playlist-builder">Playlist builder</a><span class="dots"></span><span class="pg" data-pg="playlist-builder">4</span></div>
-  <div class="tsub"><a href="#per-song-ride-mode-the-1-1-button">Per-song ride mode — the 1:1 / ½ button</a><span class="dots"></span><span class="pg" data-pg="per-song-ride-mode-the-1-1-button">4</span></div>
-  <div class="tsub"><a href="#song-length">Song length</a><span class="dots"></span><span class="pg" data-pg="song-length">4</span></div>
-  <div class="tsub"><a href="#drop-markers-the-button">Drop markers — the ◎ button</a><span class="dots"></span><span class="pg" data-pg="drop-markers-the-button">4</span></div>
-  <div class="tsub"><a href="#colour-coding-the-drops">Colour-coding the drops</a><span class="dots"></span><span class="pg" data-pg="colour-coding-the-drops">5</span></div>
-  <div class="tsub"><a href="#adding-your-own-keys">Adding your own keys</a><span class="dots"></span><span class="pg" data-pg="adding-your-own-keys">5</span></div>
-  <div class="tsub"><a href="#bands-defaults-transfer-and-backup">Bands, defaults, transfer and backup</a><span class="dots"></span><span class="pg" data-pg="bands-defaults-transfer-and-backup">6</span></div>
-  <div class="tsec"><a href="#s3">3 · THE BUILD SHEET</a><span class="dots"></span><span class="pg" data-pg="s3">6</span></div>
-  <div class="tsub"><a href="#structure">Structure</a><span class="dots"></span><span class="pg" data-pg="structure">6</span></div>
-  <div class="tsub"><a href="#ftp-and-max-hr">FTP and Max HR</a><span class="dots"></span><span class="pg" data-pg="ftp-and-max-hr">7</span></div>
-  <div class="tsub"><a href="#per-song-rows">Per-song rows</a><span class="dots"></span><span class="pg" data-pg="per-song-rows">7</span></div>
-  <div class="tsub"><a href="#drill-presets-and-the-drill-catalog">Drill presets and the drill catalog</a><span class="dots"></span><span class="pg" data-pg="drill-presets-and-the-drill-catalog">8</span></div>
-  <div class="tsub"><a href="#the-manage-drills-panel">The Manage drills panel</a><span class="dots"></span><span class="pg" data-pg="the-manage-drills-panel">8</span></div>
-  <div class="tsub"><a href="#the-drill-catalogue-in-excel">The drill catalogue in Excel</a><span class="dots"></span><span class="pg" data-pg="the-drill-catalogue-in-excel">9</span></div>
-  <div class="tsub"><a href="#reordering">Reordering</a><span class="dots"></span><span class="pg" data-pg="reordering">10</span></div>
-  <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">10</span></div>
-  <div class="tsub"><a href="#hiding-the-targets">Hiding the targets</a><span class="dots"></span><span class="pg" data-pg="hiding-the-targets">11</span></div>
-  <div class="tsec"><a href="#s4">4 · HOW EVERYTHING CONNECTS</a><span class="dots"></span><span class="pg" data-pg="s4">11</span></div>
-  <div class="tsub"><a href="#getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</a><span class="dots"></span><span class="pg" data-pg="getting-drops-into-the-sheet-which-route">12</span></div>
-  <div class="tsub"><a href="#the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</a><span class="dots"></span><span class="pg" data-pg="the-drops-library-moving-it-between-the-tool">12</span></div>
-  <div class="tsec"><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">13</span></div>
-  <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">13</span></div>
-  <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">14</span></div>
-  <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">14</span></div>
-  <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">14</span></div>
-  <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">14</span></div>
-  <div class="tsec"><a href="#s6">6 · THE TIMING AND PHRASE MATH</a><span class="dots"></span><span class="pg" data-pg="s6">15</span></div>
-  <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">15</span></div>
-  <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">15</span></div>
-  <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">15</span></div>
-  <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">15</span></div>
-  <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">16</span></div>
-  <div class="tsec"><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">16</span></div>
-  <div class="tsec"><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">17</span></div>
-  <div class="tsec"><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">18</span></div>
-  <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">18</span></div>
-  <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">19</span></div>
-  <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">19</span></div>
-  <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">19</span></div>
+<div class="toc" id="toc">
+  <div class="tctl"><button type="button" id="tocAll" aria-expanded="false">Expand all</button></div>
+  <div class="tgrp flat">
+    <div class="tsec"><span class="tcar sp"></span><a href="#s0">0 · THE PHILOSOPHY AND THE THREE RULES</a><span class="dots"></span><span class="pg" data-pg="s0">2</span></div>
+  </div>
+  <div class="tgrp flat">
+    <div class="tsec"><span class="tcar sp"></span><a href="#s1">1 · THE PIECES</a><span class="dots"></span><span class="pg" data-pg="s1">2</span></div>
+  </div>
+  <div class="tgrp">
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s2" title="Show the parts of this section"><span class="car">›</span></button><a href="#s2">2 · THE SONG BPM SELECTOR</a><span class="dots"></span><span class="pg" data-pg="s2">3</span></div>
+    <div class="tsubs" id="subs-s2" hidden>
+      <div class="tsub"><a href="#the-gauge-and-the-phrase-strip">The gauge and the phrase strip</a><span class="dots"></span><span class="pg" data-pg="the-gauge-and-the-phrase-strip">3</span></div>
+      <div class="tsub"><a href="#the-bar-calculator">The bar calculator</a><span class="dots"></span><span class="pg" data-pg="the-bar-calculator">3</span></div>
+      <div class="tsub"><a href="#the-tap-tester">The tap-tester</a><span class="dots"></span><span class="pg" data-pg="the-tap-tester">3</span></div>
+      <div class="tsub"><a href="#playlist-builder">Playlist builder</a><span class="dots"></span><span class="pg" data-pg="playlist-builder">4</span></div>
+      <div class="tsub"><a href="#per-song-ride-mode-the-1-1-button">Per-song ride mode — the 1:1 / ½ button</a><span class="dots"></span><span class="pg" data-pg="per-song-ride-mode-the-1-1-button">4</span></div>
+      <div class="tsub"><a href="#song-length">Song length</a><span class="dots"></span><span class="pg" data-pg="song-length">4</span></div>
+      <div class="tsub"><a href="#drop-markers-the-button">Drop markers — the ◎ button</a><span class="dots"></span><span class="pg" data-pg="drop-markers-the-button">4</span></div>
+      <div class="tsub"><a href="#colour-coding-the-drops">Colour-coding the drops</a><span class="dots"></span><span class="pg" data-pg="colour-coding-the-drops">5</span></div>
+      <div class="tsub"><a href="#adding-your-own-keys">Adding your own keys</a><span class="dots"></span><span class="pg" data-pg="adding-your-own-keys">5</span></div>
+      <div class="tsub"><a href="#bands-defaults-transfer-and-backup">Bands, defaults, transfer and backup</a><span class="dots"></span><span class="pg" data-pg="bands-defaults-transfer-and-backup">6</span></div>
+    </div>
+  </div>
+  <div class="tgrp">
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s3" title="Show the parts of this section"><span class="car">›</span></button><a href="#s3">3 · THE BUILD SHEET</a><span class="dots"></span><span class="pg" data-pg="s3">6</span></div>
+    <div class="tsubs" id="subs-s3" hidden>
+      <div class="tsub"><a href="#structure">Structure</a><span class="dots"></span><span class="pg" data-pg="structure">6</span></div>
+      <div class="tsub"><a href="#ftp-and-max-hr">FTP and Max HR</a><span class="dots"></span><span class="pg" data-pg="ftp-and-max-hr">7</span></div>
+      <div class="tsub"><a href="#per-song-rows">Per-song rows</a><span class="dots"></span><span class="pg" data-pg="per-song-rows">7</span></div>
+      <div class="tsub"><a href="#drill-presets-and-the-drill-catalog">Drill presets and the drill catalog</a><span class="dots"></span><span class="pg" data-pg="drill-presets-and-the-drill-catalog">8</span></div>
+      <div class="tsub"><a href="#the-manage-drills-panel">The Manage drills panel</a><span class="dots"></span><span class="pg" data-pg="the-manage-drills-panel">8</span></div>
+      <div class="tsub"><a href="#the-drill-catalogue-in-excel">The drill catalogue in Excel</a><span class="dots"></span><span class="pg" data-pg="the-drill-catalogue-in-excel">9</span></div>
+      <div class="tsub"><a href="#reordering">Reordering</a><span class="dots"></span><span class="pg" data-pg="reordering">10</span></div>
+      <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">10</span></div>
+      <div class="tsub"><a href="#hiding-the-targets">Hiding the targets</a><span class="dots"></span><span class="pg" data-pg="hiding-the-targets">11</span></div>
+    </div>
+  </div>
+  <div class="tgrp">
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s4" title="Show the parts of this section"><span class="car">›</span></button><a href="#s4">4 · HOW EVERYTHING CONNECTS</a><span class="dots"></span><span class="pg" data-pg="s4">11</span></div>
+    <div class="tsubs" id="subs-s4" hidden>
+      <div class="tsub"><a href="#getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</a><span class="dots"></span><span class="pg" data-pg="getting-drops-into-the-sheet-which-route">12</span></div>
+      <div class="tsub"><a href="#the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</a><span class="dots"></span><span class="pg" data-pg="the-drops-library-moving-it-between-the-tool">12</span></div>
+    </div>
+  </div>
+  <div class="tgrp">
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s5" title="Show the parts of this section"><span class="car">›</span></button><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">13</span></div>
+    <div class="tsubs" id="subs-s5" hidden>
+      <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">13</span></div>
+      <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">14</span></div>
+      <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">14</span></div>
+      <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">14</span></div>
+      <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">14</span></div>
+    </div>
+  </div>
+  <div class="tgrp">
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s6" title="Show the parts of this section"><span class="car">›</span></button><a href="#s6">6 · THE TIMING AND PHRASE MATH</a><span class="dots"></span><span class="pg" data-pg="s6">15</span></div>
+    <div class="tsubs" id="subs-s6" hidden>
+      <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">15</span></div>
+      <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">15</span></div>
+      <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">15</span></div>
+      <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">15</span></div>
+      <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">16</span></div>
+    </div>
+  </div>
+  <div class="tgrp flat">
+    <div class="tsec"><span class="tcar sp"></span><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">16</span></div>
+  </div>
+  <div class="tgrp flat">
+    <div class="tsec"><span class="tcar sp"></span><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">17</span></div>
+  </div>
+  <div class="tgrp">
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">18</span></div>
+    <div class="tsubs" id="subs-s9" hidden>
+      <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">18</span></div>
+      <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">19</span></div>
+      <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">19</span></div>
+      <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">19</span></div>
+    </div>
+  </div>
 </div>
 
 <div class="bar" id="s0">0 · THE PHILOSOPHY AND THE THREE RULES</div>
@@ -720,5 +771,59 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Zone table <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
 </div>
 
+
+<script>
+/* The contents list folds. No library, nothing fetched — this file has to work
+   from a phone with no signal, like everything else in the kit. Printing is
+   untouched: the print stylesheet shows every row whatever is folded here. */
+(function(){
+  var toc=document.getElementById('toc'); if(!toc)return;
+  var all=document.getElementById('tocAll');
+  function groupsOpen(){
+    var subs=toc.querySelectorAll('.tsubs'), n=0;
+    Array.prototype.forEach.call(subs,function(d){ if(!d.hidden)n++; });
+    return {open:n, total:subs.length};
+  }
+  function paintAll(){
+    if(!all)return;
+    var g=groupsOpen(), every=(g.open===g.total);
+    all.textContent = every ? 'Collapse all' : 'Expand all';
+    all.setAttribute('aria-expanded', every ? 'true' : 'false');
+  }
+  function set(btn, open){
+    var box=document.getElementById(btn.getAttribute('aria-controls'));
+    if(!box)return;
+    box.hidden=!open;
+    btn.setAttribute('aria-expanded', open?'true':'false');
+    paintAll();
+  }
+  Array.prototype.forEach.call(toc.querySelectorAll('.tcar[aria-controls]'),function(btn){
+    btn.addEventListener('click',function(){
+      set(btn, btn.getAttribute('aria-expanded')!=='true');
+    });
+  });
+  if(all) all.addEventListener('click',function(){
+    var open = all.getAttribute('aria-expanded')!=='true';
+    Array.prototype.forEach.call(toc.querySelectorAll('.tcar[aria-controls]'),function(b){ set(b, open); });
+  });
+  // Following a link into a section opens that section's list, so coming back
+  // to the contents shows where you were rather than a closed row.
+  function openFor(hash){
+    if(!hash)return;
+    var link=toc.querySelector('a[href="'+hash.replace(/"/g,'')+'"]');
+    if(!link)return;
+    var grp=link.closest ? link.closest('.tgrp') : null;
+    var btn=grp && grp.querySelector('.tcar[aria-controls]');
+    if(btn) set(btn, true);
+  }
+  toc.addEventListener('click',function(e){
+    var a=e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if(a) openFor(a.getAttribute('href'));
+  });
+  window.addEventListener('hashchange',function(){ openFor(location.hash); });
+  openFor(location.hash);
+  paintAll();
+})();
+</script>
 </body>
 </html>

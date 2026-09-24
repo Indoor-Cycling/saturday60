@@ -43,6 +43,21 @@
   .toolbar button:active{transform:scale(.98);}
   .drift-ctl{font-size:11.5px;color:var(--muted);align-self:center;display:inline-flex;align-items:center;gap:5px;}
   .drift-ctl input{width:44px;border:1px solid var(--line);border-radius:7px;padding:6px 4px;font-family:var(--mono);font-size:12px;text-align:center;color:var(--ink);}
+  .drift-ctl .mini{background:none;border:1px solid var(--line);border-radius:7px;color:var(--muted);
+    font-size:11px;padding:4px 8px;cursor:pointer;font-family:inherit;}
+  .drift-ctl .mini:hover{color:var(--ink);border-color:var(--muted);}
+  .dcalc{width:100%;border-collapse:collapse;margin:4px 0 2px;}
+  .dcalc td{padding:6px 6px 6px 0;vertical-align:top;font-size:12px;border-bottom:1px solid var(--line);}
+  .dcalc tr:last-child td{border-bottom:none;}
+  .dcalc td.dk{width:20px;font-weight:700;color:var(--warm);text-align:center;}
+  .dcalc input{width:70px;border:1px solid var(--line);border-radius:7px;padding:5px 6px;
+    font-family:var(--mono);font-size:12px;text-align:center;color:var(--ink);}
+  .dcalc .mini{background:none;border:1px solid var(--line);border-radius:7px;color:var(--muted);
+    font-size:11px;padding:3px 8px;cursor:pointer;font-family:inherit;margin-left:4px;}
+  .dcalc .dchint{font-size:11px;color:var(--muted);margin-left:6px;}
+  .dcout{background:var(--paper);border:1px solid var(--line);border-radius:9px;padding:9px 11px;
+    font-size:12.5px;margin:10px 0 0;line-height:1.5;}
+  .dcout b{font-family:var(--mono);font-size:14px;}
   .status{font-size:11px;color:var(--muted);align-self:center;margin-left:auto;}
 
   /* zones */
@@ -231,7 +246,8 @@
     <button title="Hide the Power target and HR guide columns and give that width to Song and Intervals. Nothing is deleted — the wording comes back when you show them again." id="noTgtBtn">Hide targets</button>
     <button title="Discard this sheet and start again from the default Build Sheet" id="resetBtn">Reset to defaults</button>
     <button title="Empty the song titles, lengths and drop times, keeping every other setting" id="clearSongsBtn">Clear songs &amp; drops only</button>
-    <span class="drift-ctl">Drift <input id="driftIn" inputmode="decimal" title="Average fractional seconds each song runs past its whole-second length. Applied to ◉ ride times only; Σ stays matched to MOWL."> s/song</span>
+    <span class="drift-ctl">Drift <input id="driftIn" inputmode="decimal" title="Average fractional seconds each song runs past its whole-second length. Applied to ◉ ride times only; Σ stays matched to MOWL."> s/song
+      <button class="mini" id="driftCalc" type="button" title="Work the number out from how far behind the music ran last time">Measure…</button></span>
     <span class="status" id="status"></span>
   </div>
 
@@ -320,6 +336,35 @@
       <span class="grow"></span>
       <button title="Close without importing" id="codeCancel">Cancel</button>
       <button title="Read the pasted code and load it" class="primary" id="codeGo">Import</button>
+    </div>
+  </div>
+</div>
+
+<div class="imp-back" id="driftBack">
+  <div class="imp-card" style="max-width:520px">
+    <h3>Work out the drift</h3>
+    <p>Tracks carry fractional seconds that whole-second interval maps throw away, so the music slips a little further
+       behind the interval clock at every transition. One ride tells you how much.</p>
+    <table class="dcalc">
+      <tr><td class="dk">1</td>
+          <td>Ride the class, or watch it through, with the sheet in front of you.
+              <b>When the last song starts</b>, note the gap between where the music actually is and where the sheet
+              says it should be.</td></tr>
+      <tr><td class="dk">2</td>
+          <td>How far behind was it?
+              <input id="dcGap" inputmode="decimal" placeholder="6.5" aria-label="Seconds behind"> seconds
+              <span class="dchint">(6.5, or 0:06.5 — either reads)</span></td></tr>
+      <tr><td class="dk">3</td>
+          <td>Songs in that ride:
+              <input id="dcSongs" inputmode="numeric" aria-label="Number of songs">
+              <button class="mini" id="dcFromSheet" type="button" title="Count the songs on this sheet">from this sheet</button>
+              <span class="dchint" id="dcTrans"></span></td></tr>
+    </table>
+    <p class="dcout" id="dcOut">Fill in the two boxes and the answer appears here.</p>
+    <div class="imp-row">
+      <span class="grow"></span>
+      <button id="dcCancel" type="button">Cancel</button>
+      <button class="primary" id="dcUse" type="button" disabled>Use this number</button>
     </div>
   </div>
 </div>
@@ -501,6 +546,79 @@
     var c=driftIn.value.replace(/[^0-9.]/g,''); if(c!==driftIn.value)driftIn.value=c;
     try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}
     updateSums();
+  });
+
+  /* ---- working the drift out from one ride ----
+     Drift is the fractional second each song runs past its whole-second
+     length; over a class those add up and the music ends up behind the
+     interval clock. One division gives you the number — gap at the last song
+     divided by the transitions before it — so the sheet does it rather than
+     leaving you to do arithmetic in a studio. */
+  var driftBack=document.getElementById('driftBack'),
+      dcGap=document.getElementById('dcGap'), dcSongs=document.getElementById('dcSongs'),
+      dcOut=document.getElementById('dcOut'), dcUse=document.getElementById('dcUse'),
+      dcTrans=document.getElementById('dcTrans');
+  var dcValue=null;
+
+  function sheetSongCount(){
+    var n=0;
+    data.forEach(function(seg){seg.rows.forEach(function(r){ if((r.song||'').trim())n++; });});
+    return n;
+  }
+  // "6.5" and "0:06.5" both mean the same thing to a tired instructor
+  function readGap(v){
+    v=String(v||'').trim(); if(!v)return null;
+    if(v.indexOf(':')>=0){
+      var p=v.split(':'), m=parseFloat(p[0]), sec=parseFloat(p[1]);
+      if(isNaN(m)||isNaN(sec))return null;
+      return m*60+sec;
+    }
+    var n=parseFloat(v); return isNaN(n)?null:n;
+  }
+
+  function dcRender(){
+    var gap=readGap(dcGap.value), songs=parseInt(dcSongs.value,10);
+    var trans=(!isNaN(songs)&&songs>1)?songs-1:0;
+    dcTrans.textContent = trans ? '= '+trans+' transition'+(trans===1?'':'s') : '';
+    dcValue=null; dcUse.disabled=true;
+    if(gap==null||!trans){
+      dcOut.textContent='Fill in the two boxes and the answer appears here.';
+      return;
+    }
+    if(gap<0){ dcOut.textContent='If the music ran AHEAD of the sheet, drift is not the cause — leave it at 0.'; return; }
+    var d=gap/trans;
+    if(d>3){ dcOut.innerHTML='That works out at <b>'+d.toFixed(2)+'</b> s per song, which is past what drift explains. '+
+      'Check the gap and the song count — a whole missing song looks like enormous drift.'; return; }
+    dcValue=Math.round(d*100)/100;
+    dcUse.disabled=false;
+    dcOut.innerHTML='Drift is <b>'+dcValue.toFixed(2)+'</b> s per song &nbsp;\u2014&nbsp; '+
+      gap.toFixed(1)+' s spread over '+trans+' transition'+(trans===1?'':'s')+'.<br>'+
+      '<span style="color:var(--muted)">On a '+(trans+1)+'-song ride that is about '+
+      (dcValue*trans).toFixed(1)+' s by the last song, and roughly '+(dcValue*Math.round(trans/2)).toFixed(1)+
+      ' s by halfway.</span>';
+  }
+
+  function openDrift(){
+    dcGap.value='';
+    dcSongs.value=String(sheetSongCount()||'');
+    dcRender(); driftBack.classList.add('open'); dcGap.focus();
+  }
+  document.getElementById('driftCalc').addEventListener('click',openDrift);
+  document.getElementById('dcFromSheet').addEventListener('click',function(){
+    var n=sheetSongCount();
+    if(!n){ alert('There are no songs on this sheet yet, so there is nothing to count.'); return; }
+    dcSongs.value=String(n); dcRender();
+  });
+  [dcGap,dcSongs].forEach(function(el){ el.addEventListener('input',dcRender); });
+  document.getElementById('dcCancel').addEventListener('click',function(){ driftBack.classList.remove('open'); });
+  driftBack.addEventListener('click',function(e){ if(e.target===driftBack)driftBack.classList.remove('open'); });
+  dcUse.addEventListener('click',function(){
+    if(dcValue==null)return;
+    driftIn.value=dcValue.toFixed(2);
+    try{ localStorage.setItem(DRIFTKEY,driftIn.value); }catch(e){}
+    driftBack.classList.remove('open');
+    updateSums();
+    sheetStatus('Drift set to '+dcValue.toFixed(2)+' s/song \u2713');
   });
 
   /* ---- rider numbers: FTP and Max HR drive the zone table ----

@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 39 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 40 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -172,7 +172,7 @@ The three HTML tools now run as one installed web app at <span class="url">https
       <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">15</span></div>
       <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">15</span></div>
       <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">15</span></div>
-      <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">15</span></div>
+      <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">16</span></div>
       <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">16</span></div>
     </div>
   </div>
@@ -185,10 +185,10 @@ The three HTML tools now run as one installed web app at <span class="url">https
   <div class="tgrp">
     <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">18</span></div>
     <div class="tsubs" id="subs-s9" hidden>
-      <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">18</span></div>
+      <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">19</span></div>
       <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">19</span></div>
       <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">19</span></div>
-      <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">19</span></div>
+      <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">20</span></div>
     </div>
   </div>
 </div>
@@ -541,6 +541,13 @@ intervals each transition — measured at 6.5 s over 15 transitions. The <b>Drif
 MOWL's clock) corrects ◉ times only; Σ stays matched to MOWL. Recalibrate: gap at the last song ÷ transitions. In MOWL,
 stretching every other interval by +1 s holds the hour within ~half a second.</p>
 
+
+<table>
+  <tr><td class="k">Measuring it<span class="new">REV 40</span></td><td>The Build Sheet does the arithmetic. <b>Measure…</b> beside the Drift box asks two things: how many seconds behind the music was when the last song started, and how many songs were in that ride — which it fills in from the sheet. Drift is the gap divided by the transitions before it, so a 6.5-second gap over a 16-song ride is 6.5 ÷ 15 = <b>0.43</b>. <b>Use this number</b> writes it into the Drift box.</td></tr>
+  <tr><td class="k">Reading the gap</td><td>Ride or watch the class with the sheet in front of you and look once, at the moment the last song starts: where the music actually is against where the sheet says it should be. One reading at the end is more accurate than several along the way, because the error accumulates and a bigger number is easier to read.</td></tr>
+  <tr><td class="k">Sanity checks</td><td>The panel refuses a negative gap — music running ahead is not drift — and warns when the answer exceeds 3 s per song, which usually means a song was skipped rather than that the clock slipped. It also shows the total the figure implies at the end and at halfway, so you can tell at a glance whether it matches what you saw.</td></tr>
+  <tr><td class="k">How often</td><td>Once, then again if you change platform, bike or crossfade setting. It is a property of how the music is cut and played, not of a particular week’s playlist.</td></tr>
+</table>
 <h3 id="bars-and-phrase-boundaries">Bars and phrase boundaries</h3>
 <p>Assuming 4/4: one beat = 60 ÷ BPM, one bar = 240 ÷ BPM. At 126 BPM a bar is 1.90 s, 8 bars 15.2 s, 32 bars 61.0 s. The
 tools work in <b>boundary times</b> rather than bar numbers, because what you need is where a drill can start, not where
@@ -660,12 +667,13 @@ When any tool changes, ask Claude for a manual revision to match.
 
 
 
+
 <div class="bar b8 pagebreak" id="index">INDEX</div>
 <p style="margin:0 0 6px">Page numbers are the printed pages of this manual. On screen every entry is a link.</p>
 <div class="idx">
   <div class="ia">0–9</div>
   <div class="ie">110 RPM cap <span class="ip"><a href="#s0">2</a>, <a href="#per-song-rows">7</a></span></div>
-  <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">15</a></span></div>
+  <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">16</a></span></div>
   <div class="ia">A</div>
   <div class="ie">Add drill <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
   <div class="ie">Add group <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
@@ -674,7 +682,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ia">B</div>
   <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#totals-and-buttons">10</a>, <a href="#s7">16</a></span></div>
   <div class="ie">Bar calculator <span class="ip"><a href="#the-bar-calculator">3</a></span></div>
-  <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">15</a></span></div>
+  <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">16</a></span></div>
   <div class="ie">Beat-lock (1:1 and ½) <span class="ip"><a href="#s0">2</a>, <a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
   <div class="ie">BPM looks doubled or halved <span class="ip"><a href="#the-tap-tester">3</a>, <a href="#s8">17</a></span></div>
   <div class="ie">Build Sheet <span class="ip"><a href="#s1">2</a>, <a href="#s3">6</a></span></div>
@@ -726,20 +734,20 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ia">O</div>
   <div class="ie">Offline, working <span class="ip"><a href="#s7">16</a>, <a href="#s9">18</a></span></div>
   <div class="ia">P</div>
-  <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">15</a></span></div>
+  <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">16</a></span></div>
   <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">16</a></span></div>
   <div class="ie">Phrase strip <span class="ip"><a href="#the-gauge-and-the-phrase-strip">3</a></span></div>
   <div class="ie">Playlist builder <span class="ip"><a href="#playlist-builder">4</a></span></div>
   <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">14</a></span></div>
   <div class="ie">Power targets <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
-  <div class="ie">Privacy <span class="ip"><a href="#s7">16</a>, <a href="#privacy">19</a></span></div>
+  <div class="ie">Privacy <span class="ip"><a href="#s7">16</a>, <a href="#privacy">20</a></span></div>
   <div class="ia">R</div>
   <div class="ie">Refresh targets <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Removing a song <span class="ip"><a href="#playlist-builder">4</a></span></div>
   <div class="ie">Renaming a section <span class="ip"><a href="#structure">6</a></span></div>
   <div class="ie">Reordering songs <span class="ip"><a href="#reordering">10</a></span></div>
-  <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">18</a></span></div>
+  <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">19</a></span></div>
   <div class="ie">Reset to defaults <span class="ip"><a href="#structure">6</a>, <a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Ride mode, per song <span class="ip"><a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
   <div class="ie">Rider zones <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
@@ -771,59 +779,5 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Zone table <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
 </div>
 
-
-<script>
-/* The contents list folds. No library, nothing fetched — this file has to work
-   from a phone with no signal, like everything else in the kit. Printing is
-   untouched: the print stylesheet shows every row whatever is folded here. */
-(function(){
-  var toc=document.getElementById('toc'); if(!toc)return;
-  var all=document.getElementById('tocAll');
-  function groupsOpen(){
-    var subs=toc.querySelectorAll('.tsubs'), n=0;
-    Array.prototype.forEach.call(subs,function(d){ if(!d.hidden)n++; });
-    return {open:n, total:subs.length};
-  }
-  function paintAll(){
-    if(!all)return;
-    var g=groupsOpen(), every=(g.open===g.total);
-    all.textContent = every ? 'Collapse all' : 'Expand all';
-    all.setAttribute('aria-expanded', every ? 'true' : 'false');
-  }
-  function set(btn, open){
-    var box=document.getElementById(btn.getAttribute('aria-controls'));
-    if(!box)return;
-    box.hidden=!open;
-    btn.setAttribute('aria-expanded', open?'true':'false');
-    paintAll();
-  }
-  Array.prototype.forEach.call(toc.querySelectorAll('.tcar[aria-controls]'),function(btn){
-    btn.addEventListener('click',function(){
-      set(btn, btn.getAttribute('aria-expanded')!=='true');
-    });
-  });
-  if(all) all.addEventListener('click',function(){
-    var open = all.getAttribute('aria-expanded')!=='true';
-    Array.prototype.forEach.call(toc.querySelectorAll('.tcar[aria-controls]'),function(b){ set(b, open); });
-  });
-  // Following a link into a section opens that section's list, so coming back
-  // to the contents shows where you were rather than a closed row.
-  function openFor(hash){
-    if(!hash)return;
-    var link=toc.querySelector('a[href="'+hash.replace(/"/g,'')+'"]');
-    if(!link)return;
-    var grp=link.closest ? link.closest('.tgrp') : null;
-    var btn=grp && grp.querySelector('.tcar[aria-controls]');
-    if(btn) set(btn, true);
-  }
-  toc.addEventListener('click',function(e){
-    var a=e.target && e.target.closest ? e.target.closest('a[href^="#"]') : null;
-    if(a) openFor(a.getAttribute('href'));
-  });
-  window.addEventListener('hashchange',function(){ openFor(location.hash); });
-  openFor(location.hash);
-  paintAll();
-})();
-</script>
 </body>
 </html>

@@ -191,6 +191,15 @@
   .imp-card p{margin:0 0 10px;font-size:11.5px;color:var(--muted);line-height:1.5;}
   .imp-card textarea{width:100%;height:130px;border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:11px;padding:8px;resize:vertical;}
   .imp-row{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+  /* On a narrow screen this row wrapped so that the last button sat on top of
+     the one before it, and a tap meant to hit Import landed on Cancel. Give
+     each button its own line's worth of room and let the row grow instead. */
+  .imp-row button{flex:0 1 auto;min-height:40px;}
+  .imp-row .grow{flex:1 1 100%;min-width:0;height:0;}
+  @media (max-width:520px){
+    .imp-row{gap:8px;}
+    .imp-row button{flex:1 1 44%;}
+  }
   .imp-row input[type=file]{font-size:11px;}
   .imp-row .grow{flex:1;}
   .imp-row button{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;}
@@ -548,6 +557,26 @@
     updateSums();
   });
 
+  /* ---- one panel at a time ----
+     Every overlay used to open on top of whatever was already open, so closing
+     the top one uncovered the other still sitting there. Opening any panel now
+     closes the rest, and Escape closes whatever is showing. */
+  function showPanel(el){
+    if(!el)return;
+    Array.prototype.forEach.call(document.querySelectorAll('.imp-back.open, .pm-back.open'), function(o){
+      if(o!==el) o.classList.remove('open');
+    });
+    el.classList.add('open');
+  }
+  function closePanels(){
+    Array.prototype.forEach.call(document.querySelectorAll('.imp-back.open, .pm-back.open'), function(o){
+      o.classList.remove('open');
+    });
+  }
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && document.querySelector('.imp-back.open, .pm-back.open')) closePanels();
+  });
+
   /* ---- working the drift out from one ride ----
      Drift is the fractional second each song runs past its whole-second
      length; over a class those add up and the music ends up behind the
@@ -601,7 +630,7 @@
   function openDrift(){
     dcGap.value='';
     dcSongs.value=String(sheetSongCount()||'');
-    dcRender(); driftBack.classList.add('open'); dcGap.focus();
+    dcRender(); showPanel(driftBack); dcGap.focus();
   }
   document.getElementById('driftCalc').addEventListener('click',openDrift);
   document.getElementById('dcFromSheet').addEventListener('click',function(){
@@ -871,7 +900,7 @@
     });
   }
   var pmBack=document.getElementById('pmBack');
-  document.getElementById('phraseBtn').addEventListener('click',function(){ renderPhraseMap(); pmBack.classList.add('open'); });
+  document.getElementById('phraseBtn').addEventListener('click',function(){ renderPhraseMap(); showPanel(pmBack); });
   document.getElementById('pmDone').addEventListener('click',function(){ pmBack.classList.remove('open'); });
   pmBack.addEventListener('click',function(e){ if(e.target===pmBack)pmBack.classList.remove('open'); });
   document.querySelectorAll('[data-pgrid]').forEach(function(b){
@@ -947,7 +976,7 @@
       });
     });
   }
-  document.getElementById('dlViewBtn').addEventListener('click',function(){ renderDropsLib(); dlBack.classList.add('open'); });
+  document.getElementById('dlViewBtn').addEventListener('click',function(){ renderDropsLib(); showPanel(dlBack); });
   document.getElementById('dlDone').addEventListener('click',function(){ dlBack.classList.remove('open'); });
   dlBack.addEventListener('click',function(e){ if(e.target===dlBack)dlBack.classList.remove('open'); });
   document.getElementById('dlAdd').addEventListener('click',function(){
@@ -1194,7 +1223,7 @@
       codeGo=document.getElementById('codeGo'),
       codeCancel=document.getElementById('codeCancel');
   importSheetBtn.addEventListener('click',function(){
-    codeText.value=''; codeBack.classList.add('open'); codeText.focus();
+    codeText.value=''; showPanel(codeBack); codeText.focus();
   });
   codeCancel.addEventListener('click',function(){codeBack.classList.remove('open');});
   codeBack.addEventListener('click',function(e){if(e.target===codeBack)codeBack.classList.remove('open');});
@@ -1504,7 +1533,7 @@
     sheetStatus('Imported '+out.length+' drills in '+groups.length+' groups ✓');
   }
 
-  function openDrillManager(){renderDrillManager(); drillBack.classList.add('open');}
+  function openDrillManager(){renderDrillManager(); showPanel(drillBack);}
   document.getElementById('dmAddGroup').addEventListener('click',function(){
     var n=prompt('Name the new group:','New group');
     if(!n)return; n=n.trim(); if(!n)return;
@@ -2301,7 +2330,7 @@ var S60XLSX = (function () {
       impCancel=document.getElementById('impCancel');
 
   document.getElementById('spotifyBtn').addEventListener('click',function(){
-    impText.value=''; impFile.value=''; impBack.classList.add('open'); impText.focus();
+    impText.value=''; impFile.value=''; showPanel(impBack); impText.focus();
   });
   impCancel.addEventListener('click',function(){impBack.classList.remove('open');});
   impBack.addEventListener('click',function(e){if(e.target===impBack)impBack.classList.remove('open');});
@@ -2405,6 +2434,17 @@ var S60XLSX = (function () {
   }
 
   impGo.addEventListener('click',function(){
+    // Any throw in here used to leave the panel sitting there with the sheet
+    // untouched, which reads as a dead button. Say what went wrong instead.
+    try{ runImport(); }
+    catch(err){
+      alert('The import stopped partway.\n\n'+((err&&err.message)||err)+
+            '\n\nNothing was saved. Tell whoever maintains this what the sheet looked like — '+
+            'it is a fault in the app, not in your file.');
+    }
+  });
+
+  function runImport(){
     var songs=parseSpotifyExport(impText.value);
     if(!songs.length){alert('No songs found. Paste an Exportify/Chosic CSV or one song per line.');return;}
     var withBpm=songs.filter(function(s){return s.bpm;}).length;
@@ -2460,12 +2500,21 @@ var S60XLSX = (function () {
       });
     });
     if(toRemove) changed+=toRemove;             // a removed row is a change too
-    // extras become new rows in the cool-down section
+    // Extras go into the cool-down — but a sheet need not have one. It can be
+    // deleted, renamed away, or replaced by sections of your own, and assuming
+    // it was there is what made a long import die in silence on the phone.
     if(q.length){
-      var seg=data.filter(function(g){return g.id==='cool';})[0];
+      var seg=data.filter(function(g){return g.id==='cool';})[0] || data[data.length-1];
+      if(!seg){                                   // a sheet with no sections at all
+        seg={id:'extra',color:'var(--cool)',title:'EXTRA SONGS',time:'',note:'',rows:[]};
+        data.push(seg);
+      }
+      if(!Array.isArray(seg.rows)) seg.rows=[];
       q.forEach(function(s){
-        var last=seg.rows[seg.rows.length-1];
-        seg.rows.push({song:s.title,ph:'song title',bpm:s.bpm?String(s.bpm):'',len:s.len||'',mode:(s.bpm&&s.bpm>CAP)?'half':last.mode,pos:last.pos,intervals:'',power:last.power,hr:last.hr,drops:'',role:last.role||'cool'});
+        var last=seg.rows[seg.rows.length-1] || {mode:'beat',pos:'Seat',power:'',hr:'',role:'cool'};
+        seg.rows.push({song:s.title,ph:'song title',bpm:s.bpm?String(s.bpm):'',len:s.len||'',
+          mode:(s.bpm&&s.bpm>CAP)?'half':(last.mode||'beat'),pos:last.pos||'Seat',intervals:'',
+          power:last.power||'',hr:last.hr||'',drops:'',role:last.role||'cool'});
       });
     }
     impBack.classList.remove('open');
@@ -2482,7 +2531,7 @@ var S60XLSX = (function () {
     if(!changed){
       alert('Those '+songs.length+' song'+(songs.length===1?'':'s')+' were already on the sheet, in that order — so nothing changed.\n\nThe import did run.');
     }
-  });
+  }
 
   /* ---- Import from the Selector's playlist ---- */
   var FEEDKEY='s60_feed_v1';

@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 40 · September 2026<br>
+workbook, and the Spotify → Chosic → MOWL pipeline · rev. 42 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -183,11 +183,11 @@ The three HTML tools now run as one installed web app at <span class="url">https
     <div class="tsec"><span class="tcar sp"></span><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">17</span></div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">18</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">19</span></div>
     <div class="tsubs" id="subs-s9" hidden>
       <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">19</span></div>
       <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">19</span></div>
-      <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">19</span></div>
+      <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">20</span></div>
       <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">20</span></div>
     </div>
   </div>
@@ -585,7 +585,9 @@ phrasing really matters; read the downbeat there and type it into the offset fie
 
 <div class="bar b8" id="s8">8 · TROUBLESHOOTING</div>
 <table>
-  <tr><td class="k">Import looks like it did nothing<span class="new">REV 29</span></td><td>Check the toolbar line at the top of the sheet and look for the blue-tinted rows. From s60-v33 the sheet scrolls to the first imported row, so this should answer itself. If the rows really are unchanged, the file held the same songs in the same order and the app now says so. If the file was never read, the prompt would have said “No songs found” instead.</td></tr>
+  <tr><td class="k">Import looks like it did nothing<span class="new">REV 41</span></td><td>First check the toolbar line at the top of the sheet and look for the blue-tinted rows; from s60-v33 the sheet scrolls to the first imported row, so this usually answers itself. If the prompt appears, you press OK and the sheet genuinely does not change, that is a fault in the app rather than in your file. It happened up to s60-v46 when an import carried <b>more songs than the sheet had slots</b> and the sheet had no cool-down section — deleted, renamed away, or replaced by sections of your own. The extras had nowhere to go, the import stopped mid-way without a word, and the panel stayed open. Fixed: extras now land in the last section, whatever it is called, and any other failure says so instead of stopping silently.</td></tr>
+  <tr><td class="k">Closing a panel shows another<span class="new">REV 42</span></td><td>Each panel — Drops library, Spotify import, Phrase map, the transfer code, Manage drills, the drift calculator — used to open on top of whatever was already open, so closing the top one uncovered the one still sitting underneath. From s60-v48 opening any panel closes the rest, and <b>Esc</b> closes whatever is showing.</td></tr>
+  <tr><td class="k">Cancel where Import should be<span class="new">REV 41</span></td><td>On a phone the buttons at the foot of an import panel used to wrap so the last one sat on top of the one before it, and a tap aimed at <b>Import</b> could land on <b>Cancel</b>. Fixed in s60-v47; the buttons now share the width evenly on a narrow screen.</td></tr>
   <tr><td class="k">Import left last week’s songs behind<span class="new">REV 28</span></td><td>Fixed in s60-v32. Before that, an import only overwrote as many slots as it had songs and left the rest alone, so a short playlist landed on top of a full sheet and the two mixed. Update, then import again.</td></tr>
   <tr><td class="k">Import says "No songs found"</td><td>The CSV header wasn't recognised. The importer knows Chosic (Song/Artist/BPM/Duration) and Exportify (Track Name/Artist Name(s)/Duration (ms)).</td></tr>
   <tr><td class="k">"That code could not be read"</td><td>Usually the tail was cut in transit, or it's the wrong code type. Re-copy with the whole block selected; compare the last 10 characters on both devices.</td></tr>
@@ -668,6 +670,8 @@ When any tool changes, ask Claude for a manual revision to match.
 
 
 
+
+
 <div class="bar b8 pagebreak" id="index">INDEX</div>
 <p style="margin:0 0 6px">Page numbers are the printed pages of this manual. On screen every entry is a link.</p>
 <div class="idx">
@@ -678,7 +682,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Add drill <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
   <div class="ie">Add group <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
   <div class="ie">Add key (drop colours) <span class="ip"><a href="#adding-your-own-keys">5</a></span></div>
-  <div class="ie">Android, installing on <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ie">Android, installing on <span class="ip"><a href="#s9">19</a></span></div>
   <div class="ia">B</div>
   <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#totals-and-buttons">10</a>, <a href="#s7">16</a></span></div>
   <div class="ie">Bar calculator <span class="ip"><a href="#the-bar-calculator">3</a></span></div>
@@ -714,15 +718,15 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Heart rate, maximum <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Hiding the targets <span class="ip"><a href="#hiding-the-targets">11</a></span></div>
   <div class="ie">Holding a phrase boundary <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
-  <div class="ie">Hub screen <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ie">Hub screen <span class="ip"><a href="#s9">19</a></span></div>
   <div class="ia">I</div>
   <div class="ie">Import drops only <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Import Spotify export <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
   <div class="ie">Import ← Selector <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
   <div class="ie">Importing does nothing <span class="ip"><a href="#s8">17</a></span></div>
-  <div class="ie">Installing the app <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ie">Installing the app <span class="ip"><a href="#s9">19</a></span></div>
   <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">14</a></span></div>
-  <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">18</a></span></div>
+  <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">19</a></span></div>
   <div class="ia">K</div>
   <div class="ie">Key, drop colour <span class="ip"><a href="#colour-coding-the-drops">5</a></span></div>
   <div class="ia">L</div>
@@ -732,7 +736,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Manage drills <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
   <div class="ie">MOWL Session Designer <span class="ip"><a href="#s4">11</a>, <a href="#getting-the-ride-in">13</a></span></div>
   <div class="ia">O</div>
-  <div class="ie">Offline, working <span class="ip"><a href="#s7">16</a>, <a href="#s9">18</a></span></div>
+  <div class="ie">Offline, working <span class="ip"><a href="#s7">16</a>, <a href="#s9">19</a></span></div>
   <div class="ia">P</div>
   <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">16</a></span></div>
   <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">16</a></span></div>
@@ -751,7 +755,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Reset to defaults <span class="ip"><a href="#structure">6</a>, <a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Ride mode, per song <span class="ip"><a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
   <div class="ie">Rider zones <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
-  <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">19</a></span></div>
+  <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">20</a></span></div>
   <div class="ia">S</div>
   <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">16</a></span></div>
   <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
@@ -770,9 +774,9 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">16</a></span></div>
   <div class="ie">Troubleshooting <span class="ip"><a href="#s8">17</a></span></div>
   <div class="ia">U</div>
-  <div class="ie">Updating the app <span class="ip"><a href="#s9">18</a>, <a href="#publishing-a-change">19</a></span></div>
+  <div class="ie">Updating the app <span class="ip"><a href="#publishing-a-change">19</a></span></div>
   <div class="ia">V</div>
-  <div class="ie">Version number <span class="ip"><a href="#s9">18</a>, <a href="#publishing-a-change">19</a></span></div>
+  <div class="ie">Version number <span class="ip"><a href="#s9">19</a></span></div>
   <div class="ia">W</div>
   <div class="ie">Weekly Workflow <span class="ip"><a href="#s1">2</a></span></div>
   <div class="ia">Z</div>

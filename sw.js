@@ -2,9 +2,19 @@
    THIS FILE IS THE LIVE VERSION, served from
    https://indoor-cycling.github.io/saturday60/ — revise from this copy,
    not an older one.
-   Bump VERSION below whenever you upload changed files. That forces every
-   installed copy to re-download the whole app on its next launch. */
-var VERSION = 's60-v49';
+
+   Bump VERSION below whenever you upload changed files.
+
+   v50 changes, after an update took most of an afternoon to land:
+   - install calls skipWaiting(), so a new version takes over at once
+     instead of waiting for every tab on the old one to be closed.
+   - Pages (.html and navigations) are fetched network-first, so a reload
+     after an upload always shows the new file. Everything else stays
+     cache-first for speed and offline use.
+   - Background refreshes revalidate with the server rather than accepting
+     whatever Chrome's HTTP cache is holding.
+   In practice: upload, bump VERSION, reload once. */
+var VERSION = 's60-v50';
 var CACHE = 'saturday60-' + VERSION;
 
 var ASSETS = [
@@ -29,6 +39,13 @@ var ASSETS = [
   'icons/favicon-32.png'
 ];
 
+// A page is anything the browser would render as a document: a navigation,
+// a path ending in .html, or a bare directory such as './'.
+function isPage(req, url) {
+  if (req.mode === 'navigate' || req.destination === 'document') return true;
+  return /\.html$/i.test(url.pathname) || /\/$/.test(url.pathname);
+}
+
 self.addEventListener('install', function (e) {
   e.waitUntil(
     caches.open(CACHE).then(function (c) {
@@ -38,6 +55,9 @@ self.addEventListener('install', function (e) {
           console.warn('[sw] could not precache', u, err);
         });
       }));
+    }).then(function () {
+      // Don't sit in "waiting" behind open tabs — this version is ready.
+      return self.skipWaiting();
     })
   );
 });
@@ -68,18 +88,42 @@ self.addEventListener('fetch', function (e) {
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
+  // ---- Pages: network first. An upload shows up on the next reload;
+  //      the cached copy is only there for when the network isn't.
+  if (isPage(req, url)) {
+    e.respondWith(
+      fetch(req).then(function (res) {
+        if (res && res.ok && res.type === 'basic') {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) { c.put(req, copy); });
+        }
+        return res;
+      }).catch(function () {
+        return caches.match(req, { ignoreSearch: true }).then(function (hit) {
+          if (hit) return hit;
+          return caches.match('index.html').then(function (page) {
+            return page || caches.match('./');
+          }).then(function (page) {
+            return page || new Response('', { status: 504, statusText: 'Offline' });
+          });
+        });
+      })
+    );
+    return;
+  }
+
+  // ---- Everything else: cache first, refreshed quietly in the background.
   e.respondWith(
     caches.match(req, { ignoreSearch: true }).then(function (hit) {
-      // Cached: serve instantly, then quietly refresh in the background.
       if (hit) {
         e.waitUntil(
-          fetch(req).then(function (res) {
+          // no-cache: check with the server rather than trusting Chrome's copy.
+          fetch(new Request(req, { cache: 'no-cache' })).then(function (res) {
             if (res && res.ok) return caches.open(CACHE).then(function (c) { return c.put(req, res); });
           }).catch(function () {})
         );
         return hit;
       }
-      // Not cached: go to the network and keep a copy.
       return fetch(req).then(function (res) {
         if (res && res.ok && res.type === 'basic') {
           var copy = res.clone();
@@ -87,14 +131,6 @@ self.addEventListener('fetch', function (e) {
         }
         return res;
       }).catch(function () {
-        // Offline and unknown page — fall back to the hub.
-        if (req.mode === 'navigate') {
-          return caches.match('index.html').then(function (page) {
-            return page || caches.match('./');
-          }).then(function (page) {
-            return page || new Response('', { status: 504, statusText: 'Offline' });
-          });
-        }
         return new Response('', { status: 504, statusText: 'Offline' });
       });
     })

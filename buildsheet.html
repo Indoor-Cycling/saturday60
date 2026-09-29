@@ -1206,7 +1206,11 @@
         var parts=t.split(' \u2014 ');
         var song=parts[0].trim();
         var artist=parts.length>1 ? parts.slice(1).join(' \u2014 ').trim() : '';
-        var eF='=IF(M'+r+'=0,,SUM($M$2:M'+r+'))';   // M = _TimeValue (hidden)
+        // M = _TimeValue (hidden). Subtract the crossfade once per song so
+        // Elapsed lands where the NEXT song starts, matching MOWL and the
+        // sheet's own Sum column. N2 on My Playlist holds the crossfade.
+        var eF='=IF(M'+r+'=0,,SUM($M$2:M'+r+')-SUMPRODUCT(--($M$2:M'+r+'>0))'
+              +'*TIME(0,0,IF(ISNUMBER($N$2),$N$2,10)))';
         lines.push([song, artist, padLen(row.len), eF, rpm, '', '', xlSegment(seg,row), cue].join('\t'));
         r++;
       });

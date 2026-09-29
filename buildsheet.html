@@ -280,7 +280,7 @@
 <div class="imp-back" id="impBack">
   <div class="imp-card">
     <h3>Import a Spotify playlist export</h3>
-    <p>Best source: <b>Chosic's Playlist Analyzer</b> (chosic.com/spotify-playlist-analyzer — paste the playlist link, then download the CSV) because its export <b>includes each song's BPM</b>, which fills in automatically. <b>Exportify</b> (exportify.app) and Chosic's plain exporter also work but carry titles only. Upload the file or paste its contents below. Songs fill the sheet <b>in ride order</b>, top to bottom. Sanity-check imported BPMs that look doubled or halved — the tap-tester settles any argument.</p>
+    <p>Best source: <b>Chosic's Playlist Analyzer</b> (chosic.com/spotify-playlist-analyzer — paste the playlist link, then download the CSV) because its export <b>includes each song's BPM</b>, which fills in automatically. <b>Exportify</b> (exportify.app) also carries BPM (Tempo) and exact lengths in milliseconds, which is the most accurate source for timing. Lengths are stored the way MOWL counts them, rounded up to the next whole second, so they read 1 s longer than MOWL's song list. Upload the file or paste its contents below. Songs fill the sheet <b>in ride order</b>, top to bottom. Sanity-check imported BPMs that look doubled or halved — the tap-tester settles any argument.</p>
     <textarea id="impText" placeholder="Paste CSV or one song per line…"></textarea>
     <div class="imp-row">
       <input type="file" id="impFile" accept=".csv,.txt,text/csv,text/plain">
@@ -1589,13 +1589,14 @@
         var isTrack=(row.song&&row.song.trim())||L>0;
         var cell=document.getElementById('sum_'+si+'_'+ri);
         if(L>0){
-          run += (counted===0 ? L : L-XF);
+          var startBase=run;      // this song's start on MOWL's timeline
+          run += L-XF;            // its block ends where the next song starts (last song: MOWL's total)
           counted++;
           if(cell)cell.textContent=fmtLen(run);
-          // ride-clock drops: song starts at run − L, shifted by accumulated drift
+          // ride-clock drops: song starts at startBase, shifted by accumulated drift
           var rd=document.getElementById('rided_'+si+'_'+ri);
           if(rd){
-            var start=run-L+drift*(counted-1), times=[];
+            var start=startBase+drift*(counted-1), times=[];
             String(row.drops||'').split(/[,;]+/).forEach(function(tok){
               tok=tok.trim(); if(!tok)return;
               var off=parseLen(tok);
@@ -1646,7 +1647,7 @@
       var deltaTxt = counted===0 ? '' : (diff===0 ? 'exactly 60:00'
         : (diff>0 ? fmtLen(diff)+' over 60:00' : fmtLen(-diff)+' under 60:00'));
       g.innerHTML='<span>Playlist total: '+fmtLen(run)+
-        (counted>1?' <span style="color:var(--muted);font-weight:500">(incl. 10 s crossfades)</span>':'')+
+        (counted>1?' <span style="color:var(--muted);font-weight:500">(MOWL total: last song ends 10 s later)</span>':'')+
         (missingAll?' <span style="color:var(--muted);font-weight:500">· '+missingAll+' song'+(missingAll===1?'':'s')+' without a length</span>':'')+
         '</span><span class="delta '+cls+'">'+deltaTxt+'</span>';
     }
@@ -2412,12 +2413,15 @@ var S60XLSX = (function () {
         if(di>=0){
           var dv=(rows[r][di]||'').trim();
           if(dv.indexOf(':')>=0){
-            var dp=dv.split(':');
-            if(dp.length===3){len=(parseInt(dp[0],10)*60+parseInt(dp[1],10))+':'+dp[2];}
-            else {len=parseInt(dp[0],10)+':'+dp[1];}
+            // Chosic's mm:ss drops the fraction; MOWL rounds up, so add the second back
+            var dp=dv.split(':'), secs;
+            if(dp.length===3){secs=parseInt(dp[0],10)*3600+parseInt(dp[1],10)*60+parseInt(dp[2],10);}
+            else {secs=parseInt(dp[0],10)*60+parseInt(dp[1],10);}
+            if(!isNaN(secs)){secs+=1; len=Math.floor(secs/60)+':'+((secs%60)<10?'0':'')+(secs%60);}
           } else {
             var ms=parseFloat(dv);
-            if(!isNaN(ms)&&ms>1000){var sec=Math.round(ms/1000);len=Math.floor(sec/60)+':'+((sec%60)<10?'0':'')+(sec%60);}
+            if(!isNaN(ms)&&ms>1000){var sec=Math.ceil(ms/1000);   // MOWL counts each song rounded UP to a whole second
+              len=Math.floor(sec/60)+':'+((sec%60)<10?'0':'')+(sec%60);}
           }
         }
         songs.push({title:(artist? t+' — '+artist : t), bpm:bpm, len:len});

@@ -256,7 +256,7 @@
     <button title="Discard this sheet and start again from the default Build Sheet" id="resetBtn">Reset to defaults</button>
     <button title="Empty the song titles, lengths and drop times, keeping every other setting" id="clearSongsBtn">Clear songs &amp; drops only</button>
     <span class="drift-ctl">Drift <input id="driftIn" inputmode="decimal" title="Average fractional seconds each song runs past its whole-second length. Applied to ◉ ride times only; Σ stays matched to MOWL."> s/song
-      <button class="mini" id="driftCalc" type="button" title="Work the number out from how far behind the music ran last time">Measure…</button></span>
+      <button class="mini" id="driftCalc" type="button" title="Set the drift: use the typical figure, or work it out from a real ride">Set…</button></span>
     <span class="status" id="status"></span>
   </div>
 
@@ -351,14 +351,19 @@
 
 <div class="imp-back" id="driftBack">
   <div class="imp-card" style="max-width:520px">
-    <h3>Work out the drift</h3>
+    <h3>Set the drift</h3>
     <p>Tracks carry fractional seconds that whole-second interval maps throw away, so the music slips a little further
-       behind the interval clock at every transition. One ride tells you how much.</p>
+       behind the interval clock at every transition. You do not need to ride the class to set this while you build:
+       start with the typical figure, and refine it later from a real ride if you want.</p>
+    <p class="dcout" id="dcPred"></p>
+    <div class="imp-row" style="margin-bottom:10px">
+      <button class="primary" id="dcPredict" type="button">Use typical 0.43 s/song</button>
+    </div>
+    <p class="dchint" style="margin:0 0 6px">Optional refinement, once you have ridden the class:</p>
     <table class="dcalc">
       <tr><td class="dk">1</td>
-          <td>Ride the class, or watch it through, with the sheet in front of you.
-              <b>When the last song starts</b>, note the gap between where the music actually is and where the sheet
-              says it should be.</td></tr>
+          <td>After riding the class (or watching it through), note the gap between where the music actually is and
+              where the sheet says it should be <b>when the last song starts</b>.</td></tr>
       <tr><td class="dk">2</td>
           <td>How far behind was it?
               <input id="dcGap" inputmode="decimal" placeholder="6.5" aria-label="Seconds behind"> seconds
@@ -550,7 +555,8 @@
   var DRIFTKEY='s60_drift_v1';
   var driftIn=document.getElementById('driftIn');
   function getDrift(){var v=parseFloat(driftIn.value); return isNaN(v)?0:Math.max(0,Math.min(3,v));}
-  (function(){var v='0';try{v=localStorage.getItem(DRIFTKEY)||'0';}catch(e){} driftIn.value=v;})();
+  var DRIFT_DEFAULT=0.43;   // s/song, calibrated from live ride data; used until you set your own
+  (function(){var v=null;try{v=localStorage.getItem(DRIFTKEY);}catch(e){} driftIn.value=(v===null)?String(DRIFT_DEFAULT):v;})();
   driftIn.addEventListener('input',function(){
     var c=driftIn.value.replace(/[^0-9.]/g,''); if(c!==driftIn.value)driftIn.value=c;
     try{localStorage.setItem(DRIFTKEY,driftIn.value);}catch(e){}
@@ -627,7 +633,21 @@
       ' s by halfway.</span>';
   }
 
+  var dcPred=document.getElementById('dcPred');
+  function dcPredRender(){
+    var n=sheetSongCount();
+    dcPred.innerHTML='Typical drift: <b>'+DRIFT_DEFAULT.toFixed(2)+'</b> s per song (from your live rides).'+
+      (n>1?' On this sheet\u2019s '+n+' songs that is about '+(DRIFT_DEFAULT*(n-1)).toFixed(1)+' s by the last song.':'');
+  }
+  document.getElementById('dcPredict').addEventListener('click',function(){
+    driftIn.value=DRIFT_DEFAULT.toFixed(2);
+    try{ localStorage.setItem(DRIFTKEY,driftIn.value); }catch(e){}
+    driftBack.classList.remove('open');
+    updateSums();
+    sheetStatus('Drift set to '+DRIFT_DEFAULT.toFixed(2)+' s/song \u2713');
+  });
   function openDrift(){
+    dcPredRender();
     dcGap.value='';
     dcSongs.value=String(sheetSongCount()||'');
     dcRender(); showPanel(driftBack); dcGap.focus();

@@ -283,6 +283,12 @@
   .manual .mlbl{font-size:11.5px;color:var(--dim);}
   .manual input{width:78px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:9px;font-family:var(--mono);font-size:14px;text-align:center;padding:9px;}
   .manual button{background:var(--surface-2);border:1px solid var(--line);color:var(--muted);border-radius:9px;font-size:12.5px;font-weight:600;padding:9px 13px;cursor:pointer;}
+  /* a whole song's drops in one paste: commas, spaces or line breaks all read */
+  .manual.paste{margin-top:8px;align-items:flex-start;}
+  .manual.paste .mlbl{padding-top:11px;}
+  .manual.paste textarea{flex:1 1 150px;min-width:0;background:var(--surface-2);border:1px solid var(--line);color:var(--text);
+    border-radius:9px;font-family:var(--mono);font-size:14px;padding:9px;resize:vertical;line-height:1.4;}
+  .paste-out{font-size:11.5px;color:var(--muted);margin-top:6px;min-height:1em;font-variant-numeric:tabular-nums;}
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
 </style>
@@ -433,6 +439,13 @@
     <div class="ckey" id="dropKey"></div>
     <div class="chips" id="dropChips"></div>
     <div class="manual"><span class="mlbl">Add by hand</span><input id="manualIn" type="text" placeholder="1:14" aria-label="Drop time, minutes colon seconds"><button title="Add a drop at the time typed on the left" id="manualAdd">Add</button></div>
+    <div class="manual paste">
+      <span class="mlbl">Paste a list</span>
+      <textarea id="pasteIn" rows="2" placeholder="0:32, 1:14, 2:05" aria-label="Several drop times at once, separated by commas, spaces or line breaks"></textarea>
+      <button id="pasteAdd" type="button" title="Add these times to the drops already captured">Add all</button>
+      <button id="pasteReplace" type="button" title="Throw away this song&rsquo;s drops and use these times instead">Replace</button>
+    </div>
+    <div class="paste-out" id="pasteOut" role="status" aria-live="polite"></div>
     <button class="sheet-done" id="dropDone" type="button" title="Close this song’s drop markers">Done</button>
   </div>
 </div>
@@ -1330,6 +1343,8 @@
     if(dbEl)dbEl.value=s.dbOffset?String(Math.round(s.dbOffset*10)/10):'';
     var lenEl=document.getElementById('lenIn');
     if(lenEl)lenEl.value=s.len?fmtTime(s.len):'';
+    var pEl=document.getElementById('pasteIn'); if(pEl)pEl.value='';
+    var pOut=document.getElementById('pasteOut'); if(pOut)pOut.textContent='';
     renderChips();
     dropBack.classList.add('open');
   }
@@ -1663,6 +1678,61 @@
     addDropTo(s,sec); manualIn.value=''; renderChips();
   });
   manualIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();manualAdd.click();}});
+
+  /* ---- a whole song's drops in one paste ----------------------------
+     Splits on anything that is not part of a time, so "0:32, 1:14",
+     one-per-line, and a run of spaces all read the same. Each token goes
+     through the same parseTime the single field uses, so 1:14 and 74
+     both mean the same thing. */
+  var pasteIn=document.getElementById('pasteIn'),
+      pasteOut=document.getElementById('pasteOut');
+  function parseDropList(raw){
+    var toks=String(raw||'').split(/[^0-9:.]+/);
+    var times=[], seen={}, bad=0, dupe=0;
+    toks.forEach(function(t){
+      t=t.trim(); if(!t)return;
+      var sec=parseTime(t);
+      if(sec==null||isNaN(sec)){ bad++; return; }
+      sec=Math.max(0,Math.round(sec));
+      if(seen[sec]){ dupe++; return; }
+      seen[sec]=1; times.push(sec);
+    });
+    times.sort(function(a,b){return a-b;});
+    return {times:times, bad:bad, dupe:dupe};
+  }
+  function bits(){ var a=[]; for(var i=0;i<arguments.length;i++) if(arguments[i]) a.push(arguments[i]); return a.join(' \u00b7 '); }
+  function commitPaste(replace){
+    var s=curSong(); if(!s)return;
+    var raw=pasteIn.value;
+    if(!raw.trim()){ pasteOut.textContent=''; return; }
+    var r=parseDropList(raw);
+    if(!r.times.length){
+      pasteOut.textContent='Nothing readable in that. Times look like 1:14, or 74 for bare seconds.';
+      return;
+    }
+    var d=songDrops(s), msg;
+    if(replace){
+      if(d.length && !confirm('Replace this song\u2019s '+d.length+' drop'+(d.length===1?'':'s')+
+                              ' with the '+r.times.length+' pasted time'+(r.times.length===1?'':'s')+'?')) return;
+      var keep={}; r.times.forEach(function(t){ keep[t]=1; });
+      var cols=dropCols(s), gone=0;
+      d.forEach(function(t){ if(!keep[t]){ delete cols[t]; gone++; } });
+      d.length=0;
+      r.times.forEach(function(t){ d.push(t); });
+      saveSongs();
+      msg=bits(r.times.length+' drop'+(r.times.length===1?'':'s')+' set',
+               gone?gone+' cleared':'' );
+    } else {
+      var added=0, already=0;
+      r.times.forEach(function(t){ if(addDropTo(s,t)) added++; else already++; });
+      msg=bits(added+' added', already?already+' already there':'');
+    }
+    pasteOut.textContent=bits(msg, r.dupe?r.dupe+' repeated in the paste':'', r.bad?r.bad+' unreadable':'');
+    pasteIn.value='';
+    renderChips();
+  }
+  document.getElementById('pasteAdd').addEventListener('click',function(){ commitPaste(false); });
+  document.getElementById('pasteReplace').addEventListener('click',function(){ commitPaste(true); });
 
   /* ---- song length: optional, and only ever set by you ---- */
   var lenIn=document.getElementById('lenIn'), lenUse=document.getElementById('lenUse');

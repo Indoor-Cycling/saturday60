@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Chosic → MOWL pipeline · rev. 42 · September 2026<br>
+workbook, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 43 · September 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -268,7 +268,8 @@ changes.</p>
 
 <h3 id="drop-markers-the-button">Drop markers — the ◎ button</h3>
 <table>
-  <tr><td class="k">Capturing</td><td>Stopwatch (Start/Pause/Reset) plus a big Mark drop button; chips show what you caught, each removable. Add by hand takes typed times.</td></tr>
+  <tr><td class="k">Capturing</td><td>Stopwatch (Start/Pause/Reset) plus a big Mark drop button; chips show what you caught, each removable. Add by hand takes one typed time; Paste a list takes the whole song at once.</td></tr>
+  <tr><td class="k">Pasting a whole list<span class="new">REV 43</span></td><td>Under Add by hand is a <b>Paste a list</b> box that takes every drop for a song in one go. Commas, spaces and line breaks all separate, so "0:32, 1:14, 2:05", one-per-line, and a line copied off another screen ("◉ 0:32 · 1:14 · 2:05") all read the same. Each time goes through the same parser the single field uses, so 1:14 and 74 mean the same thing. Times come back sorted with repeats dropped. <b>Add all</b> keeps the drops already captured and adds the new ones; <b>Replace</b> clears the song's drops and uses the pasted times instead, asking first when the song already has some. A line under the box reports what happened — "4 added", "6 drops set · 2 cleared", "1 already there". Colour coding survives: a time that is in both the old and the pasted list keeps its colour, and a slot whose time disappears is cleared.</td></tr>
   <tr><td class="k">Five ways to capture<span class="new">REV 23</span></td><td>Split-screen with Spotify and mark live · split-screen with Musixmatch and tap when the lyrics flip to Chorus (the drop sheet fits a half-height window) · read Spotify’s elapsed clock and type it (most accurate) · scout the YouTube most-replayed peak in advance · <b>hold a phrase boundary</b> in the grid and take the time straight off it.</td></tr>
   <tr><td class="k">Simultaneous start</td><td>Tap the song's restart control and the stopwatch's Start together on your own count — you are launching both from zero, not catching a moving song.</td></tr>
   <tr><td class="k">Phrase boundaries</td><td>An 8 / 16 / 32 toggle lists every boundary time in the song — the natural places a drill can start or end. On the 8-bar view every fourth marker is brightened because it is also a 32-bar boundary; any boundary near one of your drops is highlighted. The list runs eight phrases ahead of the downbeat and extends as you mark drops past it; switch to 32 bars to see further into the track at a glance.</td></tr>
@@ -341,7 +342,7 @@ defaults</b> always restores the factory eight, and the library and drills survi
   <tr><td class="k">Len</td><td>Song length (m:ss); auto-fills on import from a CSV, and from the Selector when the song carries one. Feeds all clock math. A row that has a song but no length is tinted amber until you fill it — on screen only, never on the printout.<span class="new">REV 19</span></td></tr>
   <tr><td class="k">BPM → Ride → RPM</td><td>Type the BPM, pick 1:1 or ½; RPM computes under the 110 cap. The beat-lock cannot be broken here.</td></tr>
   <tr><td class="k">Pos</td><td>Seat / Stand / S-St.</td></tr>
-  <tr><td class="k">Σ ride</td><td>Running total through that song, crossfade-aware. Matches MOWL's interval timeline.</td></tr>
+  <tr><td class="k">Σ ride<span class="new">REV 43</span></td><td>Where that song's block <i>ends</i> on MOWL's timeline — which is where the next song starts, crossfade included. Read it against the Session Designer's song strip, row for row. The last song's figure is MOWL's total for the class; its audio keeps playing for another 10 s underneath whatever follows. Until s60-v49 this column reported where each song's audio ended instead, so every row read 10 s per transition adrift of the timeline.</td></tr>
   <tr><td class="k">◉ ride / ◉ 8-bar</td><td>Under the drops: each drop as an absolute class minute (drift-corrected), then the 8-bar phrase boundary it snaps to and the gap — "1:16 −2.2".</td></tr>
 </table>
 
@@ -427,17 +428,20 @@ ascending no matter what moves.</p>
 </table>
 
 <div class="bar b4" id="s4">4 · HOW EVERYTHING CONNECTS</div>
-<p><b>Data flow:</b> Spotify → Chosic CSV → Build Sheet → (printed PDF · Excel workbook · MOWL Session Designer), with
-the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
+<p><b>Data flow:</b> Spotify → Exportify or Chosic CSV → Build Sheet → (printed PDF · Excel workbook · MOWL Session
+Designer), with the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
 <table>
-  <tr><td class="k">Chosic CSV carries</td><td>Song, Artist, BPM, Duration — plus Camelot (key matching) and Explicit (clean audit).</td></tr>
+  <tr><td class="k">Which export<span class="new">REV 43</span></td><td><b>Exportify is the one to use when the clock matters.</b> Its Duration (ms) column carries the exact length in milliseconds, which is what lets the sheet round the way MOWL does. Chosic's Duration is mm:ss with the fraction already thrown away, so the sheet has to add a second back blindly — right for almost every track, and one second over for a track whose true length is an exact whole second. Chosic still wins on Camelot and Explicit, so exporting both and using Chosic for the audit is reasonable.</td></tr>
+  <tr><td class="k">Chosic CSV carries</td><td>Song, Artist, BPM, Duration (mm:ss) — plus Camelot (key matching) and Explicit (clean audit).</td></tr>
+  <tr><td class="k">Exportify CSV carries<span class="new">REV 43</span></td><td>Track Name, Artist Name(s), Tempo (BPM) and Duration (ms) — exact lengths, no Camelot or Explicit.</td></tr>
   <tr><td class="k">Spotify-export import</td><td>Fills top-to-bottom in ride order, bridges included: titles, artists, BPMs, lengths. Over 110 BPM becomes ½ automatically. Playlist order = sheet order.</td></tr>
+  <tr><td class="k">Lengths round UP<span class="new">REV 43</span></td><td>MOWL counts each track rounded up to the next whole second, so the sheet stores it that way: an Exportify duration of 189.363 s becomes <b>3:10</b>, and a Chosic <b>3:09</b> has a second added. That means the Len column reads one second longer than the same song in MOWL's own song list — that is not a mismatch, it is what makes the timeline agree. Verified against a 23-song class: rounding up and subtracting the crossfade gives 1:01:43, exactly MOWL's total. Rounding down gives 1:01:31 and rounding to nearest 1:01:39; neither fits.</td></tr>
   <tr><td class="k">Selector ↔ Sheet</td><td>Selector code → sheet fills by block role. Sheet's Send → Selector maps sections back to blocks (Segment 4 → Finisher; bridges and cool-down → Cool-Down) and carries drops and ride modes both ways. Song lengths travel Selector → Sheet.</td></tr>
   <tr><td class="k">Sheet ↔ Sheet</td><td>Sheet codes clone everything. Sheet content REPLACES on import; the Section Library and drill catalog MERGE.</td></tr>
-  <tr><td class="k">Two import routes</td><td>Chosic route = fast skeleton with BPMs/lengths. Selector route = complete data including drops, colour coding and any lengths you set. Pick ONE per week.</td></tr>
+  <tr><td class="k">Two import routes</td><td>CSV route = fast skeleton with BPMs/lengths. Selector route = complete data including drops, colour coding and any lengths you set. Pick ONE per week.</td></tr>
   <tr><td class="k">Seeing that it landed<span class="new">REV 29</span></td><td>When an import runs, the rows it wrote are tinted blue for a few seconds and the first of them is scrolled into view, so the result is visible wherever you were on the sheet. The toolbar line reports the counts for eight seconds. If an import changes nothing at all — the same file imported twice — it says so outright rather than looking like a dead button.</td></tr>
   <tr><td class="k">An import replaces the playlist<span class="new">REV 30</span></td><td>Importing a Spotify or Chosic export fills the sheet in ride order and then puts the sheet back to its normal shape: every slot past the last imported song is emptied, and any <b>spare rows</b> beyond a section’s factory count are removed outright — so a short playlist gives a short sheet, not a tail of blank rows. A section never drops below its factory row count (one row for a section you added yourself), so the ride structure survives. The prompt says how many slots will be cleared and how many rows removed before you commit, and Cancel leaves the sheet untouched. More songs than slots still extends the cool-down, as it always has — and the next smaller import shrinks it back.</td></tr>
-  <tr><td class="k">Sheet → MOWL</td><td>Σ matches Session Designer's interval timeline to the second (verified). Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
+  <tr><td class="k">Sheet → MOWL<span class="new">REV 43</span></td><td>Σ gives each song's start on the Session Designer's song strip, and the last song's Σ is MOWL's total — checked song by song against a real session. From an Exportify CSV it lands on the second; from Chosic expect the odd song a second out, for the rounding reason above. Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
 </table>
 
 <h3 id="getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</h3>
@@ -477,7 +481,7 @@ the Elapsed formula is written quote-free.</p>
   <tr><td class="k">B · Song Name</td><td>Title only; the artist is split off at the " — " separator.</td></tr>
   <tr><td class="k">C · Artist</td><td>The other half of that split.</td></tr>
   <tr><td class="k">D · Runtime</td><td>Zero-padded mm:ss, right-aligned.</td></tr>
-  <tr><td class="k">E · Elapsed Time</td><td>A live formula, pasted with the block; empty rows show blank.</td></tr>
+  <tr><td class="k">E · Elapsed Time<span class="new">REV 43</span></td><td>A live formula, pasted with the block; empty rows show blank. It subtracts the crossfade once per song, so it reads the same figure as the Build Sheet's Σ — where the next song starts on MOWL's timeline. The crossfade it uses is <b>N2</b> on My Playlist (default 10), labelled in N1; that is the only place to change it.</td></tr>
   <tr><td class="k">F · RPM</td><td>The beat-locked cadence.</td></tr>
   <tr><td class="k">G · Gear (M3) / H · Gear (M3i)</td><td>Blanked on paste — re-pick from the 1–24 and 1–72 dropdowns.</td></tr>
   <tr><td class="k">I · Segment</td><td>Warm-up · Fast-Flat · Seated/Standing-Climb (by position) · Sprint/Standing-Attack (by position) · Recovery (bridges) · Cool-down.</td></tr>
@@ -512,6 +516,7 @@ doubles data entry, and normalized power computed from interval blocks overstate
   <tr><td class="k">Page 2</td><td>Song and artist in larger type. Print double-sided, flip on the LONG edge, and the same songs land on the same half front and back.</td></tr>
   <tr><td class="k">Geometry</td><td>0.25in margin | 3.66in panel | 0.60in gutter | 3.66in panel | 0.25in margin. The 4.25in fold falls inside the empty gutter. Top/bottom 0.75in, header/footer 0.3in. Content sits just under the page so fit-to-page never shrinks it — a shrink would slide the fold off position.</td></tr>
   <tr><td class="k">Empty slots</td><td>Dropped entirely. 24 songs prints at about 13pt titles, 19 at about 16pt, 12 at the 26pt ceiling.</td></tr>
+  <tr><td class="k">How many fit<span class="new">REV 43</span></td><td>Up to <b>32</b>, matching the rows ClearPlaylist and RepairFormulas work on. The older module counted only rows 2–25 and capped at 24, so a longer class lost its tail off the printout without saying so. Type shrinks as the count rises, down to a 10pt floor.</td></tr>
 </table>
 
 <h3 id="the-three-macros">The three macros</h3>
@@ -520,9 +525,9 @@ doubles data entry, and normalized power computed from interval blocks overstate
   <tr><td class="k">Weekly rhythm</td><td><b>ClearPlaylist</b> → paste at B2 → pick the gears → <b>FormatPlaylistPrint</b> → print.</td></tr>
   <tr><td class="k">1 · ClearPlaylist</td><td>Wipes only last week: paste block (B2:J33), Pointers (K2:K33), intervals (Intervals C2:R33) — all keyed to row position. Formulas, charts, drills and the drops library untouched. Runs RepairFormulas silently.</td></tr>
   <tr><td class="k">2 · FormatPlaylistPrint</td><td>Counts songs, splits them evenly, drops empty slots, scales rows and fonts, builds both pages, resets page breaks, sets margins and print area.</td></tr>
-  <tr><td class="k">3 · RepairFormulas</td><td>Rebuilds A, E, L, M on My Playlist and the Intervals formulas. Columns A, L and M sit OUTSIDE the paste block, so if a row loses them they never return on their own — while E is inside and gets rewritten by every paste. The result is an Elapsed formula with no input: no error, just a blank cell on that row.</td></tr>
+  <tr><td class="k">3 · RepairFormulas</td><td>Rebuilds A, E, L, M on My Playlist and the Intervals formulas, and seeds the crossfade setting in N1/N2 if it is missing (never overwriting a figure you have set). Columns A, L and M sit OUTSIDE the paste block, so if a row loses them they never return on their own — while E is inside and gets rewritten by every paste. The result is an Elapsed formula with no input: no error, just a blank cell on that row.</td></tr>
   <tr><td class="k">Why the .bas is ASCII</td><td>The VBA editor imports as Windows-1252; a UTF-8 dash arrives as strange characters, so special characters are built with ChrW().</td></tr>
-  <tr><td class="k">Raw times</td><td>The workbook's Elapsed does NOT subtract crossfades, so its total runs ~2–3 minutes longer than the Build Sheet's. Intended.</td></tr>
+  <tr><td class="k">Elapsed and the crossfade<span class="new">REV 43</span></td><td>Elapsed now subtracts the crossfade, so the workbook, the Build Sheet and MOWL all give the same figure. It did not before: its total ran 10 s per transition long — about 3:40 on a 23-song class. Both sides had to change, because the Build Sheet's <b>Export for Excel</b> writes column E and would otherwise put the old formula straight back over a repaired sheet. Update the .bas <i>and</i> the Build Sheet together, or the bug returns on the next paste. Charts and Intervals were never affected — they read Avg RPM, gears and per-song runtime, not Elapsed.</td></tr>
 </table>
 
 <div class="bar b6" id="s6">6 · THE TIMING AND PHRASE MATH</div>
@@ -530,6 +535,10 @@ doubles data entry, and normalized power computed from interval blocks overstate
 <h3 id="crossfade">Crossfade</h3>
 <p>With a 10 s crossfade, real clock time = sum of lengths −10 s per transition. A 16-song hour plays ~2:30 faster than
 its raw sum. All Σ figures use this, and MOWL was verified to use the same convention.</p>
+<p>The lengths it works from are <b>rounded up</b> to the whole second, because that is how MOWL counts (Section 4). The
+two together are what make the sheet and the Session Designer agree: a 23-song class summing to 1:01:43 in MOWL comes out
+at 1:01:43 on the sheet. Get either half wrong and the error compounds a second or so per song, which looks like a small
+discrepancy on song 2 and a minute by the finisher.</p>
 
 <h3 id="song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</h3>
 <p>Stored drop times are positions <i>inside the song</i>. The ◉ ride line converts them to class minutes: song start =
@@ -537,14 +546,16 @@ its raw sum. All Σ figures use this, and MOWL was verified to use the same conv
 
 <h3 id="fractional-drift">Fractional drift</h3>
 <p>Tracks carry fractional seconds that whole-second interval maps truncate, so music falls ~0.4–0.5 s further behind the
-intervals each transition — measured at 6.5 s over 15 transitions. The <b>Drift s/song</b> field (0.43 measured; 0 = show
-MOWL's clock) corrects ◉ times only; Σ stays matched to MOWL. Recalibrate: gap at the last song ÷ transitions. In MOWL,
-stretching every other interval by +1 s holds the hour within ~half a second.</p>
+intervals each transition — measured at 6.5 s over 15 transitions. The <b>Drift s/song</b> field corrects ◉ times only;
+Σ stays matched to MOWL. It <b>starts at 0.43</b>, the measured figure, so a sheet is correct from the first song you
+type and nothing has to be ridden first; set it to 0 to show MOWL's own clock. Recalibrate: gap at the last song ÷
+transitions. In MOWL, stretching every other interval by +1 s holds the hour within ~half a second.</p>
 
 
 <table>
-  <tr><td class="k">Measuring it<span class="new">REV 40</span></td><td>The Build Sheet does the arithmetic. <b>Measure…</b> beside the Drift box asks two things: how many seconds behind the music was when the last song started, and how many songs were in that ride — which it fills in from the sheet. Drift is the gap divided by the transitions before it, so a 6.5-second gap over a 16-song ride is 6.5 ÷ 15 = <b>0.43</b>. <b>Use this number</b> writes it into the Drift box.</td></tr>
-  <tr><td class="k">Reading the gap</td><td>Ride or watch the class with the sheet in front of you and look once, at the moment the last song starts: where the music actually is against where the sheet says it should be. One reading at the end is more accurate than several along the way, because the error accumulates and a bigger number is easier to read.</td></tr>
+  <tr><td class="k">Setting it<span class="new">REV 43</span></td><td><b>Set…</b> beside the Drift box opens a panel that leads with the typical figure and a <b>Use typical 0.43 s/song</b> button, together with what that adds up to across the songs on the sheet. That is the whole job while you are building: measuring from a ride is offered underneath as an optional refinement, not a prerequisite. The button was labelled <b>Measure…</b> before s60-v49 and the panel opened on step 1 of a measurement, which read as an instruction to ride the class before the sheet would give you numbers.</td></tr>
+  <tr><td class="k">Refining it from a ride<span class="new">REV 40</span></td><td>The Build Sheet does the arithmetic. The panel asks two things: how many seconds behind the music was when the last song started, and how many songs were in that ride — which it fills in from the sheet. Drift is the gap divided by the transitions before it, so a 6.5-second gap over a 16-song ride is 6.5 ÷ 15 = <b>0.43</b>. <b>Use this number</b> writes it into the Drift box.</td></tr>
+  <tr><td class="k">Reading the gap</td><td>Once you do want to refine it: ride or watch the class with the sheet in front of you and look once, at the moment the last song starts: where the music actually is against where the sheet says it should be. One reading at the end is more accurate than several along the way, because the error accumulates and a bigger number is easier to read.</td></tr>
   <tr><td class="k">Sanity checks</td><td>The panel refuses a negative gap — music running ahead is not drift — and warns when the answer exceeds 3 s per song, which usually means a song was skipped rather than that the clock slipped. It also shows the total the figure implies at the end and at halfway, so you can tell at a glance whether it matches what you saw.</td></tr>
   <tr><td class="k">How often</td><td>Once, then again if you change platform, bike or crossfade setting. It is a property of how the music is cut and played, not of a particular week’s playlist.</td></tr>
 </table>
@@ -592,9 +603,12 @@ phrasing really matters; read the downbeat there and type it into the offset fie
   <tr><td class="k">Import says "No songs found"</td><td>The CSV header wasn't recognised. The importer knows Chosic (Song/Artist/BPM/Duration) and Exportify (Track Name/Artist Name(s)/Duration (ms)).</td></tr>
   <tr><td class="k">"That code could not be read"</td><td>Usually the tail was cut in transit, or it's the wrong code type. Re-copy with the whole block selected; compare the last 10 characters on both devices.</td></tr>
   <tr><td class="k">An Elapsed Time is blank</td><td>Run RepairFormulas. See Section 5.</td></tr>
+  <tr><td class="k">Elapsed runs ahead of MOWL<span class="new">REV 43</span></td><td>The old formula is back, which means a paste from an out-of-date Build Sheet put it there. Update both the Build Sheet and the .bas module, then run RepairFormulas or re-export and paste again. Check E2: the current formula contains SUMPRODUCT and reads $N$2.</td></tr>
+  <tr><td class="k">Σ is a second or two out per song<span class="new">REV 43</span></td><td>The lengths came in from Chosic, whose mm:ss has already lost the fraction. Re-import from Exportify, whose Duration (ms) is exact. See Section 4.</td></tr>
+  <tr><td class="k">An upload doesn't show up<span class="new">REV 43</span></td><td>Bump VERSION in sw.js, then close every tab and the installed app and reopen. From s60-v50 the worker calls skipWaiting and fetches pages network-first, so a single reload is enough; before that a new version sat waiting behind any open tab. Incognito is the quick way to see what the server is really holding.</td></tr>
   <tr><td class="k">Three print pages instead of two</td><td>Stale page breaks from an earlier run. Fixed — FormatPlaylistPrint now resets them every time.</td></tr>
   <tr><td class="k">A BPM looks doubled or halved</td><td>Spotify-derived tempo data does this. Tap-test and edit the BPM.</td></tr>
-  <tr><td class="k">Times don't match a database</td><td>Databases (and AI memory) get durations wrong; the Chosic CSV is the referee.</td></tr>
+  <tr><td class="k">Times don't match a database</td><td>Databases (and AI memory) get durations wrong; the CSV is the referee — Exportify for the exact figure, Chosic for a whole-second one.</td></tr>
   <tr><td class="k">Key/Camelot codes</td><td>Key detection runs well under 50% accurate on some services. Match within segments only; bridges are free reset points.</td></tr>
   <tr><td class="k">Explicit versions</td><td>Spotify search and Spotlistr default to the ▪ version. Audit the Chosic Explicit column.</td></tr>
   <tr><td class="k">Smart Reorder</td><td>Premium, mobile-only. Useful within a block; it will sand off the deliberate tempo cliffs between blocks.</td></tr>

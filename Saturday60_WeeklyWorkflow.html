@@ -28,7 +28,7 @@
   *{box-sizing:border-box;}
   body{margin:0;color:var(--ink);background:#fff;
        font-family:Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
-       font-size:8.55pt;line-height:1.26;}
+       font-size:8.15pt;line-height:1.2;}
   h1{font-size:18pt;margin:0 0 2px;font-weight:700;letter-spacing:-.01em;}
   .sub{color:var(--p1);font-size:8pt;line-height:1.34;margin:0 0 6px;}
   .bar{color:#fff;font-weight:700;font-size:8.9pt;letter-spacing:.03em;
@@ -56,7 +56,7 @@
 
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — Weekly Workflow</h1>
-<p class="sub">Spotify → Chosic → Build Sheet → drops → print → MOWL + Excel backup · Rules that ride along
+<p class="sub">Spotify → Exportify → Build Sheet → drops → print → MOWL + Excel backup · Rules that ride along
 automatically: RPM beat-locked (1:1 or ½) · 110 RPM hard ceiling · PLAYLIST FIRST — MUSIC LEADS</p>
 
 <div class="bar">PHASE 1 — BUILD THE PLAYLIST IN SPOTIFY (ride order is everything)</div>
@@ -65,15 +65,15 @@ automatically: RPM beat-locked (1:1 or ½) · 110 RPM hard ceiling · PLAYLIST F
   <tr><td class="n">2</td><td>Playback rules: crossfade 10 s · gapless ON · Automix OFF. Make the playlist public so Chosic can read it.</td></tr>
 </table>
 
-<div class="bar b2">PHASE 2 — EXPORT THROUGH CHOSIC (titles + BPM + length)</div>
+<div class="bar b2">PHASE 2 — EXPORT THE PLAYLIST (titles + BPM + length)</div>
 <table>
-  <tr><td class="n">1</td><td>Copy the playlist link (▪ → Share → Copy link), paste at chosic.com/spotify-playlist-analyzer, download the CSV.</td></tr>
-  <tr><td class="n">2</td><td>Scan the CSV: Explicit column all zeros; Camelot codes match within segments (bridges are free reset points).</td></tr>
+  <tr><td class="n">1</td><td><b>Use Exportify — the clock depends on it:</b> exportify.app → export the playlist. Duration (ms) is exact; Chosic's mm:ss has lost the fraction and leaves the odd song a second out.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">2</td><td>For the clean/key audit also run Chosic (▪ → Share → Copy link → chosic.com/spotify-playlist-analyzer): Explicit all zeros; Camelot matches within segments (bridges reset). Import the <b>Exportify</b> file.</td></tr>
 </table>
 
 <div class="bar b3">PHASE 3 — IMPORT INTO THE BUILD SHEET</div>
 <table>
-  <tr><td class="n">1</td><td>Open the Build Sheet → Import Spotify export → choose the CSV. BPMs, lengths and RPMs fill; anything over 110 BPM is set to ½ automatically.</td></tr>
+  <tr><td class="n">1</td><td>Open the Build Sheet → Import Spotify export → choose the CSV. BPMs, lengths and RPMs fill; anything over 110 BPM is set to ½ automatically. Lengths round <b>up</b> to the whole second the way MOWL counts — Len 3:10 against MOWL's 3:09 is right.<span class="new">NEW</span></td></tr>
   <tr><td class="n">2</td><td><b>Fill the drops you already own:</b> Drops library → <b>Fill from library</b> — every song marked in an earlier week gets its drop times and drill text back; only songs with none are touched. Not sharing this device's library? <b>Import file</b> → newest Saturday60-Drops file. Load before you Save, so exports stay a superset.<span class="new">NEW</span></td></tr>
   <tr><td class="n">3</td><td>Housekeep: nudge placement with ▲▼ or the jump dropdown · rename a section header, or trade two headers with ⇄, without moving a song · set Ride mode where defaults don't fit · tap-test any BPM that looks doubled or halved · use the bar calculator in the Song tempo box to size a drill to a counted section.</td></tr>
 </table>
@@ -82,13 +82,14 @@ automatically: RPM beat-locked (1:1 or ½) · 110 RPM hard ceiling · PLAYLIST F
 <table>
   <tr><td class="n">1</td><td><b>Start with what you already have:</b> Drops library → <b>Fill from library</b>. Every song you have marked before gets its drops, colour coding and downbeat back in one tap — only songs with none are touched.<span class="new">NEW</span></td></tr>
   <tr><td class="n">2</td><td>Mark the rest: add the key work-block songs, tap a song's ◎ button, capture drops — split-screen with Spotify and Mark drop live · split-screen with Musixmatch and tap when the lyrics flip to Chorus · read Spotify's elapsed time and use Add by hand (most accurate) · or the YouTube most-replayed peak · or <b>hold a phrase boundary</b> for half a second to take that time straight off the grid (hold again to undo). Tap a chip to colour-code it; the sheet fits a half-height window and the × stays pinned.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">2b</td><td><b>Times already in hand?</b> Paste a list → <b>Add all</b> keeps what you captured, <b>Replace</b> starts the song over. Commas, spaces or line breaks all separate.<span class="new">NEW</span></td></tr>
   <tr><td class="n">3</td><td>While you are there, set each song's <b>length</b> — type it or take it <i>from timer</i>. Lengths travel with the songs, so the import fills the sheet's Len column instead of clearing it.<span class="new">NEW</span></td></tr>
   <tr><td class="n">4</td><td>Get them to the sheet: type into Drop times, or Send to sheet → Import from Selector. Pick ONE import route per week. Then bank the week: Drops library → <b>Add this playlist</b>.</td></tr>
 </table>
 
 <div class="bar b5">PHASE 5 — PRINT AND PROGRAM MOWL</div>
 <table>
-  <tr><td class="n">1</td><td>Check the sheet before you print: no amber length boxes (a slot that changed song lost its old runtime), Σ close to 60:00, no +n? in the headers.<span class="new">NEW</span></td></tr>
+  <tr><td class="n">1</td><td>Check the sheet before you print: no amber length boxes (a slot that changed song lost its old runtime), Σ close to 60:00, no +n? in the headers. Σ is each song's <i>start</i> on MOWL's strip, so the last figure is MOWL's total — check it against the Session Designer pill.<span class="new">NEW</span></td></tr>
   <tr><td class="n">2</td><td>Build Sheet → Print / Save as PDF; the finished week joins the kit.</td></tr>
   <tr><td class="n">3</td><td>MOWL Session Designer: link the playlist → intervals auto-import per song → set counts from the Intervals column → nudge boundaries to the Drop times → set targets from Power (Z2 ≈56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
 </table>
@@ -96,7 +97,7 @@ automatically: RPM beat-locked (1:1 or ½) · 110 RPM hard ceiling · PLAYLIST F
 <div class="bar b6">PHASE 6 — EXCEL BACKUP AND CHARTS</div>
 <table>
   <tr><td class="n">1</td><td><b>FIRST:</b> Developer → Macros → <b>ClearPlaylist</b>. Wipes last week's songs, Pointers and intervals — all keyed to row position. Skip it and a shorter ride leaves the tail of the old one in your totals.</td></tr>
-  <tr><td class="n">2</td><td>Build Sheet → Export for Excel. In the workbook click <b>B2 on My Playlist</b> and paste (block B:J). Pointers (K) and Avg RPM (L) are never overwritten.</td></tr>
+  <tr><td class="n">2</td><td>Build Sheet → Export for Excel. In the workbook click <b>B2 on My Playlist</b> and paste (block B:J). Pointers (K) and Avg RPM (L) are never overwritten. Elapsed should match MOWL; if it runs long, the Build Sheet and the .bas are out of step — update both.<span class="new">NEW</span></td></tr>
   <tr><td class="n">3</td><td>Pick the gears: Gear (M3) 1–24, Gear (M3i) 1–72. Add intervals on the Intervals sheet for a weighted Avg RPM. The Load curves and segment/cadence charts update themselves.</td></tr>
   <tr><td class="n">4</td><td>Developer → Macros → <b>FormatPlaylistPrint</b>. Sizes the fold-up sheet to your song count and drops empty slots. Print double-sided, flip on the LONG edge, fold in half — ride detail front, song + artist back.</td></tr>
 </table>
@@ -107,7 +108,7 @@ offline, all three sharing one drops library on that device. Data still lives pe
 writes a dated file you can Restore anywhere, any time, and asks where to put it — the share sheet on a phone, so it
 can go to Drive or Files (shared as .txt — same contents), a folder of your choosing on a computer. Transfer codes stay the quick courier between phone and
 desktop; Manage drills → Export/Import to Excel does the same for the drill catalogue. After uploading a change, bump the version in sw.js and tap <b>Update now</b>; the hub's <b>Check for
-updates</b> settles whether it landed. Rider: FTP 158 W · Max HR 164 (both editable in the sheet’s header — the zone table follows) · TSS target ~65–70 · drift 0.43 s/song (Drift → <b>Measure…</b> works yours out).
+updates</b> settles whether it landed. Rider: FTP 158 W · Max HR 164 (both editable in the sheet’s header — the zone table follows) · TSS target ~65–70 · drift 0.43 s/song, already set (Drift → <b>Set…</b> to change it).
 </p>
 </body>
 </html>

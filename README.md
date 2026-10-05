@@ -30,13 +30,48 @@ loss only shows up later as missing colours or a page that no longer works
 offline.
 
 **After replacing any file, raise the version** on the `VERSION` line near the top of `sw.js`
-(`s60-v18` → `s60-v19`). That one word is what tells installed copies there is
+(`s60-v53` → `s60-v54`). That one word is what tells installed copies there is
 something new. The hub screen shows the running version and has a
 **Check for updates** button, so you can confirm an upload landed.
 
 **To roll a change back,** upload the older files with a *higher* version number
-(`s60-v19-rollback`). A version number only ever goes forward — re-uploading an
+(`s60-v54-rollback`). A version number only ever goes forward — re-uploading an
 older one leaves every installed copy unaware anything changed.
+
+---
+
+## Rollback bundles
+
+**Every published change gets one, made at the time it ships.** A rollback bundle is a
+folder holding the previous version of each file the change touched, an `sw.js`
+already stamped with a higher `-rollback` version, and a `HOW-TO-ROLL-BACK.txt`
+saying in plain words what it undoes. Rolling back is then dragging a folder into
+GitHub, rather than working out weeks later which files moved and what the version
+line should say.
+
+They live in `Current_Revisions_Cloud`, one dated folder per bundle. They are **not**
+part of this repository — a rollback bundle that lived here would be overwritten by
+the very upload it exists to undo.
+
+The rules that make them work:
+
+- **Only the files the change touched**, at their previous version. Leaving the rest
+  out means a rollback cannot quietly revert something unrelated.
+- **Check the live VERSION before using one.** A stamp is only right for the version
+  it was written against. Open `.../sw.js`, read the VERSION line, and if the app has
+  moved past the stamp, edit it higher before uploading.
+- **A floor bundle** returns every file to a known-good version instead of undoing one
+  change. That is what you want once several changes have stacked up, or when you
+  cannot tell which one broke something.
+- **Some changes straddle the workbook.** The Elapsed formula is written both by the
+  Build Sheet's Export for Excel and by the `.bas` module, so a bundle touching one
+  carries the other. Its note says which file is imported in Excel rather than
+  uploaded here.
+- **A bundle reaching back past `s60-v50` keeps the newer `sw.js`.** The older worker
+  made a new version wait behind every open tab; the asset list is unchanged, so
+  keeping the newer one costs nothing and is what makes a rollback land on one reload.
+
+The System Manual covers this in Section 9.
 
 ---
 
@@ -44,7 +79,7 @@ older one leaves every installed copy unaware anything changed.
 
 | File | What it is |
 |---|---|
-| `index.html` | The hub — the screen you land on, linking the three tools and the two documents |
+| `index.html` | The hub — the screen you land on, linking the three tools, the drill catalogue and the three documents |
 | `selector.html` | Song BPM Selector (phone-first) |
 | `buildsheet.html` | MOWL-style Build Sheet (desktop-first) |
 | `drops.html` | Drops Library Editor |

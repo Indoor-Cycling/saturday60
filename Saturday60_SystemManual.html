@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 43 · September 2026<br>
+workbook, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 44 · October 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -131,18 +131,18 @@ The three HTML tools now run as one installed web app at <span class="url">https
       <div class="tsub"><a href="#song-length">Song length</a><span class="dots"></span><span class="pg" data-pg="song-length">4</span></div>
       <div class="tsub"><a href="#drop-markers-the-button">Drop markers — the ◎ button</a><span class="dots"></span><span class="pg" data-pg="drop-markers-the-button">4</span></div>
       <div class="tsub"><a href="#colour-coding-the-drops">Colour-coding the drops</a><span class="dots"></span><span class="pg" data-pg="colour-coding-the-drops">5</span></div>
-      <div class="tsub"><a href="#adding-your-own-keys">Adding your own keys</a><span class="dots"></span><span class="pg" data-pg="adding-your-own-keys">5</span></div>
+      <div class="tsub"><a href="#adding-your-own-keys">Adding your own keys</a><span class="dots"></span><span class="pg" data-pg="adding-your-own-keys">6</span></div>
       <div class="tsub"><a href="#bands-defaults-transfer-and-backup">Bands, defaults, transfer and backup</a><span class="dots"></span><span class="pg" data-pg="bands-defaults-transfer-and-backup">6</span></div>
     </div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s3" title="Show the parts of this section"><span class="car">›</span></button><a href="#s3">3 · THE BUILD SHEET</a><span class="dots"></span><span class="pg" data-pg="s3">6</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s3" title="Show the parts of this section"><span class="car">›</span></button><a href="#s3">3 · THE BUILD SHEET</a><span class="dots"></span><span class="pg" data-pg="s3">7</span></div>
     <div class="tsubs" id="subs-s3" hidden>
-      <div class="tsub"><a href="#structure">Structure</a><span class="dots"></span><span class="pg" data-pg="structure">6</span></div>
+      <div class="tsub"><a href="#structure">Structure</a><span class="dots"></span><span class="pg" data-pg="structure">7</span></div>
       <div class="tsub"><a href="#ftp-and-max-hr">FTP and Max HR</a><span class="dots"></span><span class="pg" data-pg="ftp-and-max-hr">7</span></div>
-      <div class="tsub"><a href="#per-song-rows">Per-song rows</a><span class="dots"></span><span class="pg" data-pg="per-song-rows">7</span></div>
+      <div class="tsub"><a href="#per-song-rows">Per-song rows</a><span class="dots"></span><span class="pg" data-pg="per-song-rows">8</span></div>
       <div class="tsub"><a href="#drill-presets-and-the-drill-catalog">Drill presets and the drill catalog</a><span class="dots"></span><span class="pg" data-pg="drill-presets-and-the-drill-catalog">8</span></div>
-      <div class="tsub"><a href="#the-manage-drills-panel">The Manage drills panel</a><span class="dots"></span><span class="pg" data-pg="the-manage-drills-panel">8</span></div>
+      <div class="tsub"><a href="#the-manage-drills-panel">The Manage drills panel</a><span class="dots"></span><span class="pg" data-pg="the-manage-drills-panel">9</span></div>
       <div class="tsub"><a href="#the-drill-catalogue-in-excel">The drill catalogue in Excel</a><span class="dots"></span><span class="pg" data-pg="the-drill-catalogue-in-excel">9</span></div>
       <div class="tsub"><a href="#reordering">Reordering</a><span class="dots"></span><span class="pg" data-pg="reordering">10</span></div>
       <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">10</span></div>
@@ -152,43 +152,44 @@ The three HTML tools now run as one installed web app at <span class="url">https
   <div class="tgrp">
     <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s4" title="Show the parts of this section"><span class="car">›</span></button><a href="#s4">4 · HOW EVERYTHING CONNECTS</a><span class="dots"></span><span class="pg" data-pg="s4">11</span></div>
     <div class="tsubs" id="subs-s4" hidden>
-      <div class="tsub"><a href="#getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</a><span class="dots"></span><span class="pg" data-pg="getting-drops-into-the-sheet-which-route">12</span></div>
-      <div class="tsub"><a href="#the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</a><span class="dots"></span><span class="pg" data-pg="the-drops-library-moving-it-between-the-tool">12</span></div>
+      <div class="tsub"><a href="#getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</a><span class="dots"></span><span class="pg" data-pg="getting-drops-into-the-sheet-which-route">13</span></div>
+      <div class="tsub"><a href="#the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</a><span class="dots"></span><span class="pg" data-pg="the-drops-library-moving-it-between-the-tool">13</span></div>
     </div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s5" title="Show the parts of this section"><span class="car">›</span></button><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">13</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s5" title="Show the parts of this section"><span class="car">›</span></button><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">14</span></div>
     <div class="tsubs" id="subs-s5" hidden>
-      <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">13</span></div>
-      <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">14</span></div>
-      <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">14</span></div>
-      <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">14</span></div>
-      <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">14</span></div>
+      <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">14</span></div>
+      <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">15</span></div>
+      <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">15</span></div>
+      <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">15</span></div>
+      <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">15</span></div>
     </div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s6" title="Show the parts of this section"><span class="car">›</span></button><a href="#s6">6 · THE TIMING AND PHRASE MATH</a><span class="dots"></span><span class="pg" data-pg="s6">15</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s6" title="Show the parts of this section"><span class="car">›</span></button><a href="#s6">6 · THE TIMING AND PHRASE MATH</a><span class="dots"></span><span class="pg" data-pg="s6">16</span></div>
     <div class="tsubs" id="subs-s6" hidden>
-      <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">15</span></div>
-      <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">15</span></div>
-      <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">15</span></div>
-      <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">16</span></div>
-      <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">16</span></div>
+      <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">16</span></div>
+      <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">16</span></div>
+      <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">16</span></div>
+      <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">17</span></div>
+      <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">17</span></div>
     </div>
   </div>
   <div class="tgrp flat">
-    <div class="tsec"><span class="tcar sp"></span><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">16</span></div>
+    <div class="tsec"><span class="tcar sp"></span><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">18</span></div>
   </div>
   <div class="tgrp flat">
-    <div class="tsec"><span class="tcar sp"></span><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">17</span></div>
+    <div class="tsec"><span class="tcar sp"></span><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">19</span></div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">19</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">20</span></div>
     <div class="tsubs" id="subs-s9" hidden>
-      <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">19</span></div>
-      <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">19</span></div>
-      <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">20</span></div>
-      <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">20</span></div>
+      <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">21</span></div>
+      <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">21</span></div>
+      <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">21</span></div>
+      <div class="tsub"><a href="#rollback-bundles">Rollback bundles</a><span class="dots"></span><span class="pg" data-pg="rollback-bundles">22</span></div>
+      <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">22</span></div>
     </div>
   </div>
 </div>
@@ -665,6 +666,23 @@ number — re-uploading an older number would leave every installed copy unaware
   <tr><td class="k">Keep the zips</td><td>The simplest safety net is keeping the last known-good folder somewhere. There is no version history to fall back on beyond what GitHub itself records.</td></tr>
 </table>
 
+<h3 id="rollback-bundles">Rollback bundles<span class="new">REV 44</span></h3>
+<p>Those known-good folders have a shape, and it is worth keeping to it. A <b>rollback bundle</b> is a folder holding the
+previous version of every file a change touched, an <code>sw.js</code> already stamped with a higher
+<code>-rollback</code> version, and a plain-text note saying what it undoes. It is built so that rolling back is dragging
+a folder into GitHub rather than reconstructing which files moved and what the version line should say — decisions that
+are easy while the change is fresh and awkward weeks later. They live in
+<code>Current_Revisions_Cloud</code>, one dated folder per bundle.</p>
+<table>
+  <tr><td class="k">When one is made</td><td>After every change that is published. If a change ships without a bundle, there is nothing to fall back to but memory and whatever GitHub happens to hold.</td></tr>
+  <tr><td class="k">What goes in</td><td>Only the files the change touched, at their previous version. A file the change did not touch is left out, so rolling back cannot quietly revert something unrelated.</td></tr>
+  <tr><td class="k">The version stamp</td><td><code>sw.js</code> is stamped one <i>above</i> the version the change shipped as, with <code>-rollback</code> on the end — <code>'s60-v53-rollback'</code>. Check the live VERSION line before using an older bundle: if the app has moved past the stamp, edit it higher first.</td></tr>
+  <tr><td class="k">The note</td><td><code>HOW-TO-ROLL-BACK.txt</code>: which version it was built against, what it undoes in plain words, which files to drag in, and what happens to your data. Written for a reader who has forgotten the change entirely, because that is who will be reading it.</td></tr>
+  <tr><td class="k">Single change or floor</td><td>Most bundles undo one change. A <b>floor</b> bundle instead returns every file to a known-good version, which is what you want after several changes have stacked up. A floor is also the one to reach for when you cannot tell which change broke something.</td></tr>
+  <tr><td class="k">What is not in the repo</td><td>A change can straddle the app and the workbook — the Elapsed formula is written by both the Build Sheet's export and the <code>.bas</code> module. When it does, the bundle carries the old <code>.bas</code> too, with the note saying it is imported in Excel rather than uploaded to GitHub.</td></tr>
+  <tr><td class="k">The service worker</td><td>A bundle that reaches back past s60-v50 keeps the <i>newer</i> worker rather than the one of its own era, because the older one made a new version wait behind every open tab. The asset list has not changed, so this costs nothing and is what makes a rollback land on one reload.</td></tr>
+</table>
+
 <h3 id="privacy">Privacy</h3>
 <p>The repository is public, which is what free hosting requires — so the tools' code is readable by anyone with the
 address. Your content is not: songs, BPMs, drop times, colour coding and build sheets are written to storage on the
@@ -690,40 +708,40 @@ When any tool changes, ask Claude for a manual revision to match.
 <p style="margin:0 0 6px">Page numbers are the printed pages of this manual. On screen every entry is a link.</p>
 <div class="idx">
   <div class="ia">0–9</div>
-  <div class="ie">110 RPM cap <span class="ip"><a href="#s0">2</a>, <a href="#per-song-rows">7</a></span></div>
-  <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">16</a></span></div>
+  <div class="ie">110 RPM cap <span class="ip"><a href="#s0">2</a>, <a href="#per-song-rows">8</a></span></div>
+  <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">17</a></span></div>
   <div class="ia">A</div>
-  <div class="ie">Add drill <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
-  <div class="ie">Add group <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
-  <div class="ie">Add key (drop colours) <span class="ip"><a href="#adding-your-own-keys">5</a></span></div>
-  <div class="ie">Android, installing on <span class="ip"><a href="#s9">19</a></span></div>
+  <div class="ie">Add drill <span class="ip"><a href="#the-manage-drills-panel">9</a></span></div>
+  <div class="ie">Add group <span class="ip"><a href="#the-manage-drills-panel">9</a></span></div>
+  <div class="ie">Add key (drop colours) <span class="ip"><a href="#adding-your-own-keys">6</a></span></div>
+  <div class="ie">Android, installing on <span class="ip"><a href="#s9">20</a></span></div>
   <div class="ia">B</div>
-  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#totals-and-buttons">10</a>, <a href="#s7">16</a></span></div>
+  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#totals-and-buttons">10</a>, <a href="#s7">18</a></span></div>
   <div class="ie">Bar calculator <span class="ip"><a href="#the-bar-calculator">3</a></span></div>
-  <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">16</a></span></div>
+  <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">17</a></span></div>
   <div class="ie">Beat-lock (1:1 and ½) <span class="ip"><a href="#s0">2</a>, <a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
-  <div class="ie">BPM looks doubled or halved <span class="ip"><a href="#the-tap-tester">3</a>, <a href="#s8">17</a></span></div>
-  <div class="ie">Build Sheet <span class="ip"><a href="#s1">2</a>, <a href="#s3">6</a></span></div>
+  <div class="ie">BPM looks doubled or halved <span class="ip"><a href="#the-tap-tester">3</a>, <a href="#s8">19</a></span></div>
+  <div class="ie">Build Sheet <span class="ip"><a href="#s1">2</a>, <a href="#s3">7</a></span></div>
   <div class="ia">C</div>
-  <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">14</a></span></div>
-  <div class="ie">Camelot and key codes <span class="ip"><a href="#s4">11</a>, <a href="#s8">17</a></span></div>
+  <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">15</a></span></div>
+  <div class="ie">Camelot and key codes <span class="ip"><a href="#s4">11</a>, <a href="#s8">19</a></span></div>
   <div class="ie">Chosic CSV <span class="ip"><a href="#s4">11</a></span></div>
-  <div class="ie">Clock, ride vs MOWL <span class="ip"><a href="#per-song-rows">7</a>, <a href="#fractional-drift">15</a></span></div>
+  <div class="ie">Clock, ride vs MOWL <span class="ip"><a href="#per-song-rows">8</a>, <a href="#fractional-drift">16</a></span></div>
   <div class="ie">Colour-coding drops <span class="ip"><a href="#colour-coding-the-drops">5</a></span></div>
-  <div class="ie">Crossfade <span class="ip"><a href="#crossfade">15</a></span></div>
+  <div class="ie">Crossfade <span class="ip"><a href="#crossfade">16</a></span></div>
   <div class="ia">D</div>
   <div class="ie">Downbeat, first <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
-  <div class="ie">Drift, fractional <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#fractional-drift">15</a></span></div>
+  <div class="ie">Drift, fractional <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#fractional-drift">16</a></span></div>
   <div class="ie">Drill catalogue <span class="ip"><a href="#drill-presets-and-the-drill-catalog">8</a></span></div>
   <div class="ie">Drills in Excel <span class="ip"><a href="#the-drill-catalogue-in-excel">9</a></span></div>
   <div class="ie">Drop markers (◎) <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
-  <div class="ie">Drops library <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-drops-library-moving-it-between-the-tool">12</a></span></div>
-  <div class="ie">Drops Library Editor <span class="ip"><a href="#s1">2</a>, <a href="#the-drops-library-moving-it-between-the-tool">12</a></span></div>
+  <div class="ie">Drops library <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-drops-library-moving-it-between-the-tool">13</a></span></div>
+  <div class="ie">Drops Library Editor <span class="ip"><a href="#s1">2</a>, <a href="#the-drops-library-moving-it-between-the-tool">13</a></span></div>
   <div class="ia">E</div>
-  <div class="ie">Excel workbook <span class="ip"><a href="#s5">13</a></span></div>
+  <div class="ie">Excel workbook <span class="ip"><a href="#s5">14</a></span></div>
   <div class="ie">Export for Excel <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
   <div class="ia">F</div>
-  <div class="ie">Fill from library <span class="ip"><a href="#the-drops-library-moving-it-between-the-tool">12</a></span></div>
+  <div class="ie">Fill from library <span class="ip"><a href="#the-drops-library-moving-it-between-the-tool">13</a></span></div>
   <div class="ie">FTP <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ia">G</div>
   <div class="ie">Getting Started sheet <span class="ip"><a href="#s1">2</a></span></div>
@@ -732,65 +750,66 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Heart rate, maximum <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Hiding the targets <span class="ip"><a href="#hiding-the-targets">11</a></span></div>
   <div class="ie">Holding a phrase boundary <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
-  <div class="ie">Hub screen <span class="ip"><a href="#s9">19</a></span></div>
+  <div class="ie">Hub screen <span class="ip"><a href="#s9">20</a></span></div>
   <div class="ia">I</div>
   <div class="ie">Import drops only <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Import Spotify export <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
   <div class="ie">Import ← Selector <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
-  <div class="ie">Importing does nothing <span class="ip"><a href="#s8">17</a></span></div>
-  <div class="ie">Installing the app <span class="ip"><a href="#s9">19</a></span></div>
-  <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">14</a></span></div>
-  <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">19</a></span></div>
+  <div class="ie">Importing does nothing <span class="ip"><a href="#s8">19</a></span></div>
+  <div class="ie">Installing the app <span class="ip"><a href="#s9">20</a></span></div>
+  <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">15</a></span></div>
+  <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">20</a></span></div>
   <div class="ia">K</div>
   <div class="ie">Key, drop colour <span class="ip"><a href="#colour-coding-the-drops">5</a></span></div>
   <div class="ia">L</div>
-  <div class="ie">Length, song <span class="ip"><a href="#song-length">4</a>, <a href="#per-song-rows">7</a></span></div>
+  <div class="ie">Length, song <span class="ip"><a href="#song-length">4</a>, <a href="#per-song-rows">8</a></span></div>
   <div class="ia">M</div>
-  <div class="ie">Macros (Excel) <span class="ip"><a href="#the-three-macros">14</a></span></div>
-  <div class="ie">Manage drills <span class="ip"><a href="#the-manage-drills-panel">8</a></span></div>
-  <div class="ie">MOWL Session Designer <span class="ip"><a href="#s4">11</a>, <a href="#getting-the-ride-in">13</a></span></div>
+  <div class="ie">Macros (Excel) <span class="ip"><a href="#the-three-macros">15</a></span></div>
+  <div class="ie">Manage drills <span class="ip"><a href="#the-manage-drills-panel">9</a></span></div>
+  <div class="ie">MOWL Session Designer <span class="ip"><a href="#s4">11</a>, <a href="#getting-the-ride-in">14</a></span></div>
   <div class="ia">O</div>
-  <div class="ie">Offline, working <span class="ip"><a href="#s7">16</a>, <a href="#s9">19</a></span></div>
+  <div class="ie">Offline, working <span class="ip"><a href="#s7">18</a>, <a href="#s9">20</a></span></div>
   <div class="ia">P</div>
-  <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">16</a></span></div>
-  <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">16</a></span></div>
+  <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">17</a></span></div>
+  <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">17</a></span></div>
   <div class="ie">Phrase strip <span class="ip"><a href="#the-gauge-and-the-phrase-strip">3</a></span></div>
   <div class="ie">Playlist builder <span class="ip"><a href="#playlist-builder">4</a></span></div>
-  <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">14</a></span></div>
+  <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">15</a></span></div>
   <div class="ie">Power targets <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
-  <div class="ie">Privacy <span class="ip"><a href="#s7">16</a>, <a href="#privacy">20</a></span></div>
+  <div class="ie">Privacy <span class="ip"><a href="#s7">18</a>, <a href="#privacy">22</a></span></div>
   <div class="ia">R</div>
   <div class="ie">Refresh targets <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Removing a song <span class="ip"><a href="#playlist-builder">4</a></span></div>
-  <div class="ie">Renaming a section <span class="ip"><a href="#structure">6</a></span></div>
+  <div class="ie">Renaming a section <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ie">Reordering songs <span class="ip"><a href="#reordering">10</a></span></div>
-  <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">19</a></span></div>
-  <div class="ie">Reset to defaults <span class="ip"><a href="#structure">6</a>, <a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">21</a></span></div>
+  <div class="ie">Reset to defaults <span class="ip"><a href="#structure">7</a>, <a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Ride mode, per song <span class="ip"><a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
   <div class="ie">Rider zones <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
-  <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">20</a></span></div>
+  <div class="ie">Rollback bundles <span class="ip"><a href="#rollback-bundles">22</a></span></div>
+  <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">21</a>, <a href="#rollback-bundles">22</a></span></div>
   <div class="ia">S</div>
-  <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">16</a></span></div>
+  <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">18</a></span></div>
   <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
-  <div class="ie">Sections, structure of <span class="ip"><a href="#structure">6</a></span></div>
+  <div class="ie">Sections, structure of <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ie">Selector (Song BPM) <span class="ip"><a href="#s1">2</a>, <a href="#s2">3</a></span></div>
   <div class="ie">Send → Selector <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Snapping to the grid <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
   <div class="ie">Song length <span class="ip"><a href="#song-length">4</a></span></div>
-  <div class="ie">Spin Class Pro workbook <span class="ip"><a href="#s1">2</a>, <a href="#s5">13</a></span></div>
+  <div class="ie">Spin Class Pro workbook <span class="ip"><a href="#s1">2</a>, <a href="#s5">14</a></span></div>
   <div class="ie">Spotify export <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
-  <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">16</a></span></div>
-  <div class="ie">Switching two sections <span class="ip"><a href="#structure">6</a></span></div>
+  <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">18</a></span></div>
+  <div class="ie">Switching two sections <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ia">T</div>
   <div class="ie">Tap-tester <span class="ip"><a href="#the-tap-tester">3</a></span></div>
   <div class="ie">Targets, Power and HR <span class="ip"><a href="#ftp-and-max-hr">7</a>, <a href="#hiding-the-targets">11</a></span></div>
-  <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">16</a></span></div>
-  <div class="ie">Troubleshooting <span class="ip"><a href="#s8">17</a></span></div>
+  <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">18</a></span></div>
+  <div class="ie">Troubleshooting <span class="ip"><a href="#s8">19</a></span></div>
   <div class="ia">U</div>
-  <div class="ie">Updating the app <span class="ip"><a href="#publishing-a-change">19</a></span></div>
+  <div class="ie">Updating the app <span class="ip"><a href="#publishing-a-change">21</a></span></div>
   <div class="ia">V</div>
-  <div class="ie">Version number <span class="ip"><a href="#s9">19</a></span></div>
+  <div class="ie">Version number <span class="ip"><a href="#s9">20</a></span></div>
   <div class="ia">W</div>
   <div class="ie">Weekly Workflow <span class="ip"><a href="#s1">2</a></span></div>
   <div class="ia">Z</div>

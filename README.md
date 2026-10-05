@@ -34,42 +34,42 @@ offline.
 something new. The hub screen shows the running version and has a
 **Check for updates** button, so you can confirm an upload landed.
 
-**To roll a change back,** upload the older files with a *higher* version number
-(`s60-v54-rollback`). A version number only ever goes forward — re-uploading an
-older one leaves every installed copy unaware anything changed.
+**To roll a change back,** upload the rollback bundle described below. Its
+`sw.js` carries a `-restore` stamp that differs from whatever is live, which is
+all that is needed — see *Why the version line only has to differ*.
 
 ---
 
-## Rollback bundles
+## The rollback bundle
 
-**Every published change gets one, made at the time it ships.** A rollback bundle is a
-folder holding the previous version of each file the change touched, an `sw.js`
-already stamped with a higher `-rollback` version, and a `HOW-TO-ROLL-BACK.txt`
-saying in plain words what it undoes. Rolling back is then dragging a folder into
-GitHub, rather than working out weeks later which files moved and what the version
-line should say.
+**There is one, and it holds the version you are running now.** After every
+successful update, `Current_Revisions_Cloud/saturday60-rollback-current/` is
+refreshed with a complete copy of the files just published, and its `sw.js` is
+stamped `s60-vNN-restore`. If the next update misbehaves, you upload that folder
+and you are back on a version that worked — no working out which files moved, and
+no half states, because it is the whole app rather than a patch.
 
-They live in `Current_Revisions_Cloud`, one dated folder per bundle. They are **not**
-part of this repository — a rollback bundle that lived here would be overwritten by
-the very upload it exists to undo.
+It is **not** part of this repository. A rollback bundle stored here would be
+overwritten by the very upload it exists to undo.
 
-The rules that make them work:
+- **Complete, not just what changed** — `app.js`, the manifest and the icons too.
+- **One step back only.** For anything older, the dated folders beside it are
+  archives, and GitHub keeps the full history of every file.
+- **It carries `SaturdaySixty.bas`,** which is imported in Excel rather than
+  uploaded here. The Elapsed formula is written both by the Build Sheet's Export
+  for Excel and by the module's RepairFormulas, so the two have to move together.
+- **Refresh it after each update.** A bundle three versions stale undoes three
+  things you wanted.
 
-- **Only the files the change touched**, at their previous version. Leaving the rest
-  out means a rollback cannot quietly revert something unrelated.
-- **Check the live VERSION before using one.** A stamp is only right for the version
-  it was written against. Open `.../sw.js`, read the VERSION line, and if the app has
-  moved past the stamp, edit it higher before uploading.
-- **A floor bundle** returns every file to a known-good version instead of undoing one
-  change. That is what you want once several changes have stacked up, or when you
-  cannot tell which one broke something.
-- **Some changes straddle the workbook.** The Elapsed formula is written both by the
-  Build Sheet's Export for Excel and by the `.bas` module, so a bundle touching one
-  carries the other. Its note says which file is imported in Excel rather than
-  uploaded here.
-- **A bundle reaching back past `s60-v50` keeps the newer `sw.js`.** The older worker
-  made a new version wait behind every open tab; the asset list is unchanged, so
-  keeping the newer one costs nothing and is what makes a rollback land on one reload.
+### Why the version line only has to differ
+
+The browser compares the **bytes** of `sw.js` against the copy it already holds.
+It never reads the number. Tested: a *lower* number, a same-number `-rollback`
+suffix and a higher number all install correctly, and old caches are purged every
+time. The only thing that does nothing is re-uploading a byte-identical `sw.js` —
+which is exactly what happens if you re-upload an old version folder verbatim.
+That is the real reason for the `-restore` suffix, and the real meaning of "never
+go backwards".
 
 The System Manual covers this in Section 9.
 

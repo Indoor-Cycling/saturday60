@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 44 · October 2026<br>
+workbook, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 45 · October 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -188,7 +188,8 @@ The three HTML tools now run as one installed web app at <span class="url">https
       <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">21</span></div>
       <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">21</span></div>
       <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">21</span></div>
-      <div class="tsub"><a href="#rollback-bundles">Rollback bundles</a><span class="dots"></span><span class="pg" data-pg="rollback-bundles">22</span></div>
+      <div class="tsub"><a href="#rollback-bundles">The rollback bundle</a><span class="dots"></span><span class="pg" data-pg="rollback-bundles">22</span></div>
+      <div class="tsub"><a href="#why-the-version-line-only-has-to-differ">Why the version line only has to differ</a><span class="dots"></span><span class="pg" data-pg="why-the-version-line-only-has-to-differ">22</span></div>
       <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">22</span></div>
     </div>
   </div>
@@ -666,22 +667,27 @@ number — re-uploading an older number would leave every installed copy unaware
   <tr><td class="k">Keep the zips</td><td>The simplest safety net is keeping the last known-good folder somewhere. There is no version history to fall back on beyond what GitHub itself records.</td></tr>
 </table>
 
-<h3 id="rollback-bundles">Rollback bundles<span class="new">REV 44</span></h3>
-<p>Those known-good folders have a shape, and it is worth keeping to it. A <b>rollback bundle</b> is a folder holding the
-previous version of every file a change touched, an <code>sw.js</code> already stamped with a higher
-<code>-rollback</code> version, and a plain-text note saying what it undoes. It is built so that rolling back is dragging
-a folder into GitHub rather than reconstructing which files moved and what the version line should say — decisions that
-are easy while the change is fresh and awkward weeks later. They live in
-<code>Current_Revisions_Cloud</code>, one dated folder per bundle.</p>
+<h3 id="rollback-bundles">The rollback bundle<span class="new">REV 45</span></h3>
+<p>There is <b>one</b>, and it holds the version you are running now. After every successful update,
+<code>Current_Revisions_Cloud/saturday60-rollback-current/</code> is refreshed with a complete copy of the files just
+published, and its <code>sw.js</code> is stamped <code>s60-vNN-restore</code>. Whatever is live has been used and is
+working, so a copy of it is kept ready; if the next update misbehaves you upload that folder and you are back on solid
+ground. It is not in the repository — a bundle stored there would be overwritten by the very upload it exists to undo.</p>
 <table>
-  <tr><td class="k">When one is made</td><td>After every change that is published. If a change ships without a bundle, there is nothing to fall back to but memory and whatever GitHub happens to hold.</td></tr>
-  <tr><td class="k">What goes in</td><td>Only the files the change touched, at their previous version. A file the change did not touch is left out, so rolling back cannot quietly revert something unrelated.</td></tr>
-  <tr><td class="k">The version stamp</td><td><code>sw.js</code> is stamped one <i>above</i> the version the change shipped as, with <code>-rollback</code> on the end — <code>'s60-v53-rollback'</code>. Check the live VERSION line before using an older bundle: if the app has moved past the stamp, edit it higher first.</td></tr>
-  <tr><td class="k">The note</td><td><code>HOW-TO-ROLL-BACK.txt</code>: which version it was built against, what it undoes in plain words, which files to drag in, and what happens to your data. Written for a reader who has forgotten the change entirely, because that is who will be reading it.</td></tr>
-  <tr><td class="k">Single change or floor</td><td>Most bundles undo one change. A <b>floor</b> bundle instead returns every file to a known-good version, which is what you want after several changes have stacked up. A floor is also the one to reach for when you cannot tell which change broke something.</td></tr>
-  <tr><td class="k">What is not in the repo</td><td>A change can straddle the app and the workbook — the Elapsed formula is written by both the Build Sheet's export and the <code>.bas</code> module. When it does, the bundle carries the old <code>.bas</code> too, with the note saying it is imported in Excel rather than uploaded to GitHub.</td></tr>
-  <tr><td class="k">The service worker</td><td>A bundle that reaches back past s60-v50 keeps the <i>newer</i> worker rather than the one of its own era, because the older one made a new version wait behind every open tab. The asset list has not changed, so this costs nothing and is what makes a rollback land on one reload.</td></tr>
+  <tr><td class="k">Complete, not a patch</td><td>Every file, including <code>app.js</code>, the manifest and the icons, not only the ones that happened to change. That is what makes a half state impossible: anything the broken update added that is not in the folder is replaced.</td></tr>
+  <tr><td class="k">One step back</td><td>It goes back one version, not many. For anything older the dated folders beside it are archives — <code>2026-10-05_rollback-to-v48</code> returns the app to its state before the October work — and GitHub holds the full history of every file besides.</td></tr>
+  <tr><td class="k">Refresh it after each update</td><td>Replace the contents with the new live files and move the stamp to match. A bundle three versions stale undoes three things you wanted.</td></tr>
+  <tr><td class="k">The Excel module rides along</td><td>The Elapsed formula is written from both sides — the Build Sheet's Export for Excel and the module's RepairFormulas — so <code>SaturdaySixty.bas</code> sits in the bundle too. It is imported in Excel rather than uploaded to GitHub, and the note says so.</td></tr>
+  <tr><td class="k">Earlier practice</td><td>Bundles used to be made per change, each holding only the files that change touched. It worked, but every bundle needed a version stamp clearing the next release, and the stamps collided as soon as two bundles existed. One complete bundle removes the arithmetic.</td></tr>
 </table>
+
+<h3 id="why-the-version-line-only-has-to-differ">Why the version line only has to differ<span class="new">REV 45</span></h3>
+<p>The browser compares the <b>bytes</b> of <code>sw.js</code> against the copy it already holds. It never reads the
+number. Tested against a miniature of this worker: a <i>lower</i> number, a same-number <code>-rollback</code> suffix and
+a higher number all installed correctly, and the old cache was purged every time. The one thing that does nothing is
+re-uploading a byte-for-byte identical <code>sw.js</code> — which is exactly what happens if you re-upload an old version
+folder verbatim, and is the real meaning of "a version number only goes forward". The <code>-restore</code> suffix exists
+so that cannot happen.</p>
 
 <h3 id="privacy">Privacy</h3>
 <p>The repository is public, which is what free hosting requires — so the tools' code is readable by anyone with the
@@ -787,7 +793,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Reset to defaults <span class="ip"><a href="#structure">7</a>, <a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Ride mode, per song <span class="ip"><a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
   <div class="ie">Rider zones <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
-  <div class="ie">Rollback bundles <span class="ip"><a href="#rollback-bundles">22</a></span></div>
+  <div class="ie">Rollback bundle <span class="ip"><a href="#rollback-bundles">22</a></span></div>
   <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">21</a>, <a href="#rollback-bundles">22</a></span></div>
   <div class="ia">S</div>
   <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">18</a></span></div>
@@ -809,6 +815,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ia">U</div>
   <div class="ie">Updating the app <span class="ip"><a href="#publishing-a-change">21</a></span></div>
   <div class="ia">V</div>
+  <div class="ie">Version line, why it only has to differ <span class="ip"><a href="#why-the-version-line-only-has-to-differ">22</a></span></div>
   <div class="ie">Version number <span class="ip"><a href="#s9">20</a></span></div>
   <div class="ia">W</div>
   <div class="ie">Weekly Workflow <span class="ip"><a href="#s1">2</a></span></div>

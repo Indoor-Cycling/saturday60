@@ -823,5 +823,58 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Zone table <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
 </div>
 
+<script>
+/* ---- the CONTENTS carets ----
+   The markup has always carried the buttons, the aria-expanded state and the
+   hidden panels, but nothing was ever wired to them, so the carets and
+   "Expand all" did nothing. The print stylesheet hides the carets and forces
+   every panel open, so none of this affects the PDF. */
+(function(){
+  var toc = document.getElementById('toc');
+  if(!toc) return;
+
+  var cars = Array.prototype.slice.call(toc.querySelectorAll('button.tcar[aria-controls]'));
+  var all  = document.getElementById('tocAll');
+  if(!cars.length) return;
+
+  function panelFor(btn){ return document.getElementById(btn.getAttribute('aria-controls')); }
+
+  function setOpen(btn, open){
+    var panel = panelFor(btn);
+    if(!panel) return;
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    panel.hidden = !open;
+  }
+
+  function syncAll(){
+    if(!all) return;
+    var every = cars.every(function(b){ return b.getAttribute('aria-expanded') === 'true'; });
+    all.setAttribute('aria-expanded', every ? 'true' : 'false');
+    all.textContent = every ? 'Collapse all' : 'Expand all';
+  }
+
+  cars.forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      setOpen(btn, btn.getAttribute('aria-expanded') !== 'true');
+      syncAll();
+    });
+  });
+
+  if(all){
+    all.addEventListener('click', function(e){
+      e.preventDefault();
+      var open = all.getAttribute('aria-expanded') !== 'true';
+      cars.forEach(function(b){ setOpen(b, open); });
+      syncAll();
+    });
+  }
+
+  // Start from whatever the markup says, so the two can never disagree.
+  cars.forEach(function(b){ setOpen(b, b.getAttribute('aria-expanded') === 'true'); });
+  syncAll();
+})();
+</script>
+
 </body>
 </html>

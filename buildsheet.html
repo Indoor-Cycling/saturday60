@@ -578,6 +578,8 @@
     Array.prototype.forEach.call(document.querySelectorAll('.imp-back.open, .pm-back.open'), function(o){
       o.classList.remove('open');
     });
+    // the drill catalogue owns an address; closing it this way must drop it
+    if(typeof dropDrillHash==='function') dropDrillHash();
   }
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape' && document.querySelector('.imp-back.open, .pm-back.open')) closePanels();
@@ -1557,7 +1559,39 @@
     sheetStatus('Imported '+out.length+' drills in '+groups.length+' groups ✓');
   }
 
-  function openDrillManager(){renderDrillManager(); showPanel(drillBack);}
+  /* ---- the drill catalogue has its own address ----------------------
+     The hub links here as buildsheet.html#drills, so the catalogue can be
+     reached directly rather than only through an Intervals dropdown. The
+     hash is set when the panel opens and cleared when it closes, so the
+     browser's Back button closes it and a reload lands back on it. */
+  var DRILL_HASH='#drills', hashLock=false;
+  // push on open so Back closes the panel; replace on close so Back does not
+  // immediately reopen it.
+  function setHash(h,push){
+    hashLock=true;
+    var url = h || (location.pathname+location.search);
+    try{
+      if(history && history.pushState && history.replaceState){
+        if(push) history.pushState(null,'',url); else history.replaceState(null,'',url);
+      } else { location.hash = h || ''; }
+    }catch(e){ location.hash = h || ''; }
+    setTimeout(function(){hashLock=false;},0);
+  }
+  function openDrillManager(fromHash){
+    renderDrillManager(); showPanel(drillBack);
+    if(!fromHash) setHash(DRILL_HASH,true);
+  }
+  function dropDrillHash(){ if(location.hash===DRILL_HASH) setHash('',false); }
+  function closeDrillManager(fromHash){
+    drills=drills.filter(function(d){return (d.t||'').trim();});
+    saveDrills(); drillBack.classList.remove('open'); render();
+    if(!fromHash && location.hash===DRILL_HASH) setHash('',false);
+  }
+  window.addEventListener('hashchange',function(){
+    if(hashLock)return;
+    if(location.hash===DRILL_HASH){ if(!drillBack.classList.contains('open')) openDrillManager(true); }
+    else if(drillBack.classList.contains('open')) closeDrillManager(true);
+  });
   document.getElementById('dmAddGroup').addEventListener('click',function(){
     var n=prompt('Name the new group:','New group');
     if(!n)return; n=n.trim(); if(!n)return;
@@ -1576,10 +1610,7 @@
     saveGroups(); saveDrills(); renderDrillManager();
     sheetStatus(added?('Restored '+added+' built-in drill'+(added===1?'':'s')):'All built-ins already present');
   });
-  document.getElementById('dmDone').addEventListener('click',function(){
-    drills=drills.filter(function(d){return (d.t||'').trim();});
-    saveDrills(); drillBack.classList.remove('open'); render();
-  });
+  document.getElementById('dmDone').addEventListener('click',function(){ closeDrillManager(false); });
   drillBack.addEventListener('click',function(e){if(e.target===drillBack)document.getElementById('dmDone').click();});
 
   function updateSums(){
@@ -2694,6 +2725,10 @@ var S60XLSX = (function () {
   });
 
   render();
+
+  /* The hub's Drill Catalogue card lands here. Done after render() so the
+     sheet behind the panel is already drawn. */
+  if(location.hash===DRILL_HASH) openDrillManager(true);
 })();
 </script>
 </body>

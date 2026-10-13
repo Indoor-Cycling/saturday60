@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17171F">
+<title>5-Minute FTP Test — Keiser M3 / M3i</title>
+<script src="app.js" defer></script>
+<style>
+  :root{
+    --ink:#17171F; --paper:#F4F5F7; --line:#D9DBE0; --grey:#7A7C86; --grey2:#5A5C66; --greyl:#9A9CA6;
+    --z0:#2BC4B8; --z1:#6FD15A; --z2:#F2C13D; --z3:#F08A3C; --z4:#E8503A; --white:#fff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45;}
+  .heat{height:6px;background:linear-gradient(90deg,var(--z0),var(--z1),var(--z2),var(--z3),var(--z4));}
+  .wrap{max-width:680px;margin:0 auto;padding:16px 16px 70px;}
+  header .eyebrow{font-size:11px;letter-spacing:1.4px;color:var(--grey);font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase;}
+  h1{font-size:30px;margin:6px 0 2px;letter-spacing:.3px;line-height:1.05;}
+  .sub{font-size:13px;color:var(--grey2);margin:0 0 14px;}
+  /* timeline chips */
+  .tl{display:flex;gap:6px;margin:0 0 16px;}
+  .tl .seg{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;}
+  .tl .bar{height:8px;border-radius:4px;}
+  .tl .lab{font-size:9px;color:var(--grey2);margin-top:4px;font-family:ui-monospace,monospace;text-align:center;line-height:1.2;}
+  /* NOW / timer */
+  .now{border-radius:14px;background:var(--ink);color:#fff;padding:16px 16px 14px;position:relative;overflow:hidden;}
+  .now .top{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#c7c9d1;font-family:ui-monospace,monospace;letter-spacing:.5px;}
+  .now .phase{font-size:19px;font-weight:800;margin:5px 0 2px;line-height:1.1;}
+  .now .count{font-size:52px;font-weight:800;font-family:ui-monospace,monospace;letter-spacing:1px;line-height:1.05;margin:2px 0;}
+  .now .detail{font-size:12.5px;color:#d7d8de;min-height:34px;}
+  .now .targets{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-family:ui-monospace,monospace;font-size:13px;font-weight:700;}
+  .now .targets .t-cad{color:var(--z0);} .now .targets .t-pwr{color:var(--z2);} .now .targets .t-hr{color:#ff9db0;}
+  .pbar{height:6px;border-radius:3px;background:#33343d;margin-top:12px;overflow:hidden;}
+  .pbar>div{height:100%;width:0;background:var(--z2);transition:width .95s linear;}
+  .controls{display:flex;gap:8px;margin-top:12px;align-items:center;}
+  .btn{border:none;border-radius:10px;padding:13px 18px;font-size:15px;font-weight:800;cursor:pointer;}
+  .btn.go{background:var(--z0);color:#06302c;flex:1;}
+  .btn.go.running{background:var(--z4);color:#fff;}
+  .btn.reset{background:#3a3b44;color:#e7e8ec;}
+  .mute{display:flex;align-items:center;gap:6px;font-size:11px;color:#b9bbc4;font-family:ui-monospace,monospace;cursor:pointer;user-select:none;}
+  .mute input{width:15px;height:15px;}
+  .note{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:16px 0;font-size:12.5px;color:var(--grey2);}
+  .note b{color:var(--ink);}
+  h2{font-size:12px;letter-spacing:1.2px;color:var(--grey);font-family:ui-monospace,monospace;text-transform:uppercase;margin:24px 0 10px;}
+  .phase-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0;margin:0 0 12px;overflow:hidden;}
+  .pc-head{display:flex;align-items:center;gap:10px;padding:11px 14px;color:#fff;}
+  .pc-head .n{font-weight:800;font-size:13px;}
+  .pc-head .dur{margin-left:auto;font-family:ui-monospace,monospace;font-weight:800;font-size:13px;opacity:.95;}
+  .pc-body{padding:11px 14px 13px;}
+  .pc-body p{margin:0 0 8px;font-size:13px;}
+  .pc-body ul{margin:4px 0 8px;padding-left:18px;}
+  .pc-body li{font-size:13px;margin:4px 0;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+  .chip{font-family:ui-monospace,monospace;font-size:11px;font-weight:700;border-radius:6px;padding:3px 8px;background:var(--paper);border:1px solid var(--line);}
+  .chip.cad{color:#108a80;} .chip.pwr{color:#9a6a00;} .chip.hr{color:#b23a56;}
+  .star{background:var(--z4);}
+  /* calculator */
+  .calc{background:var(--ink);color:#fff;border-radius:14px;padding:16px;}
+  .calc h3{margin:0 0 4px;font-size:16px;}
+  .calc .formula{font-family:ui-monospace,monospace;font-size:13px;color:#c7c9d1;margin:0 0 14px;}
+  .calc .formula b{color:var(--z2);}
+  .calc-row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;}
+  .calc .fld{display:flex;flex-direction:column;gap:5px;}
+  .calc .fld label{font-size:10px;letter-spacing:.6px;color:#b9bbc4;font-family:ui-monospace,monospace;text-transform:uppercase;}
+  .calc .fld input{width:130px;font-size:22px;font-weight:800;padding:9px 11px;border-radius:9px;border:none;font-family:ui-monospace,monospace;background:#fff;color:var(--ink);}
+  .calc .eq{font-size:26px;font-weight:800;color:#5a5c66;padding-bottom:6px;}
+  .calc .out{display:flex;flex-direction:column;gap:3px;}
+  .calc .out .olab{font-size:10px;letter-spacing:.6px;color:#b9bbc4;font-family:ui-monospace,monospace;text-transform:uppercase;}
+  .calc .out .oval{font-size:30px;font-weight:800;font-family:ui-monospace,monospace;color:var(--z0);}
+  .calc .out .osub{font-size:10px;color:#8e909a;font-family:ui-monospace,monospace;}
+  .calc .after{font-size:12px;color:#d7d8de;margin-top:14px;}
+  .gobtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+  .gobtn{flex:1;min-width:170px;text-align:center;text-decoration:none;border-radius:10px;padding:11px 12px;font-size:13.5px;font-weight:800;}
+  .gobtn small{display:block;font-weight:600;font-size:10px;opacity:.85;font-family:ui-monospace,monospace;margin-top:2px;}
+  .gobtn.m3i{background:var(--z0);color:#06302c;}
+  .gobtn.ymca{background:var(--z2);color:#3a2d00;}
+  .cf{font-size:11px;color:var(--grey);font-family:ui-monospace,monospace;margin:12px 2px 0;}
+  .foot{font-size:11px;color:var(--greyl);margin-top:22px;text-align:center;}
+  @media print{
+    .now .controls,.mute,.btn{display:none !important;}
+    body{background:#fff;}
+  }
+</style>
+</head>
+<body>
+<div class="heat"></div>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Keiser M3 / M3i · Physiology</div>
+    <h1>5-Minute FTP Test</h1>
+    <p class="sub">Find your Functional Threshold Power in 30 minutes. Four phases, one hard 5-minute effort, then the math does the rest.</p>
+  </header>
+
+  <!-- timeline -->
+  <div class="tl" id="tl"></div>
+
+  <!-- guided timer -->
+  <div class="now">
+    <div class="top"><span id="nowlabel">GUIDED TIMER · READY</span><span id="nowtotal">0:00 / 30:00</span></div>
+    <div class="phase" id="nowphase">Press Start to begin</div>
+    <div class="count" id="nowcount">30:00</div>
+    <div class="detail" id="nowdetail">The timer walks you through all four phases and flips the surge/ease cues for you. Keep your eyes on the bike — glance here when you need to.</div>
+    <div class="targets" id="nowtargets"></div>
+    <div class="pbar"><div id="pfill"></div></div>
+    <div class="controls">
+      <button class="btn go" id="go">▶ Start test</button>
+      <button class="btn reset" id="reset">Reset</button>
+      <label class="mute"><input type="checkbox" id="mute"> mute cues</label>
+    </div>
+  </div>
+
+  <div class="note">
+    <b>Before you start.</b> Have pen &amp; paper or your phone ready to record the result.
+    <b>On an M3:</b> reset the bike display before you begin.
+    <b>On an M3i:</b> start with the time counter at 00:00.
+    Keep the same gear through Phase Two — you change your legs, not the resistance.
+  </div>
+
+  <h2>The protocol, step by step</h2>
+  <div id="protocol"></div>
+
+  <h2>The math</h2>
+  <div class="calc">
+    <h3>Turn your 5-minute average into FTP</h3>
+    <p class="formula">FTP = 5-min average power − 15% &nbsp;=&nbsp; avg × <b>0.85</b> &nbsp;(Keiser 5-min correction factor)</p>
+    <div class="calc-row">
+      <div class="fld">
+        <label for="avg">5-min average watts</label>
+        <input id="avg" type="number" min="40" max="700" value="250" inputmode="numeric">
+      </div>
+      <div class="eq">→</div>
+      <div class="out">
+        <span class="olab">Your FTP</span>
+        <span class="oval" id="ftpout">212 W</span>
+        <span class="osub" id="ftpsub">250 − 38 (15%) = 212</span>
+      </div>
+    </div>
+    <p class="after">That FTP is your number — send it to your card and the power zones fill in:</p>
+    <div class="gobtns">
+      <a class="gobtn m3i" id="toM3i" href="RPE_Watts_Card_Editable.html" target="_blank" rel="noopener">Open my M3i card →<small>home · 72 gears</small></a>
+      <a class="gobtn ymca" id="toYMCA" href="RPE_Watts_Card_YMCA_Editable.html" target="_blank" rel="noopener">Open YMCA card →<small>class · M3 · 24 gears</small></a>
+    </div>
+  </div>
+  <p class="cf">Shorter tests need a bigger correction: <b>3-min −20%</b> · <b>5-min −15%</b> · <b>10-min −10%</b> · <b>20-min −5%</b>. The longer you can hold it, the closer to a true 60-minute FTP.</p>
+
+  <p class="foot">Protocol from the Keiser M Series training manual (Physiology). Retest every 4–6 weeks — your FTP climbs as you do.</p>
+</div>
+
+<script>
+const ZC=['#2BC4B8','#6FD15A','#F2C13D','#F08A3C','#E8503A'];
+// ---- timer segments (sum = 1800s = 30:00)
+function buildSegs(){
+  const s=[];
+  s.push({name:'Warm-Up · Phase One',detail:'Easy spin to open the legs. Set power 70–120 W to taste.',cad:'80–90 RPM',pwr:'70–120 W',hr:'HR 60–70%',secs:300,ci:0});
+  for(let r=1;r<=5;r++){
+    s.push({name:'Warm-Up 2 · Round '+r+' · SURGE',detail:(r===1?'Add 1–2 gears for all of Phase Two. ':'')+'Lift the legs to 100 RPM — power rises.',cad:'100 RPM',pwr:'↑ same gear',hr:'HR 75–80%',secs:60,ci:1});
+    s.push({name:'Warm-Up 2 · Round '+r+' · EASE',detail:'Slow to 80–90 RPM, keep the same gear — power drops.',cad:'80–90 RPM',pwr:'↓ same gear',hr:'HR 75–80%',secs:60,ci:1});
+  }
+  s.push({name:'★ MAIN TEST · 5 MIN',detail:'Hold the HIGHEST power you can for the full 5 min — even pace, strong form, don’t blow up early. Open an interval lap (inL 1) at 00:00; M3: stop 3s & reset to zero first.',cad:'80–90 RPM',pwr:'MAX you can hold',hr:'HR > 85%',secs:300,ci:4});
+  s.push({name:'Cool-Down',detail:'RECORD your averages first! (M3: stop pedaling 3s to read the flashing avg Power / RPM / HR.) Then ease the gears down.',cad:'70–80 RPM',pwr:'< 100 W',hr:'HR 60–65%',secs:600,ci:0});
+  return s;
+}
+const SEGS=buildSegs();
+const TOTAL=SEGS.reduce((a,s)=>a+s.secs,0);
+// cumulative end times
+let acc=0; SEGS.forEach(s=>{s.end=(acc+=s.secs);});
+
+function mmss(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+
+// ---- timeline chips (phase-level)
+(function(){
+  const tl=document.getElementById('tl');
+  const phases=[['Warm-Up 1','5′',300,ZC[0]],['Warm-Up 2','10′',600,ZC[1]],['TEST','5′',300,ZC[4]],['Cool-Down','10′',600,ZC[0]]];
+  phases.forEach(([n,d,sec,c])=>{
+    const seg=document.createElement('div'); seg.className='seg'; seg.style.flex=sec;
+    seg.innerHTML='<div class="bar" style="background:'+c+'"></div><div class="lab">'+n+'<br>'+d+'</div>';
+    tl.appendChild(seg);
+  });
+})();
+
+// ---- written protocol cards
+(function(){
+  const host=document.getElementById('protocol');
+  const cards=[
+    {c:ZC[0],n:'1 · Warm-Up Phase One',dur:'5 min',
+     body:'<p>Start pedaling and settle in. Set your power anywhere in the easy band depending on how the legs feel.</p>',
+     chips:[['cad','80–90 RPM'],['pwr','70–120 W'],['hr','HR 60–70% max']]},
+    {c:ZC[1],n:'2 · Warm-Up Phase Two',dur:'10 min',
+     body:'<p><b>Add 1–2 gear levels</b>, then keep that gear for the whole phase. Alternate, five times through:</p>'+
+          '<ul><li><b>1 min @ 100 RPM</b> — faster legs, power rises</li><li><b>1 min @ 80–90 RPM</b> — slower legs, same gear, power drops</li></ul>'+
+          '<p>Five surge/ease rounds = 10 minutes.</p>',
+     chips:[['cad','100 ↔ 80–90 RPM'],['pwr','same gear'],['hr','HR 75–80% max']]},
+    {c:'#5A5C66',n:'3 · Set the interval lap',dur:'—',
+     body:'<p>Straight after Phase Two, keep pedaling and open an interval lap — it shows <b>“inL 1”</b>. Begin the test when the time reads <b>00:00</b>.</p>'+
+          '<p><b>M3:</b> stop pedaling for 3 seconds and reset so all data and time are back to zero.</p>',
+     chips:[]},
+    {c:ZC[4],n:'4 · Main Test',dur:'5 min',
+     body:'<p>Set your power to the <b>maximum level you can sustain for the full five minutes</b> — pace it evenly, hold strong form, and don’t go so hard you fade. Think: steady climb into a heavy headwind.</p>'+
+          '<p>When the 5 minutes end, close the interval lap and <b>record your Average Power, HR and RPM.</b> <b>M3:</b> stop pedaling 3s to read the flashing averages.</p>',
+     chips:[['cad','80–90 RPM'],['pwr','MAX sustainable'],['hr','HR > 85% max']]},
+    {c:ZC[0],n:'5 · Cool-Down',dur:'10 min',
+     body:'<p>Gradually drop the gears and bring the power down below 100 W. Easy legs — let the effort settle.</p>',
+     chips:[['cad','70–80 RPM'],['pwr','< 100 W'],['hr','HR 60–65% max']]},
+  ];
+  host.innerHTML=cards.map(c=>{
+    const chips=c.chips.map(([k,v])=>'<span class="chip '+k+'">'+v+'</span>').join('');
+    return '<div class="phase-card"><div class="pc-head" style="background:'+c.c+'">'+
+      '<span class="n">'+c.n+'</span><span class="dur">'+c.dur+'</span></div>'+
+      '<div class="pc-body">'+c.body+(chips?'<div class="chips">'+chips+'</div>':'')+'</div></div>';
+  }).join('');
+})();
+
+// ---- calculator
+function calc(){
+  const avg=Math.max(0,parseInt(document.getElementById('avg').value||'0',10));
+  const cut=Math.round(avg*0.15);
+  const ftp=avg-cut;
+  document.getElementById('ftpout').textContent=ftp+' W';
+  const _q='?ftp='+ftp;
+  const _a=document.getElementById('toM3i'); if(_a) _a.href='RPE_Watts_Card_Editable.html'+_q;
+  const _y=document.getElementById('toYMCA'); if(_y) _y.href='RPE_Watts_Card_YMCA_Editable.html'+_q;
+  document.getElementById('ftpsub').textContent=avg+' − '+cut+' (15%) = '+ftp;
+}
+document.getElementById('avg').addEventListener('input',calc);
+calc();
+
+// ---- guided timer
+let elapsed=0, running=false, timer=null, wake=null, audio=null, lastSeg=-1;
+function curIdx(){ for(let i=0;i<SEGS.length;i++){ if(elapsed<SEGS[i].end) return i; } return SEGS.length-1; }
+function beep(kind){
+  if(document.getElementById('mute').checked) return;
+  try{
+    if(!audio) audio=new (window.AudioContext||window.webkitAudioContext)();
+    const tone=(f,t0,dur)=>{const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;o.connect(g);g.connect(audio.destination);
+      g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.25,t0+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);o.start(t0);o.stop(t0+dur);};
+    const n=audio.currentTime;
+    if(kind==='test'){ tone(660,n,0.15); tone(880,n+0.18,0.15); tone(1100,n+0.36,0.22); }
+    else if(kind==='done'){ tone(880,n,0.2); tone(660,n+0.22,0.2); tone(440,n+0.44,0.3); }
+    else { tone(760,n,0.12); }
+  }catch(e){}
+}
+function paint(){
+  const i=curIdx(), s=SEGS[i];
+  const segStart=i===0?0:SEGS[i-1].end;
+  const left=s.end-elapsed;
+  document.getElementById('nowtotal').textContent=mmss(elapsed)+' / 30:00';
+  document.getElementById('nowlabel').textContent=running?'GUIDED TIMER · RUNNING':'GUIDED TIMER · PAUSED';
+  document.getElementById('nowphase').textContent=s.name;
+  document.getElementById('nowphase').style.color = s.ci===4 ? '#ff6a52' : '#fff';
+  document.getElementById('nowcount').textContent=mmss(left);
+  document.getElementById('nowdetail').textContent=s.detail;
+  document.getElementById('nowtargets').innerHTML=
+    '<span class="t-cad">'+s.cad+'</span><span class="t-pwr">'+s.pwr+'</span><span class="t-hr">'+s.hr+'</span>';
+  const pf=document.getElementById('pfill');
+  pf.style.width=(100*(elapsed-segStart)/(s.end-segStart))+'%';
+  pf.style.background = s.ci===4 ? ZC[4] : ZC[2];
+}
+function tick(){
+  elapsed++;
+  const i=curIdx();
+  if(i!==lastSeg){
+    // boundary just crossed into segment i
+    if(SEGS[i].name.indexOf('MAIN TEST')>=0) beep('test');
+    else beep('flip');
+    lastSeg=i;
+  }
+  if(elapsed>=TOTAL){ elapsed=TOTAL; paint();
+    document.getElementById('nowphase').textContent='Test complete 🎉';
+    document.getElementById('nowcount').textContent='DONE';
+    document.getElementById('nowdetail').textContent='Enter your 5-minute average watts in the calculator below to get your FTP.';
+    document.getElementById('nowtargets').innerHTML='';
+    beep('done'); stop(); return;
+  }
+  paint();
+}
+async function reqWake(){ try{ if('wakeLock' in navigator) wake=await navigator.wakeLock.request('screen'); }catch(e){} }
+function relWake(){ try{ if(wake){wake.release();wake=null;} }catch(e){} }
+function start(){
+  if(running) return; running=true; reqWake();
+  try{ if(!audio) audio=new (window.AudioContext||window.webkitAudioContext)(); if(audio.state==='suspended') audio.resume(); }catch(e){}
+  lastSeg=curIdx();
+  const b=document.getElementById('go'); b.textContent='⏸ Pause'; b.classList.add('running');
+  timer=setInterval(tick,1000); paint();
+}
+function stop(){
+  running=false; relWake(); clearInterval(timer); timer=null;
+  const b=document.getElementById('go'); b.textContent=(elapsed>=TOTAL?'▶ Start test':'▶ Resume'); b.classList.remove('running'); paint();
+}
+document.getElementById('go').addEventListener('click',()=>running?stop():start());
+document.getElementById('reset').addEventListener('click',()=>{
+  stop(); elapsed=0; lastSeg=-1;
+  document.getElementById('go').textContent='▶ Start test';
+  paint();
+});
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && running) reqWake(); });
+paint();
+</script>
+</body>
+</html>

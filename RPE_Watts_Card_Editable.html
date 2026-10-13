@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RPE + Watts Card — Editable</title>
+<script src="app.js" defer></script>
+<style>
+  :root{
+    --ink:#17171F; --paper:#F4F5F7; --line:#D9DBE0; --grey:#7A7C86; --grey2:#5A5C66; --greyl:#9A9CA6;
+    --z0:#2BC4B8; --z1:#6FD15A; --z2:#F2C13D; --z3:#F08A3C; --z4:#E8503A; --white:#fff;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:#e9eaee;color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 60px;}
+  h1{font-size:20px;margin:0 0 2px;letter-spacing:.3px;}
+  .lede{font-size:13px;color:var(--grey2);margin:0 0 16px;line-height:1.4;}
+  .controls{background:var(--ink);border-radius:12px;padding:14px 16px;color:#fff;
+    display:flex;flex-wrap:wrap;gap:16px 22px;align-items:flex-end;}
+  .fld{display:flex;flex-direction:column;gap:4px;}
+  .fld label{font-size:10px;letter-spacing:.6px;color:#b9bbc4;font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase;}
+  .fld input{width:110px;font-size:20px;font-weight:800;padding:7px 10px;border-radius:8px;border:none;
+    font-family:ui-monospace,Menlo,Consolas,monospace;background:#fff;color:var(--ink);}
+  .fld .unit{font-size:10px;color:#8e909a;font-family:ui-monospace,monospace;margin-top:1px;}
+  .btns{margin-left:auto;display:flex;gap:8px;}
+  .btn{border:none;border-radius:9px;padding:11px 16px;font-size:14px;font-weight:800;cursor:pointer;}
+  .btn.print{background:var(--z0);color:#06302c;}
+  .btn.reset{background:#3a3b44;color:#e7e8ec;}
+  .hint{font-size:11.5px;color:var(--grey);margin:12px 2px 18px;line-height:1.45;}
+  .cards{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;}
+  .card{width:324px;background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    overflow:hidden;position:relative;}
+  .heat{height:6px;background:linear-gradient(90deg,var(--z0),var(--z1),var(--z2),var(--z3),var(--z4));}
+  .pad{padding:12px 13px 13px;}
+  .chead{display:flex;justify-content:space-between;align-items:baseline;}
+  .chead .t{font-weight:800;font-size:17px;letter-spacing:.2px;}
+  .chead .tag{font-size:10px;font-weight:800;color:var(--z4);font-family:ui-monospace,monospace;letter-spacing:.4px;}
+  .csub{font-size:9.5px;color:var(--grey2);margin-top:2px;}
+  .cmeta{font-size:9px;color:var(--grey);font-family:ui-monospace,monospace;margin-top:1px;}
+  .rule{height:1px;background:var(--line);margin:7px 0 0;}
+  table{width:100%;border-collapse:collapse;}
+  .colh td{font-size:8px;color:var(--greyl);font-family:ui-monospace,monospace;letter-spacing:.3px;padding:6px 0 3px;}
+  tr.row td{border-top:1px solid var(--line);padding:5px 0;vertical-align:middle;}
+  tr.row:nth-child(even){background:var(--white);}
+  .badge{width:24px;height:19px;border-radius:4px;color:#fff;font-weight:800;font-size:12px;
+    text-align:center;line-height:19px;display:inline-block;}
+  .word{font-weight:700;font-size:10.5px;line-height:1.05;}
+  .zone{font-size:7.2px;color:var(--grey2);font-family:ui-monospace,monospace;letter-spacing:.2px;margin-top:1px;}
+  .watt{font-weight:800;font-size:11px;font-family:ui-monospace,monospace;text-align:right;}
+  .pct{font-size:7.2px;color:var(--grey);font-family:ui-monospace,monospace;text-align:right;margin-top:1px;}
+  .cell-r{text-align:right;}
+  .style{font-size:9px;}
+  .gc{font-weight:800;font-size:10px;font-family:ui-monospace,monospace;text-align:center;}
+  .banner{background:var(--ink);color:#fff;border-radius:7px;padding:6px 9px;margin:4px 0 7px;}
+  .banner b{color:var(--z2);}
+  .banner .l1{font-size:8.5px;font-weight:800;}
+  .banner .l2{font-size:7.6px;color:#cfd0d6;font-family:ui-monospace,monospace;margin-top:2px;}
+  .cfoot{text-align:center;margin-top:8px;}
+  .cfoot .f1{font-size:8.5px;font-weight:800;}
+  .cfoot .f2{font-size:7.6px;color:var(--grey);margin-top:2px;}
+  @media (max-width:720px){ .card{width:100%;max-width:360px;} .fld input{width:90px;} }
+  @media print{
+    @page{ size:auto; margin:0.5in; }
+    html,body{background:#fff;}
+    .wrap{max-width:none;padding:0;}
+    h1,.lede,.controls,.hint{display:none !important;}
+    .cards{display:block;}
+    .card{width:3in;height:5in;border:none;page-break-after:always;margin:0 auto;}
+    .card:last-child{page-break-after:auto;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>RPE + Watts Card — editable</h1>
+  <p class="lede">Type your FTP and PB; both sides recompute. Then <b>Print</b> (double-sided, flip on short edge, 100%).</p>
+  <div class="controls">
+    <div class="fld">
+      <label for="ftp">Your FTP</label>
+      <input id="ftp" type="number" min="60" max="500" value="158" inputmode="numeric">
+      <span class="unit">watts · 20-min test × 0.95</span>
+    </div>
+    <div class="fld">
+      <label for="pb">Your PB</label>
+      <input id="pb" type="number" min="100" max="700" value="280" inputmode="numeric">
+      <span class="unit">watts · tops out Z7</span>
+    </div>
+    <div class="btns">
+      <button class="btn reset" id="reset">Reset</button>
+      <button class="btn print" id="print">⎙ Print</button>
+    </div>
+  </div>
+  <p class="hint">Every watt number is derived from your FTP, so after a re-test just change the FTP box and reprint — the whole card follows. Gear and cadence columns are starting points for your M3i Studio Plus; your legs fine-tune.</p>
+
+  <div class="cards">
+    <!-- FRONT -->
+    <div class="card">
+      <div class="heat"></div>
+      <div class="pad">
+        <div class="chead"><span class="t">RPE + WATTS</span><span class="tag">FOR RALPH</span></div>
+        <div class="csub">Your effort number paired with your watts</div>
+        <div class="cmeta" id="meta1">FTP 158 · PB 280 · retest to rescale</div>
+        <div class="rule"></div>
+        <table id="front"></table>
+        <div class="cfoot">
+          <div class="f1">On the M3i, chase the watts. On gym bikes, ride the RPE.</div>
+          <div class="f2" id="ff2">Watts from FTP 158 — retest every 4–6 weeks.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACK -->
+    <div class="card">
+      <div class="heat"></div>
+      <div class="pad">
+        <div class="chead"><span class="t">GEAR × CADENCE</span><span class="tag">M3i /72</span></div>
+        <div class="csub">Where each watt band tends to live on your bike</div>
+        <div class="banner">
+          <div class="l1">SAME WATTS, TWO WAYS</div>
+          <div class="l2">heavier gear slower · or lighter gear faster</div>
+        </div>
+        <table id="back"></table>
+        <div class="cfoot">
+          <div class="f1">Watts = gear × cadence. Number off? Change one.</div>
+          <div class="f2">Starting points for your Studio Plus; your legs fine-tune.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ZC=['#2BC4B8','#6FD15A','#F2C13D','#F08A3C','#E8503A'];
+// banker's rounding to match the original card math
+function pyround(x){
+  const r=Math.round(x);
+  if(Math.abs((x-Math.trunc(x))-0.5)<1e-9){ const fl=Math.floor(x); return (fl%2===0)?fl:fl+1; }
+  return r;
+}
+function zones(ftp,pb){
+  const z7lo=pyround(1.50*ftp)+1;
+  return [
+    {lab:'Z1 · RECOVERY',  pct:'< 55%',    watt:'< '+pyround(0.55*ftp)+'W'},
+    {lab:'Z2 · ENDURANCE', pct:'56–75%',   watt:pyround(0.56*ftp)+'–'+pyround(0.75*ftp)+'W'},
+    {lab:'Z3 · TEMPO',     pct:'76–90%',   watt:pyround(0.76*ftp)+'–'+pyround(0.90*ftp)+'W'},
+    {lab:'Z4 · THRESHOLD', pct:'91–105%',  watt:pyround(0.91*ftp)+'–'+pyround(1.05*ftp)+'W'},
+    {lab:'Z5 · VO2 MAX',   pct:'106–120%', watt:pyround(1.06*ftp)+'–'+pyround(1.20*ftp)+'W'},
+    {lab:'Z6 · ANAEROBIC', pct:'121–150%', watt:pyround(1.21*ftp)+'–'+pyround(1.50*ftp)+'W'},
+    {lab:'Z7 · NEURO',     pct:'> 150%',   watt:(pb>z7lo? z7lo+'–'+pb+'W' : z7lo+'W+')},
+  ];
+}
+// RPE rows: n, word, zone index, badge-color index
+const FRONT=[
+  [1,'VERY LIGHT',0,0],[2,'LIGHT',0,0],[3,'EASY',1,0],[4,'MODERATE',1,0],
+  [5,'TEMPO',2,1],[6,'SOMEWHAT HARD',3,2],[7,'HARD',3,2],
+  [8,'VERY HARD',4,3],[9,'NEAR MAX',5,4],[10,'MAX',6,4],
+];
+// gear×cadence rows: zone index, style, gear, rpm, color index
+const BACK=[
+  [0,'easy spin','9–18','50–80',0],[1,'endurance','18–27','78–82',0],
+  [2,'tempo flat','30–42','78–85',1],[2,'base climb','42–51','62–65',1],
+  [3,'threshold','42–51','72–78',2],[3,'seated climb','51–60','58–62',2],
+  [4,'hard climb','57–66','56–60',3],[5,'seated sprint','33–45','100–110',4],
+  [6,'max sprint','36–45','110–112',4],
+];
+function render(){
+  const ftp=Math.max(1,parseInt(document.getElementById('ftp').value||'0',10));
+  const pb=Math.max(ftp,parseInt(document.getElementById('pb').value||'0',10));
+  const Z=zones(ftp,pb);
+  document.getElementById('meta1').textContent='FTP '+ftp+' · PB '+pb+' · retest to rescale';
+  document.getElementById('ff2').textContent='Watts from FTP '+ftp+' — retest every 4–6 weeks.';
+  // FRONT
+  let h='<tr class="colh"><td></td><td>FEEL / ZONE</td><td class="cell-r">WATTS · %FTP</td></tr>';
+  FRONT.forEach(([n,word,zi,ci])=>{
+    const z=Z[zi], col=ZC[ci];
+    h+='<tr class="row"><td style="width:30px"><span class="badge" style="background:'+col+'">'+n+'</span></td>'+
+       '<td><div class="word">'+word+'</div><div class="zone">'+z.lab+'</div></td>'+
+       '<td><div class="watt" style="color:'+col+'">'+z.watt+'</div><div class="pct">'+z.pct+'</div></td></tr>';
+  });
+  document.getElementById('front').innerHTML=h;
+  // BACK
+  let b='<tr class="colh"><td>WATTS</td><td>STYLE</td><td class="cell-r">GEAR/72</td><td class="cell-r">RPM</td></tr>';
+  BACK.forEach(([zi,style,gear,rpm,ci])=>{
+    const z=Z[zi], col=ZC[ci];
+    b+='<tr class="row"><td><div class="watt" style="text-align:left;color:'+col+';font-size:9.5px">'+z.watt+'</div></td>'+
+       '<td class="style">'+style+'</td>'+
+       '<td class="gc cell-r">'+gear+'</td><td class="gc cell-r">'+rpm+'</td></tr>';
+  });
+  document.getElementById('back').innerHTML=b;
+}
+document.getElementById('ftp').addEventListener('input',render);
+document.getElementById('pb').addEventListener('input',render);
+document.getElementById('reset').addEventListener('click',()=>{
+  document.getElementById('ftp').value=158; document.getElementById('pb').value=280; render();
+});
+document.getElementById('print').addEventListener('click',()=>window.print());
+(function(){var q=new URLSearchParams(location.search);var f=parseInt(q.get('ftp'),10);if(f>=60&&f<=500)document.getElementById('ftp').value=f;var p=parseInt(q.get('pb'),10);if(p>=100&&p<=700)document.getElementById('pb').value=p;})();
+render();
+</script>
+</body>
+</html>

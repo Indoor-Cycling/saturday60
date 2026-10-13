@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 45 · October 2026<br>
+workbook, the 5-Minute FTP Test and RPE + Watts cards, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 46 · October 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -191,6 +191,14 @@ The three HTML tools now run as one installed web app at <span class="url">https
       <div class="tsub"><a href="#rollback-bundles">The rollback bundle</a><span class="dots"></span><span class="pg" data-pg="rollback-bundles">22</span></div>
       <div class="tsub"><a href="#why-the-version-line-only-has-to-differ">Why the version line only has to differ</a><span class="dots"></span><span class="pg" data-pg="why-the-version-line-only-has-to-differ">22</span></div>
       <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">22</span></div>
+    </div>
+  </div>
+  <div class="tgrp">
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s10" title="Show the parts of this section"><span class="car">›</span></button><a href="#s10">10 · POWER &amp; TESTING</a><span class="dots"></span><span class="pg" data-pg="s10">24</span></div>
+    <div class="tsubs" id="subs-s10" hidden>
+      <div class="tsub"><a href="#ftp-test">The 5-Minute FTP Test</a><span class="dots"></span><span class="pg" data-pg="ftp-test">24</span></div>
+      <div class="tsub"><a href="#rpe-watts-cards">RPE + Watts — the two cards</a><span class="dots"></span><span class="pg" data-pg="rpe-watts-cards">24</span></div>
+      <div class="tsub"><a href="#power-how-connects">How the three connect</a><span class="dots"></span><span class="pg" data-pg="power-how-connects">25</span></div>
     </div>
   </div>
 </div>
@@ -696,9 +704,9 @@ device you typed them on and never leave it. The app has no server and asks for 
 
 <p class="foot">
 Quick values: crossfade 10 s · drift 0.43 s/song · RPM cap 110 · FTP 158 W and Max HR 164 (both editable) · TSS ~65–70 · bar = 240 ÷ BPM ·
-current app version s60-v19.<br>
+current app version s60-v60.<br>
 The app: <span class="url">https://indoor-cycling.github.io/saturday60/</span> — index.html · selector.html ·
-buildsheet.html · drops.html · Saturday60_WeeklyWorkflow.html and .pdf · app.js · sw.js ·
+buildsheet.html · drops.html · Saturday60_WeeklyWorkflow.html and .pdf · FTP_5min_Test.html · RPE_Watts_Card_Editable.html · RPE_Watts_Card_YMCA_Editable.html · app.js · sw.js ·
 manifest.webmanifest · icons/ · README.md.
 Alongside it: Spin_Class_ProV4 workbook · SaturdaySixty_PlaylistPrint.bas · Saturday-60_Weekly-Workflow.pdf.
 When any tool changes, ask Claude for a manual revision to match.
@@ -709,6 +717,51 @@ When any tool changes, ask Claude for a manual revision to match.
 
 
 
+
+<div class="bar b4 pagebreak" id="s10">10 · POWER &amp; TESTING</div>
+<p>These three tools make the ride power-based. Both the Keiser M3 (the YMCA bikes) and the M3i Studio Plus at home
+read Watts; once a rider has an <b>FTP</b> — the power they can hold for about an hour — every effort can be named
+in Watts, not only by feel. The <b>5-Minute FTP Test</b> finds that number; the two <b>RPE + Watts</b> cards turn it
+into zones and gear/cadence starting points. All three are their own pages in the app, opened from the hub under
+<b>Power &amp; testing</b>, and work offline.</p>
+
+<h3 id="ftp-test">The 5-Minute FTP Test</h3>
+<p>A guided version of Keiser’s own five-minute Personal Power Test, 30 minutes end to end. The page runs a timer
+that names the phase, counts it down and flips the surge/ease cues for you, beeps at each change and at the start of
+the main effort, and keeps the screen awake. A mute toggle silences the cues.</p>
+<table>
+  <tr><td class="k">Warm-Up 1 · 5 min</td><td>80–90 RPM · 70–120 W · HR 60–70% of max. Easy spin to open the legs.</td></tr>
+  <tr><td class="k">Warm-Up 2 · 10 min</td><td>Add 1–2 gears, then keep that gear. Alternate 1 min at 100 RPM and 1 min at 80–90 RPM, five times. HR 75–80%.</td></tr>
+  <tr><td class="k">Main Test · 5 min</td><td>The highest power you can hold for the full five minutes — even pace, strong form. 80–90 RPM, HR &gt; 85%. Record the average Watts at the end.</td></tr>
+  <tr><td class="k">Cool-Down · 10 min</td><td>Ease the gears down, power under 100 W, 70–80 RPM. HR 60–65%.</td></tr>
+</table>
+<p>The result goes through one sum: <code>FTP = 5-min average − 15% = average × 0.85</code>. Keiser’s worked
+example of a 250 W average gives an FTP of 212 W. The 15% is the correction for a five-minute test; a shorter effort
+needs a bigger one and a longer effort a smaller one — <b>3-min −20% · 5-min −15% · 10-min −10% · 20-min −5%</b>.</p>
+<p>Enter the five-minute average in the calculator on the page and it does the sum; two buttons, <b>Open my M3i
+card</b> and <b>Open YMCA card</b>, then carry that FTP straight into a card (as <code>?ftp=</code> on the link), in
+the same window.</p>
+<p class="note">On an M3, reset the display before the test and stop pedalling for three seconds at the end to read the
+flashing averages. On an M3i Studio Plus, start with the time counter at 00:00.</p>
+
+<h3 id="rpe-watts-cards">RPE + Watts — the two cards</h3>
+<p>Each card takes an FTP (and a personal-best Watts) and lays the seven power zones out as a percentage of that FTP,
+next to the RPE 1–10 feel scale and a <b>gear × cadence</b> cheat — the same Watts reached either by a heavier
+gear turned slower or a lighter gear spun faster. Type a new FTP and every number re-computes; print at 100%.</p>
+<table>
+  <tr><td class="k">M3i card (home)</td><td>Gears out of 72, for the Studio Plus. Two panels — the RPE + Watts scale and the gear cheat.</td></tr>
+  <tr><td class="k">YMCA card (class)</td><td>Gears out of 24, for the M3. Three panels — a <b>Find Your Number</b> benchmark, the scale, and the gear cheat. An optional rider name prints on each panel, so riders print their own.</td></tr>
+</table>
+<p>The zone edges are fixed shares of FTP — Z1 under 55% up to Z7 above 150%, with the top of Z7 set by the
+personal best. If a raised FTP pushes 150% past the stored best, Z7 shows open-ended (for example <code>319W+</code>)
+as a nudge to retest the best with a short all-out effort. Re-test FTP every four to six weeks and reprint.</p>
+<p class="note">The M3’s Watts are displayed but not lab-calibrated the way the M3i’s are, so treat a rider’s Watts
+as a measure against themselves over time, not an exact number to compare bike to bike.</p>
+
+<h3 id="power-how-connects">How the three connect</h3>
+<p>Find the number in the FTP Test, tap through to a card and it opens with the FTP already filled in; the two cards
+also link to each other. Nothing is uploaded — the FTP you type lives only for that visit, and the pages run offline
+once the app is installed.</p>
 
 <div class="bar b8 pagebreak" id="index">INDEX</div>
 <p style="margin:0 0 6px">Page numbers are the printed pages of this manual. On screen every entry is a link.</p>
@@ -729,6 +782,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">BPM looks doubled or halved <span class="ip"><a href="#the-tap-tester">3</a>, <a href="#s8">19</a></span></div>
   <div class="ie">Build Sheet <span class="ip"><a href="#s1">2</a>, <a href="#s3">7</a></span></div>
   <div class="ia">C</div>
+  <div class="ie">Correction factor (5-min, 15%) <span class="ip"><a href="#ftp-test">24</a></span></div>
   <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">15</a></span></div>
   <div class="ie">Camelot and key codes <span class="ip"><a href="#s4">11</a>, <a href="#s8">19</a></span></div>
   <div class="ie">Chosic CSV <span class="ip"><a href="#s4">11</a></span></div>
@@ -747,9 +801,12 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Excel workbook <span class="ip"><a href="#s5">14</a></span></div>
   <div class="ie">Export for Excel <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
   <div class="ia">F</div>
+  <div class="ie">Find Your Number <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
+  <div class="ie">FTP, 5-minute test <span class="ip"><a href="#ftp-test">24</a></span></div>
   <div class="ie">Fill from library <span class="ip"><a href="#the-drops-library-moving-it-between-the-tool">13</a></span></div>
   <div class="ie">FTP <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ia">G</div>
+  <div class="ie">Gear × cadence cheat <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
   <div class="ie">Getting Started sheet <span class="ip"><a href="#s1">2</a></span></div>
   <div class="ie">Group dropdown (Excel) <span class="ip"><a href="#the-drill-catalogue-in-excel">9</a></span></div>
   <div class="ia">H</div>
@@ -776,6 +833,8 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ia">O</div>
   <div class="ie">Offline, working <span class="ip"><a href="#s7">18</a>, <a href="#s9">20</a></span></div>
   <div class="ia">P</div>
+  <div class="ie">Power &amp; testing <span class="ip"><a href="#s10">24</a></span></div>
+  <div class="ie">Power zones (% of FTP) <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
   <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">17</a></span></div>
   <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">17</a></span></div>
   <div class="ie">Phrase strip <span class="ip"><a href="#the-gauge-and-the-phrase-strip">3</a></span></div>
@@ -785,6 +844,7 @@ When any tool changes, ask Claude for a manual revision to match.
   <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
   <div class="ie">Privacy <span class="ip"><a href="#s7">18</a>, <a href="#privacy">22</a></span></div>
   <div class="ia">R</div>
+  <div class="ie">RPE + Watts cards <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
   <div class="ie">Refresh targets <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Removing a song <span class="ip"><a href="#playlist-builder">4</a></span></div>
   <div class="ie">Renaming a section <span class="ip"><a href="#structure">7</a></span></div>

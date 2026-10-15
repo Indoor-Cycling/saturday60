@@ -137,6 +137,7 @@
         <span class="osub" id="ftpsub">250 − 38 (15%) = 212</span>
       </div>
     </div>
+    <div style="margin-top:12px"><button class="btn reset" id="avgReset" style="padding:8px 13px;font-size:12.5px">Reset number</button></div>
     <p class="after">That FTP is your number — send it to your card and the power zones fill in:</p>
     <div class="gobtns">
       <a class="gobtn m3i" id="toM3i" href="RPE_Watts_Card_Editable.html">Open my M3i card →<small>home · 72 gears</small></a>
@@ -223,7 +224,13 @@ function calc(){
   const _y=document.getElementById('toYMCA'); if(_y) _y.href='RPE_Watts_Card_YMCA_Editable.html'+_q;
   document.getElementById('ftpsub').textContent=avg+' − '+cut+' (15%) = '+ftp;
 }
-document.getElementById('avg').addEventListener('input',calc);
+function _ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+document.getElementById('avg').addEventListener('input',function(){_ls('ftp.avg',this.value);calc();});
+document.getElementById('avgReset').addEventListener('click',function(){
+  try{localStorage.removeItem('ftp.avg');}catch(e){}
+  document.getElementById('avg').value=250; calc();
+});
+(function(){var sa=_ls('ftp.avg'); if(sa!==null&&sa!=='') document.getElementById('avg').value=sa;})();
 calc();
 
 // ---- guided timer

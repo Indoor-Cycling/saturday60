@@ -230,13 +230,22 @@ function render(){
   });
   document.getElementById('back').innerHTML=b;
 }
-['ftp','pb','name'].forEach(id=>document.getElementById(id).addEventListener('input',render));
+function _ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
+['ftp','pb','name'].forEach(id=>document.getElementById(id).addEventListener('input',function(){_ls('rpe.ymca.'+id,this.value);render();}));
 document.getElementById('reset').addEventListener('click',()=>{
+  try{localStorage.removeItem('rpe.ymca.ftp');localStorage.removeItem('rpe.ymca.pb');localStorage.removeItem('rpe.ymca.name');}catch(e){}
   document.getElementById('ftp').value=150; document.getElementById('pb').value=260;
   document.getElementById('name').value=''; render();
 });
 document.getElementById('print').addEventListener('click',()=>window.print());
-(function(){var q=new URLSearchParams(location.search);var f=parseInt(q.get('ftp'),10);if(f>=60&&f<=500)document.getElementById('ftp').value=f;var p=parseInt(q.get('pb'),10);if(p>=100&&p<=700)document.getElementById('pb').value=p;})();
+(function(){
+  var sf=_ls('rpe.ymca.ftp'); if(sf!==null&&sf!=='') document.getElementById('ftp').value=sf;
+  var sp=_ls('rpe.ymca.pb');  if(sp!==null&&sp!=='') document.getElementById('pb').value=sp;
+  var sn=_ls('rpe.ymca.name');if(sn!==null) document.getElementById('name').value=sn;
+  var q=new URLSearchParams(location.search);
+  var f=parseInt(q.get('ftp'),10); if(f>=60&&f<=500){document.getElementById('ftp').value=f;_ls('rpe.ymca.ftp',f);}
+  var p=parseInt(q.get('pb'),10);  if(p>=100&&p<=700){document.getElementById('pb').value=p;_ls('rpe.ymca.pb',p);}
+})();
 render();
 </script>
 </body>

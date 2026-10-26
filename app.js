@@ -125,7 +125,8 @@
       'drops.html': 'Drops Library',
       'FTP_5min_Test.html': '5-Min FTP Test',
       'RPE_Watts_Card_Editable.html': 'RPE + Watts · M3i',
-      'RPE_Watts_Card_YMCA_Editable.html': 'RPE + Watts · YMCA'
+      'RPE_Watts_Card_YMCA_Editable.html': 'RPE + Watts · YMCA',
+      'TSS_Planner.html': 'TSS Planner'
     };
     var file = location.pathname.split('/').pop();
     var title = document.createElement('span');

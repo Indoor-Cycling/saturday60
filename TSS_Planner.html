@@ -301,7 +301,7 @@ function cleanRows(a){
     if(!r)return; var z=parseInt(r.zone,10), s=Math.round(+r.sec);
     if(z>=1&&z<=7&&s>0) out.push({seg:String(r.seg||'Segment'),label:String(r.label||''),zone:z,sec:s});
   });return out;}
-var CUE=/(\d{1,2}:\d{2})\s*[\u2013\u2014-]\s*(\d{1,2}:\d{2})\s+Z([1-7])\b\s*([^\u00b7]*)/g;
+var CUE=/(\d{1,2}:\d{2})\s*[–—-]\s*(\d{1,2}:\d{2})\s+Z([1-7])\b\s*([\s\S]*?)(?=\s*·\s*\d{1,2}:\d{2}\s*[–—-]\s*\d{1,2}:\d{2}\s+Z[1-7]\b|$)/g;
 function fromSheet(data){
   var out=[], skipped=[];
   data.forEach(function(sec){

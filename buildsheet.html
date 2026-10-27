@@ -201,6 +201,22 @@
     .imp-row button{flex:1 1 44%;}
   }
   .imp-row input[type=file]{font-size:11px;}
+  /* Export for MOWL panel */
+  .mw-field{display:flex;flex-direction:column;gap:4px;margin:4px 0 10px;}
+  .mw-field label{font-size:10.5px;font-weight:700;letter-spacing:.3px;color:var(--muted);text-transform:uppercase;}
+  .mw-field input{border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:14px;width:100%;box-sizing:border-box;}
+  .mw-sum{font-size:13px;font-weight:700;margin:2px 0 8px;}
+  #mowlGo:disabled{opacity:.45;cursor:not-allowed;}
+  .mw-sum.bad{color:#b3261e;}
+  .mw-list{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:8px;font-size:12px;}
+  .mw-row{display:grid;grid-template-columns:22px 1fr auto;gap:8px;padding:6px 9px;border-bottom:1px solid var(--line);align-items:baseline;}
+  .mw-row:last-child{border-bottom:none;}
+  .mw-row .n{color:var(--muted);font-family:var(--mono);font-size:11px;}
+  .mw-row .t{min-width:0;overflow-wrap:anywhere;}
+  .mw-row .c{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap;}
+  .mw-row .w{grid-column:2/4;font-size:11.5px;color:#9a5b00;}
+  .mw-row .w.err{color:#b3261e;font-weight:700;}
+  .mw-sec{padding:6px 9px;background:var(--paper);font-size:10.5px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);}
   .imp-row .grow{flex:1;}
   .imp-row button{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;}
   .imp-row button.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
@@ -251,6 +267,7 @@
     <button id="toSelectorBtn" title="Sends songs, BPMs and drops to the phone Selector">Send → Selector</button>
     <button id="phraseBtn" title="Every song’s 8/16/32-bar boundaries on the ride clock">Phrase map</button>
     <button title="Copy the sheet as Excel rows, ready to paste into the workbook at B2" id="excelBtn">Export for Excel</button>
+    <button title="Save the class as a MOWL workout import file (.json): every timed interval cue becomes a MOWL interval" id="mowlBtn">Export for MOWL</button>
     <button title="Rescale the Power and HR cells that still hold the shipped wording to your FTP and Max HR. Anything you have typed yourself is left alone." id="tgtBtn">Refresh targets</button>
     <button title="Hide the Power target and HR guide columns and give that width to Song and Intervals. Nothing is deleted — the wording comes back when you show them again." id="noTgtBtn">Hide targets</button>
     <button title="Discard this sheet and start again from the default Build Sheet" id="resetBtn">Reset to defaults</button>
@@ -332,6 +349,21 @@
       <button title="Merge a drops library file into this one" id="dlImport">Import file</button>
       <span class="grow"></span>
       <button title="Close the drops library" class="primary" id="dlDone">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="imp-back" id="mowlBack">
+  <div class="imp-card" style="max-width:600px">
+    <h3>Export for MOWL</h3>
+    <p>Saves the class as a MOWL workout import file. Every timed cue in the Intervals column (<i>0:00–1:11 Z2 steady base · 1:11–1:34 Z3 pickup…</i>) becomes one MOWL interval: zone at its %FTP midpoint, Seated or Standing from the Pos column. Upload the file at <b>login.mowl.com/profile/import</b>, then link the playlist in Edit Workout. RPM and Cue Cards are not imported by MOWL.</p>
+    <div class="mw-field"><label for="mowlName">Workout name in MOWL</label><input id="mowlName" maxlength="60" autocomplete="off"></div>
+    <div class="mw-sum" id="mowlSum"></div>
+    <div class="mw-list" id="mowlList"></div>
+    <div class="imp-row">
+      <span class="grow"></span>
+      <button title="Close without saving" id="mowlCancel">Cancel</button>
+      <button title="Save the .json file for MOWL's import page" class="primary" id="mowlGo">Download file</button>
     </div>
   </div>
 </div>
@@ -1219,6 +1251,140 @@
     });
     if(!lines.length){sheetStatus('No songs to export');return;}
     sheetCopy(lines.join('\n'),'Excel rows copied ✓ ('+(r-2)+') — paste at B2');
+  });
+
+  /* ---- Export for MOWL (s60-v68) ----
+     Writes the two-table file MOWL's iQniter importer reads (Tabula "JSON (data)"):
+       Stage: Stage | Name | Duration | Intensity | Description
+       Steps: Step | Duration | %FTP | Position | Incline | Cadence | Cue Card
+     Confirmed against MOWL on 27 Oct 2026: %FTP at each zone's midpoint lands every
+     interval in the right colour; RPM and Cue Cards are not imported.
+     Timeline: each song rides its length minus the 10 s crossfade, the last song
+     included, so the file's total equals the sheet's last Σ (MOWL's total). */
+  var MOWL_MID=[0,50,65,83,98,113,135,160], MOWL_XF=10, MOWL_NAMEKEY='s60_mowl_name_v1';
+  var MOWL_CUE=/(\d{1,2}:\d{2})\s*[–—-]\s*(\d{1,2}:\d{2})\s+Z([1-7])\b\s*([\s\S]*?)(?=\s*·\s*\d{1,2}:\d{2}\s*[–—-]\s*\d{1,2}:\d{2}\s+Z[1-7]\b|$)/g;
+  function mwAscii(s){return String(s||'').replace(/[–—]/g,'-').replace(/×/g,'x').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/…/g,'...').replace(/\s*·\s*/g,' - ').replace(/[^\x20-\x7e]/g,'').replace(/\s+/g,' ').trim();}
+  function mwHms(n){n=Math.max(0,Math.round(n));var h=Math.floor(n/3600),m=Math.floor(n%3600/60),s=n%60,p=function(x){return (x<10?'0':'')+x;};return p(h)+':'+p(m)+':'+p(s);}
+  function mwPos(row,label){
+    if(row.pos==='Stand')return 'Standing';
+    if(row.pos==='S-St')return /stand/i.test(label||'')?'Standing':'Seated';
+    return 'Seated';
+  }
+  function mwZoneFromPower(s){s=String(s||'');var m=s.match(/Z([1-7])/);if(m)return +m[1];if(/\bSS\b/.test(s))return 4;return 0;}
+  function mwDefaultName(){
+    var d=new Date(); d.setDate(d.getDate()+((6-d.getDay()+7)%7));
+    var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return 'Saturday 60 - '+M[d.getMonth()]+' '+d.getDate();
+  }
+  // Build the interval list from the sheet. Returns {steps, songs, total, errors}.
+  function mowlBuild(){
+    var steps=[], songs=[], total=0, errors=0;
+    data.forEach(function(seg){
+      var blk=mwAscii(String(seg.title||'').split(/\s+[—–-]\s+/)[0])||'Section';
+      var first=true;
+      seg.rows.forEach(function(row){
+        var title=(row.song||'').trim(), L=parseLen(row.len);
+        if(!title&&L<=0)return;                       // empty slot
+        var name=title?title.split(' — ')[0].trim():'(untitled song)';
+        var info={sec:first?blk:'', name:name, n:0, ride:0, warn:[], err:false};
+        first=false; songs.push(info);
+        if(L<=0){ info.err=true; errors++; info.warn.push('No length (Len column) — the song cannot be placed on MOWL’s timeline.'); return; }
+        var ride=L-MOWL_XF; info.ride=ride;
+        if(ride<=0){ info.err=true; errors++; info.warn.push('Length is 10 s or less — shorter than the crossfade.'); return; }
+        var cues=[], m, prevEnd=0, gapNote='';
+        MOWL_CUE.lastIndex=0;
+        var txt=String(row.intervals||'');
+        while((m=MOWL_CUE.exec(txt))){
+          var a=parseLen(m[1]), b=parseLen(m[2]); if(b<=a)continue;
+          if(cues.length&&a!==prevEnd&&!gapNote) gapNote='Cue times jump at '+m[1]+' (previous cue ended '+fmtLen(prevEnd)+') — the intervals are laid end to end.';
+          cues.push({z:+m[3], sec:b-a, label:m[4].trim()}); prevEnd=b;
+        }
+        if(gapNote) info.warn.push(gapNote);
+        if(!cues.length){
+          var z=mwZoneFromPower(row.power)||3;
+          cues.push({z:z, sec:ride, label:'whole song'});
+          info.warn.push('No timed cues — exported as one '+fmtLen(ride)+' interval at Z'+z+(mwZoneFromPower(row.power)?' (from the Power column)':' (no zone found; Z3 used)')+'. Split it in Session Designer, or add timed cues.');
+        } else {
+          var sum=cues.reduce(function(s,c){return s+c.sec;},0), diff=ride-sum;
+          if(diff>0){ cues[cues.length-1].sec+=diff; info.warn.push('Cues cover '+fmtLen(sum)+' of the '+fmtLen(ride)+' ridden — last interval stretched by '+fmtLen(diff)+'.'); }
+          else if(diff<0){
+            var cut=-diff;
+            while(cut>0&&cues.length){ var last=cues[cues.length-1]; if(last.sec>cut){last.sec-=cut;cut=0;} else {cut-=last.sec;cues.pop();} }
+            info.warn.push('Cues run '+fmtLen(-diff)+' past the '+fmtLen(ride)+' ridden (length minus the 10 s crossfade) — trimmed from the end.');
+          }
+        }
+        cues.forEach(function(c){
+          steps.push({sec:c.sec, pct:MOWL_MID[c.z], z:c.z, pos:mwPos(row,c.label),
+                      cue:mwAscii(blk+' - '+name+(c.label?' - '+c.label:''))});
+          info.n++;
+        });
+        total+=ride;
+      });
+    });
+    return {steps:steps, songs:songs, total:total, errors:errors};
+  }
+  // Tabula-shaped JSON: an array of two lattice tables, each row a list of cells.
+  function mowlJson(b,name){
+    var COLS1=[39.68,147.40,62.36,85.04,204.10], COLS2=[31.18,53.86,39.69,48.19,36.85,42.52,286.29];
+    var LEFT=28.349802, HEAD=11.6, ROW=10.76;
+    function table(top,cols,rows){
+      var width=cols.reduce(function(s,w){return s+w;},0), y=top, out=[];
+      rows.forEach(function(r,ri){
+        var h=ri===0?HEAD:ROW, x=LEFT;
+        out.push(r.map(function(text,ci){var c={top:+y.toFixed(6),left:+x.toFixed(6),width:cols[ci],height:h,text:String(text)}; x+=cols[ci]; return c;}));
+        y+=h;
+      });
+      return {extraction_method:'lattice',top:top,left:LEFT,width:+width.toFixed(4),height:+(y-top).toFixed(4),right:+(LEFT+width).toFixed(4),bottom:+y.toFixed(6),data:out};
+    }
+    var tot=b.steps.reduce(function(s,x){return s+x.sec;},0);
+    var avg=tot?Math.round(b.steps.reduce(function(s,x){return s+x.pct*x.sec;},0)/tot):0;
+    var mx=b.steps.reduce(function(s,x){return Math.max(s,x.pct);},0);
+    var t1=table(34.346935,COLS1,[['Stage','Name','Duration','Intensity','Description'],
+      ['1',mwAscii(name),mwHms(tot),avg+'%/'+mx+'% FTP','Exported from the Saturday 60 Build Sheet '+dateStamp()]]);
+    var rows=[['Step','Duration','%FTP','Position','Incline','Cadence','Cue Card']];
+    b.steps.forEach(function(x,i){rows.push([String(i+1),mwHms(x.sec),String(x.pct),x.pos,'0','',x.cue]);});
+    var t2=table(+(t1.bottom+14.17).toFixed(6),COLS2,rows);
+    return JSON.stringify([t1,t2]);
+  }
+  var mowlBack=document.getElementById('mowlBack'), mowlName=document.getElementById('mowlName'),
+      mowlSum=document.getElementById('mowlSum'), mowlList=document.getElementById('mowlList'),
+      mowlGo=document.getElementById('mowlGo'), mowlLast=null;
+  function mowlRender(){
+    var b=mowlBuild(); mowlLast=b;
+    var flagged=b.songs.filter(function(s){return s.warn.length&&!s.err;}).length;
+    if(!b.songs.length){ mowlSum.className='mw-sum bad'; mowlSum.textContent='The sheet has no songs yet.'; }
+    else if(b.errors){ mowlSum.className='mw-sum bad'; mowlSum.textContent=b.errors+' song'+(b.errors>1?'s need':' needs')+' fixing before the file can be saved (marked below).'; }
+    else { mowlSum.className='mw-sum'; mowlSum.textContent=b.steps.length+' intervals · '+fmtLen(b.total)+' · '+b.songs.length+' songs'+(flagged?' · '+flagged+' flagged':' · all songs timed'); }
+    var html='';
+    b.songs.forEach(function(s,i){
+      if(s.sec) html+='<div class="mw-sec">'+esc(s.sec)+'</div>';
+      html+='<div class="mw-row"><span class="n">'+(i+1)+'</span><span class="t">'+esc(s.name)+'</span><span class="c">'+(s.err?'—':(s.n+(s.n===1?' interval':' intervals')+' · '+fmtLen(s.ride)))+'</span>'+
+            s.warn.map(function(w){return '<span class="w'+(s.err?' err':'')+'">⚠ '+esc(w)+'</span>';}).join('')+'</div>';
+    });
+    mowlList.innerHTML=html;
+    mowlGo.disabled=!b.songs.length||!!b.errors;
+  }
+  document.getElementById('mowlBtn').addEventListener('click',function(){
+    var v=null; try{v=localStorage.getItem(MOWL_NAMEKEY);}catch(e){}
+    mowlName.value=v||mwDefaultName();
+    mowlRender(); showPanel(mowlBack);
+  });
+  document.getElementById('mowlCancel').addEventListener('click',function(){mowlBack.classList.remove('open');});
+  mowlBack.addEventListener('click',function(e){if(e.target===mowlBack)mowlBack.classList.remove('open');});
+  mowlName.addEventListener('input',function(){try{localStorage.setItem(MOWL_NAMEKEY,mowlName.value);}catch(e){}});
+  mowlGo.addEventListener('click',function(){
+    var b=mowlBuild(); if(!b.songs.length||b.errors){mowlRender();return;}
+    var name=(mowlName.value||'').trim()||mwDefaultName();
+    var file=(mwAscii(name).replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'')||'Saturday60_MOWL')+'.json';
+    try{
+      var blob=new Blob([mowlJson(b,name)],{type:'application/json'});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download=file;
+      document.body.appendChild(a); a.click();
+      setTimeout(function(){URL.revokeObjectURL(url); if(a.parentNode)a.parentNode.removeChild(a);},1500);
+      mowlBack.classList.remove('open');
+      sheetStatus('MOWL file saved ✓ ('+b.steps.length+' intervals, '+fmtLen(b.total)+')');
+    }catch(e){ sheetStatus('MOWL export failed'); }
   });
 
   /* ---- send the sheet's playlist to the BPM Selector ---- */

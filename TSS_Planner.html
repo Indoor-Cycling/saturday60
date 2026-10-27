@@ -75,6 +75,16 @@
   .setpv th{background:#eef0f3;font-size:10px;letter-spacing:.3px;text-transform:uppercase;color:var(--grey2);}
   .setpv td.ov{color:var(--warn);font-weight:800;}
   .setsum{font-size:12.5px;color:var(--grey2);margin:4px 0 12px;font-weight:600;}
+  /* import / copy code panel */
+  .codeback{display:none;position:fixed;inset:0;background:rgba(23,23,31,.55);z-index:50;align-items:flex-start;justify-content:center;padding:40px 16px;}
+  .codeback.open{display:flex;}
+  .codepanel{background:var(--white);border-radius:14px;max-width:560px;width:100%;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,.25);}
+  .codepanel h3{margin:0 0 6px;font-size:16px;}
+  .codepanel p{margin:0 0 10px;font-size:12.5px;color:var(--grey2);}
+  .codepanel textarea{width:100%;height:150px;border:1px solid var(--line);border-radius:9px;padding:9px;font-family:ui-monospace,monospace;font-size:11px;resize:vertical;word-break:break-all;}
+  .codepanel .btns{justify-content:flex-end;}
+  .codemsg{font-size:12.5px;font-weight:700;margin-top:8px;min-height:1em;}
+  .codemsg.bad{color:var(--warn);} .codemsg.good{color:var(--good);}
   @media (max-width:620px){
     .summary{grid-template-columns:repeat(2,1fr);}
     .ivhead{display:none;}
@@ -82,7 +92,7 @@
     .iv .lab-seg{grid-column:1/-1;}
     .iv .rmwrap{grid-column:2/3;justify-self:end;}
   }
-  @media print{.settings .fld input{border:1px solid #ccc;} .btns,.rm{display:none !important;}}
+  @media print{.settings .fld input{border:1px solid #ccc;} .btns,.rm,.codeback{display:none !important;}}
 </style>
 </head>
 <body>
@@ -122,6 +132,17 @@
     <button class="btn warnbtn" id="reset">Reset to example</button>
     <button class="btn warnbtn" id="clear">Clear all</button>
     <button class="btn" id="print">⎙ Print</button>
+    <button class="btn" id="importCode" title="Paste a Planner code or a Build Sheet code">Import code</button>
+    <button class="btn" id="copyCode" title="Copy this plan as a code for another device">Copy plan code</button>
+  </div>
+  <div class="codeback" id="codeBack">
+    <div class="codepanel" role="dialog" aria-labelledby="codeTitle">
+      <h3 id="codeTitle">Import code</h3>
+      <p id="codeHelp">Paste a <b>Planner code</b> (from Copy plan code on another device) or a <b>Build Sheet code</b> (Send → Build Sheet). From a Build Sheet, every song whose interval cues carry times — <i>0:00–2:00 Z1 easy spin · 2:00–3:59 Z2 …</i> — becomes intervals here.</p>
+      <textarea id="codeText" spellcheck="false" autocomplete="off" placeholder="S60T… or S60B…"></textarea>
+      <div class="codemsg" id="codeMsg"></div>
+      <div class="btns"><button class="btn" id="codeCancel">Cancel</button><button class="btn pri" id="codeGo">Import</button></div>
+    </div>
   </div>
 
   <h2>Build a hard set — spread the work across the choruses</h2>
@@ -267,6 +288,81 @@ document.getElementById('addseg').addEventListener('click',function(){rows.push(
 document.getElementById('reset').addEventListener('click',function(){rows=EXAMPLE.map(function(e){return {seg:e[0],label:e[1],zone:e[2],sec:e[3]};});save();renderList();compute();});
 document.getElementById('clear').addEventListener('click',function(){rows=[];save();renderList();compute();});
 document.getElementById('print').addEventListener('click',function(){window.print();});
+
+// ---- import / copy plan codes ----
+// Planner code: 'S60T' + base64(UTF-8 JSON {kind:'s60tss',v:1,rows:[{seg,label,zone,sec}]}).
+// Build Sheet code: 'S60B' + base64(UTF-8 JSON {kind:'s60sheet',data:[sections]}); each row's
+// "m:ss–m:ss Zn label" cues become intervals, segment = section title, label = song — cue.
+function b64enc(s){return btoa(unescape(encodeURIComponent(s)));}
+function b64dec(s){return decodeURIComponent(escape(atob(s)));}
+function planCode(){return 'S60T'+b64enc(JSON.stringify({kind:'s60tss',v:1,t:Date.now(),rows:rows}));}
+function cleanRows(a){
+  var out=[];(Array.isArray(a)?a:[]).forEach(function(r){
+    if(!r)return; var z=parseInt(r.zone,10), s=Math.round(+r.sec);
+    if(z>=1&&z<=7&&s>0) out.push({seg:String(r.seg||'Segment'),label:String(r.label||''),zone:z,sec:s});
+  });return out;}
+var CUE=/(\d{1,2}:\d{2})\s*[\u2013\u2014-]\s*(\d{1,2}:\d{2})\s+Z([1-7])\b\s*([^\u00b7]*)/g;
+function fromSheet(data){
+  var out=[], skipped=[];
+  data.forEach(function(sec){
+    var segName=String(sec.title||'Segment').split(/\s+\u2014\s+/)[0].trim()||'Segment';
+    (sec.rows||[]).forEach(function(row){
+      var song=String(row.song||'').trim(); if(!song)return;
+      var title=song.split(' \u2014 ')[0].trim(), m, got=0; CUE.lastIndex=0;
+      while((m=CUE.exec(String(row.intervals||'')))){
+        var s=parseDur(m[2])-parseDur(m[1]); if(s<=0)continue;
+        out.push({seg:segName,label:title+' \u2014 '+m[4].trim(),zone:+m[3],sec:s}); got++;
+      }
+      if(!got) skipped.push(title);
+    });
+  });
+  return {rows:out,skipped:skipped};
+}
+var codeBack=document.getElementById('codeBack'),codeText=document.getElementById('codeText'),codeMsg=document.getElementById('codeMsg'),
+    codeTitle=document.getElementById('codeTitle'),codeHelp=document.getElementById('codeHelp'),codeGo=document.getElementById('codeGo');
+var codeHelpImport=codeHelp.innerHTML, pending=null;
+function msg(t,cls){codeMsg.textContent=t;codeMsg.className='codemsg'+(cls?' '+cls:'');}
+function closeCode(){codeBack.classList.remove('open');pending=null;}
+document.getElementById('importCode').addEventListener('click',function(){
+  codeTitle.textContent='Import code'; codeHelp.innerHTML=codeHelpImport; codeText.value=''; codeText.readOnly=false;
+  codeGo.style.display=''; codeGo.textContent='Import'; pending=null; msg('');
+  codeBack.classList.add('open'); codeText.focus();
+});
+document.getElementById('codeCancel').addEventListener('click',closeCode);
+codeBack.addEventListener('click',function(e){if(e.target===codeBack)closeCode();});
+codeText.addEventListener('input',function(){pending=null;codeGo.textContent='Import';msg('');});
+codeGo.addEventListener('click',function(){
+  if(pending){                                   // second tap confirms the replace
+    rows=pending; save(); renderList(); compute(); closeCode(); return;
+  }
+  var code=(codeText.value||'').replace(/\s+/g,''), p=null, got=null, note='';
+  if(!code){msg('Paste a code first.','bad');return;}
+  var kind=code.slice(0,4);
+  if(kind!=='S60T'&&kind!=='S60B'){
+    msg(code.slice(0,3)==='S60'?'That looks like a Selector code — the Planner takes Planner or Build Sheet codes.':'That isn\u2019t a Saturday 60 code.','bad');return;}
+  try{p=JSON.parse(b64dec(code.slice(4)));}
+  catch(e){msg('That code could not be read — most often the end got cut off. Copy the whole block again.','bad');return;}
+  if(kind==='S60T'){
+    if(!p||p.kind!=='s60tss'){msg('That code does not contain a Planner plan.','bad');return;}
+    got=cleanRows(p.rows);
+  } else {
+    if(!p||p.kind!=='s60sheet'||!Array.isArray(p.data)){msg('That code does not contain a Build Sheet.','bad');return;}
+    var r=fromSheet(p.data); got=cleanRows(r.rows);
+    if(r.skipped.length) note=' '+(r.skipped.length>1?r.skipped.length+' songs had no timed cues and were':'1 song had no timed cues and was')+' left out: '+r.skipped.slice(0,4).join(', ')+(r.skipped.length>4?'…':'')+'.';
+  }
+  if(!got.length){msg('Nothing to import — no intervals with times were found.'+note,'bad');return;}
+  var secs=got.reduce(function(a,x){return a+x.sec;},0);
+  pending=got; codeGo.textContent='Replace plan';
+  msg('Found '+got.length+' intervals ('+mmss(secs)+'). This replaces the '+rows.length+' intervals on this device — tap Replace plan to go ahead.'+note, note?'bad':'good');
+});
+document.getElementById('copyCode').addEventListener('click',function(){
+  var c=planCode();
+  codeTitle.textContent='Copy plan code'; codeGo.style.display='none'; pending=null;
+  codeHelp.innerHTML='Paste this into <b>Import code</b> on another device. It carries the intervals only — FTP and the band stay as each device has them.';
+  codeText.value=c; codeText.readOnly=true; codeBack.classList.add('open'); codeText.focus(); codeText.select();
+  var ok=function(){msg('Copied \u2713','good');}, fail=function(){msg('Select all and copy it by hand.','');};
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(c).then(ok,fail); else fail(); }catch(e){fail();}
+});
 
 // ---- hard-set helper ----
 function hzRatio(z){return z===5?1:z===6?2:3;}

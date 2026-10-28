@@ -77,6 +77,10 @@
   .slots tbody tr td{transition:background .9s ease;}
   .slots tr.justimported td{background:#cfe8f7;transition:none;}
   .slots tr.justimported td:first-child{box-shadow:inset 3px 0 0 var(--warm);}
+  /* explicit-track flag (s60-v69): explicit versions are banned (Rulebook §12) */
+  .slots tr.explicit td:first-child{box-shadow:inset 3px 0 0 #b3261e;}
+  .xbadge{display:inline-block;margin-top:3px;font-size:10px;font-weight:700;line-height:1.3;color:#fff;background:#b3261e;border-radius:4px;padding:1px 6px;letter-spacing:.2px;}
+  @media print{ .xbadge{display:none;} .slots tr.explicit td:first-child{box-shadow:none;} }
   @media print{ .slots tr.justimported td{background:none!important;box-shadow:none!important;} }
   /* The title and note are editable in place. They carry no chrome until you
      put a cursor in one, so the sheet still reads as a printed document. */
@@ -297,7 +301,7 @@
 <div class="imp-back" id="impBack">
   <div class="imp-card">
     <h3>Import a Spotify playlist export</h3>
-    <p>Best source: <b>Chosic's Playlist Analyzer</b> (chosic.com/spotify-playlist-analyzer — paste the playlist link, then download the CSV) because its export <b>includes each song's BPM</b>, which fills in automatically. <b>Exportify</b> (exportify.app) also carries BPM (Tempo) and exact lengths in milliseconds, which is the most accurate source for timing. Lengths are stored the way MOWL counts them, rounded up to the next whole second, so they read 1 s longer than MOWL's song list. Upload the file or paste its contents below. Songs fill the sheet <b>in ride order</b>, top to bottom. Sanity-check imported BPMs that look doubled or halved — the tap-tester settles any argument.</p>
+    <p>Best source: <b>Chosic's Playlist Analyzer</b> (chosic.com/spotify-playlist-analyzer — paste the playlist link, then download the CSV) because its export <b>includes each song's BPM</b>, which fills in automatically. <b>Exportify</b> (exportify.app) also carries BPM (Tempo) and exact lengths in milliseconds, which is the most accurate source for timing, and Spotify's <b>Explicit</b> flag: explicit tracks import with a red flag, since explicit versions are banned. Lengths are stored the way MOWL counts them, rounded up to the next whole second, so they read 1 s longer than MOWL's song list. Upload the file or paste its contents below. Songs fill the sheet <b>in ride order</b>, top to bottom. Sanity-check imported BPMs that look doubled or halved — the tap-tester settles any argument.</p>
     <textarea id="impText" placeholder="Paste CSV or one song per line…"></textarea>
     <div class="imp-row">
       <input type="file" id="impFile" accept=".csv,.txt,text/csv,text/plain">
@@ -1290,6 +1294,7 @@
         first=false; songs.push(info);
         if(L<=0){ info.err=true; errors++; info.warn.push('No length (Len column) — the song cannot be placed on MOWL’s timeline.'); return; }
         var ride=L-MOWL_XF; info.ride=ride;
+        if(row.explicit) info.warn.push('Explicit version — banned (Rulebook §12). Swap in the clean edit before class.');
         if(ride<=0){ info.err=true; errors++; info.warn.push('Length is 10 s or less — shorter than the crossfade.'); return; }
         var cues=[], m, prevEnd=0, gapNote='';
         MOWL_CUE.lastIndex=0;
@@ -2290,9 +2295,10 @@ var S60XLSX = (function () {
                (canDn?'<button class="mv" data-dn="'+si+'_'+ri+'" title="Move down">▼</button>':'');
         var jumpOpts=data.map(function(g,gi){return '<option value="'+gi+'"'+(gi===si?' selected':'')+'>'+esc(shortName(g,gi))+'</option>';}).join('');
         songNum++;
-        html+='<tr>'+
+        html+='<tr'+(row.explicit?' class="explicit"':'')+'>'+
           '<td>'+songNum+'</td>'+
-          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="song" placeholder="'+esc(row.ph||'song title')+'">'+esc(row.song)+'</textarea></td>'+
+          '<td><textarea rows="1" data-s="'+si+'" data-r="'+ri+'" data-f="song" placeholder="'+esc(row.ph||'song title')+'">'+esc(row.song)+'</textarea>'+
+            (row.explicit?'<div class="xbadge" title="Spotify marks this version Explicit. Explicit versions are banned (Rulebook §12): swap in the clean edit, then re-import the Exportify CSV. Editing the title clears this flag.">E \u00b7 explicit \u2014 swap in the clean edit</div>':'')+'</td>'+
           '<td><input type="text" class="len'+((row.song||'').trim()&&!(row.len||'').trim()?' need':'')+'" data-s="'+si+'" data-r="'+ri+'" data-f="len" value="'+esc(row.len||'')+'" placeholder="3:41"></td>'+
           '<td><input type="text" class="bpm" inputmode="numeric" data-s="'+si+'" data-r="'+ri+'" data-f="bpm" value="'+esc(row.bpm)+'"></td>'+
           '<td><select data-s="'+si+'" data-r="'+ri+'" data-f="mode">'+modeOpts+'</select></td>'+
@@ -2325,6 +2331,11 @@ var S60XLSX = (function () {
         if(f==='len'){var c2=el.value.replace(/[^0-9:]/g,''); if(c2!==el.value)el.value=c2;}
         if(el.tagName==='TEXTAREA')fit(el);
         data[si].rows[ri][f]=el.value;
+        if(f==='song'&&data[si].rows[ri].explicit){
+          delete data[si].rows[ri].explicit;
+          var xtr=el.closest?el.closest('tr'):null;
+          if(xtr){xtr.classList.remove('explicit'); var xb=xtr.querySelector('.xbadge'); if(xb&&xb.parentNode)xb.parentNode.removeChild(xb);}
+        }
         if(f==='bpm'||f==='mode'){document.getElementById('rpm_'+si+'_'+ri).textContent=rpmFor(data[si].rows[ri]);}
         if(f==='len'||f==='drops')updateSums();
         if(f==='len'||f==='song'){
@@ -2604,6 +2615,7 @@ var S60XLSX = (function () {
       var ai=col('artist name(s)','artist name','artists','artist');
       var bi=col('bpm','tempo');
       var di=col('duration (ms)','duration');
+      var ei=head.indexOf('explicit');           // Exportify: true / false (Chosic has no such column)
       if(ti<0)return [];
       for(var r=1;r<rows.length;r++){
         var t=(rows[r][ti]||'').trim(); if(!t)continue;
@@ -2625,7 +2637,8 @@ var S60XLSX = (function () {
               len=Math.floor(sec/60)+':'+((sec%60)<10?'0':'')+(sec%60);}
           }
         }
-        songs.push({title:(artist? t+' — '+artist : t), bpm:bpm, len:len});
+        var explicit = ei>=0 ? /^(true|yes|1)$/i.test((rows[r][ei]||'').trim()) : undefined;
+        songs.push({title:(artist? t+' — '+artist : t), bpm:bpm, len:len, explicit:explicit});
       }
     } else {
       text.split(/\r?\n/).forEach(function(line){
@@ -2674,6 +2687,12 @@ var S60XLSX = (function () {
     if(!songs.length){alert('No songs found. Paste an Exportify/Chosic CSV or one song per line.');return;}
     var withBpm=songs.filter(function(s){return s.bpm;}).length;
     var bpmNote=withBpm? withBpm+' of them carry BPMs from the file — those fill in automatically.' : 'This export has no BPM column — fill BPMs with the lookup sites or the tap-tester.';
+    var xSongs=songs.filter(function(s){return s.explicit===true;});
+    var xNote=xSongs.length
+      ? '\n\n\u26a0 '+xSongs.length+' EXPLICIT track'+(xSongs.length===1?'':'s')+' (banned, Rulebook §12):\n'+
+        xSongs.map(function(s){return '  \u2022 '+s.title;}).join('\n')+
+        '\nThey import with a red flag. Swap in the clean edits in Spotify and re-import.'
+      : '';
 
     /* An import is a whole playlist, not a patch. Work out first how the sheet
        should be shaped afterwards, so the prompt can say it before anything is
@@ -2706,7 +2725,7 @@ var S60XLSX = (function () {
         ? ' '+toRemove+' spare row'+(toRemove===1?'':'s')+' will be removed and the rest emptied, so the sheet comes back to its normal shape.'
         : ' They will be emptied so the sheet is this playlist and nothing else.';
     }
-    if(!confirm('Fill the sheet with '+songs.length+' song'+(songs.length===1?'':'s')+' in ride order (top to bottom, bridges included)?\n\n'+bpmNote+'\nDrop times are cleared; ride modes, positions and targets keep their defaults.'+clearNote))return;
+    if(!confirm('Fill the sheet with '+songs.length+' song'+(songs.length===1?'':'s')+' in ride order (top to bottom, bridges included)?\n\n'+bpmNote+'\nDrop times are cleared; ride modes, positions and targets keep their defaults.'+clearNote+xNote))return;
 
     var q=songs.slice(), touched=[], changed=0;
     data.forEach(function(seg,si){
@@ -2714,10 +2733,11 @@ var S60XLSX = (function () {
       seg.rows.forEach(function(row,ri){
         var was=[row.song,row.bpm,row.len,row.drops].join('\u0001');
         if(!q.length){                          // past the end of the import
-          row.song=''; row.bpm=''; row.len=''; row.drops='';
+          row.song=''; row.bpm=''; row.len=''; row.drops=''; delete row.explicit;
         } else {
           var s=q.shift();
           row.song=s.title; row.bpm=s.bpm?String(s.bpm):''; row.len=s.len||''; row.drops='';
+          if(s.explicit===true)row.explicit=true; else delete row.explicit;
           if(s.bpm&&s.bpm>CAP)row.mode='half';
           touched.push(si+'_'+ri);
         }
@@ -2739,7 +2759,7 @@ var S60XLSX = (function () {
         var last=seg.rows[seg.rows.length-1] || {mode:'beat',pos:'Seat',power:'',hr:'',role:'cool'};
         seg.rows.push({song:s.title,ph:'song title',bpm:s.bpm?String(s.bpm):'',len:s.len||'',
           mode:(s.bpm&&s.bpm>CAP)?'half':(last.mode||'beat'),pos:last.pos||'Seat',intervals:'',
-          power:last.power||'',hr:last.hr||'',drops:'',role:last.role||'cool'});
+          power:last.power||'',hr:last.hr||'',drops:'',role:last.role||'cool',explicit:s.explicit===true?true:undefined});
       });
     }
     impBack.classList.remove('open');
@@ -2750,7 +2770,8 @@ var S60XLSX = (function () {
     flagImported(touched);
     statusEl.textContent='Imported '+songs.length+' song'+(songs.length===1?'':'s')+(withBpm?' ('+withBpm+' with BPM)':'')+
       (filledPast?' · '+filledPast+' old slot'+(filledPast===1?'':'s')+' cleared':'')+
-      (toRemove?' · '+toRemove+' spare row'+(toRemove===1?'':'s')+' removed':'')+' ✓';
+      (toRemove?' · '+toRemove+' spare row'+(toRemove===1?'':'s')+' removed':'')+
+      (xSongs.length?' · \u26a0 '+xSongs.length+' explicit':'')+' ✓';
     clearTimeout(saveT);
     saveT=setTimeout(function(){statusEl.textContent='';},8000);
     if(!changed){
@@ -2769,6 +2790,7 @@ var S60XLSX = (function () {
     // wrong — it drives the ride clock — so it goes. A length sent from
     // the Selector always wins, since it came with this song.
     var sameSong = normTitle(row.song)===normTitle(s.title||'');
+    if(!sameSong) delete row.explicit;
     if(+s.len>0)        row.len=fmtSec(Math.round(+s.len));
     else if(!sameSong)  row.len='';
     row.song=s.title||'';
@@ -2885,7 +2907,7 @@ var S60XLSX = (function () {
   });
   document.getElementById('clearSongsBtn').addEventListener('click',function(){
     if(confirm('Clear song titles, lengths and drop times, keeping all other settings?')){
-      data.forEach(function(seg){seg.rows.forEach(function(r){r.song='';r.drops='';r.len='';});});
+      data.forEach(function(seg){seg.rows.forEach(function(r){r.song='';r.drops='';r.len='';delete r.explicit;});});
       save(); render();
     }
   });

@@ -14,7 +14,7 @@
    - Background refreshes revalidate with the server rather than accepting
      whatever Chrome's HTTP cache is holding.
    In practice: upload, bump VERSION, reload once. */
-var VERSION = 's60-v68';
+var VERSION = 's60-v69';
 var CACHE = 'saturday60-' + VERSION;
 
 var ASSETS = [

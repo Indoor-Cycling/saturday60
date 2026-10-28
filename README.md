@@ -79,10 +79,14 @@ The System Manual covers this in Section 9.
 
 | File | What it is |
 |---|---|
-| `index.html` | The hub — the screen you land on, linking the three tools, the drill catalogue and the three documents |
+| `index.html` | The hub — the screen you land on, linking the three tools, the drill catalogue, the power and testing pages, and the three documents |
 | `selector.html` | Song BPM Selector (phone-first) |
 | `buildsheet.html` | MOWL-style Build Sheet (desktop-first) |
 | `drops.html` | Drops Library Editor |
+| `TSS_Planner.html` | TSS Planner — scores a class against the 65–75 band; imports a Build Sheet code |
+| `FTP_5min_Test.html` | 5-Minute FTP Test (guided timer and calculator) |
+| `RPE_Watts_Card_Editable.html` | RPE + Watts card for the M3i at home (gears /72) |
+| `RPE_Watts_Card_YMCA_Editable.html` | RPE + Watts card for the YMCA M3s (gears /24) |
 | `app.js` | Shared shell: offline worker, back bar, save-destination prompts |
 | `sw.js` | Service worker — stores the app for offline use. **Version lives here** |
 | `Saturday60_WeeklyWorkflow.html` / `.pdf` | The one-page weekly checklist |

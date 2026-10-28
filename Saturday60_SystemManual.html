@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, the 5-Minute FTP Test and RPE + Watts cards, and the Spotify → Exportify/Chosic → MOWL pipeline · rev. 46 · October 2026<br>
+workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 47 · October 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -125,14 +125,14 @@ The three HTML tools now run as one installed web app at <span class="url">https
     <div class="tsubs" id="subs-s2" hidden>
       <div class="tsub"><a href="#the-gauge-and-the-phrase-strip">The gauge and the phrase strip</a><span class="dots"></span><span class="pg" data-pg="the-gauge-and-the-phrase-strip">3</span></div>
       <div class="tsub"><a href="#the-bar-calculator">The bar calculator</a><span class="dots"></span><span class="pg" data-pg="the-bar-calculator">3</span></div>
-      <div class="tsub"><a href="#the-tap-tester">The tap-tester</a><span class="dots"></span><span class="pg" data-pg="the-tap-tester">3</span></div>
+      <div class="tsub"><a href="#the-tap-tester">The tap-tester</a><span class="dots"></span><span class="pg" data-pg="the-tap-tester">4</span></div>
       <div class="tsub"><a href="#playlist-builder">Playlist builder</a><span class="dots"></span><span class="pg" data-pg="playlist-builder">4</span></div>
       <div class="tsub"><a href="#per-song-ride-mode-the-1-1-button">Per-song ride mode — the 1:1 / ½ button</a><span class="dots"></span><span class="pg" data-pg="per-song-ride-mode-the-1-1-button">4</span></div>
       <div class="tsub"><a href="#song-length">Song length</a><span class="dots"></span><span class="pg" data-pg="song-length">4</span></div>
-      <div class="tsub"><a href="#drop-markers-the-button">Drop markers — the ◎ button</a><span class="dots"></span><span class="pg" data-pg="drop-markers-the-button">4</span></div>
-      <div class="tsub"><a href="#colour-coding-the-drops">Colour-coding the drops</a><span class="dots"></span><span class="pg" data-pg="colour-coding-the-drops">5</span></div>
+      <div class="tsub"><a href="#drop-markers-the-button">Drop markers — the ◎ button</a><span class="dots"></span><span class="pg" data-pg="drop-markers-the-button">5</span></div>
+      <div class="tsub"><a href="#colour-coding-the-drops">Colour-coding the drops</a><span class="dots"></span><span class="pg" data-pg="colour-coding-the-drops">6</span></div>
       <div class="tsub"><a href="#adding-your-own-keys">Adding your own keys</a><span class="dots"></span><span class="pg" data-pg="adding-your-own-keys">6</span></div>
-      <div class="tsub"><a href="#bands-defaults-transfer-and-backup">Bands, defaults, transfer and backup</a><span class="dots"></span><span class="pg" data-pg="bands-defaults-transfer-and-backup">6</span></div>
+      <div class="tsub"><a href="#bands-defaults-transfer-and-backup">Bands, defaults, transfer and backup</a><span class="dots"></span><span class="pg" data-pg="bands-defaults-transfer-and-backup">7</span></div>
     </div>
   </div>
   <div class="tgrp">
@@ -141,64 +141,66 @@ The three HTML tools now run as one installed web app at <span class="url">https
       <div class="tsub"><a href="#structure">Structure</a><span class="dots"></span><span class="pg" data-pg="structure">7</span></div>
       <div class="tsub"><a href="#ftp-and-max-hr">FTP and Max HR</a><span class="dots"></span><span class="pg" data-pg="ftp-and-max-hr">7</span></div>
       <div class="tsub"><a href="#per-song-rows">Per-song rows</a><span class="dots"></span><span class="pg" data-pg="per-song-rows">8</span></div>
-      <div class="tsub"><a href="#drill-presets-and-the-drill-catalog">Drill presets and the drill catalog</a><span class="dots"></span><span class="pg" data-pg="drill-presets-and-the-drill-catalog">8</span></div>
+      <div class="tsub"><a href="#drill-presets-and-the-drill-catalog">Drill presets and the drill catalog</a><span class="dots"></span><span class="pg" data-pg="drill-presets-and-the-drill-catalog">9</span></div>
       <div class="tsub"><a href="#the-manage-drills-panel">The Manage drills panel</a><span class="dots"></span><span class="pg" data-pg="the-manage-drills-panel">9</span></div>
-      <div class="tsub"><a href="#the-drill-catalogue-in-excel">The drill catalogue in Excel</a><span class="dots"></span><span class="pg" data-pg="the-drill-catalogue-in-excel">9</span></div>
-      <div class="tsub"><a href="#reordering">Reordering</a><span class="dots"></span><span class="pg" data-pg="reordering">10</span></div>
-      <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">10</span></div>
-      <div class="tsub"><a href="#hiding-the-targets">Hiding the targets</a><span class="dots"></span><span class="pg" data-pg="hiding-the-targets">11</span></div>
+      <div class="tsub"><a href="#the-drill-catalogue-in-excel">The drill catalogue in Excel</a><span class="dots"></span><span class="pg" data-pg="the-drill-catalogue-in-excel">10</span></div>
+      <div class="tsub"><a href="#reordering">Reordering</a><span class="dots"></span><span class="pg" data-pg="reordering">11</span></div>
+      <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">11</span></div>
+      <div class="tsub"><a href="#hiding-the-targets">Hiding the targets</a><span class="dots"></span><span class="pg" data-pg="hiding-the-targets">12</span></div>
     </div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s4" title="Show the parts of this section"><span class="car">›</span></button><a href="#s4">4 · HOW EVERYTHING CONNECTS</a><span class="dots"></span><span class="pg" data-pg="s4">11</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s4" title="Show the parts of this section"><span class="car">›</span></button><a href="#s4">4 · HOW EVERYTHING CONNECTS</a><span class="dots"></span><span class="pg" data-pg="s4">12</span></div>
     <div class="tsubs" id="subs-s4" hidden>
-      <div class="tsub"><a href="#getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</a><span class="dots"></span><span class="pg" data-pg="getting-drops-into-the-sheet-which-route">13</span></div>
-      <div class="tsub"><a href="#the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</a><span class="dots"></span><span class="pg" data-pg="the-drops-library-moving-it-between-the-tool">13</span></div>
+      <div class="tsub"><a href="#mowl-import-file">The MOWL import file</a><span class="dots"></span><span class="pg" data-pg="mowl-import-file">13</span></div>
+      <div class="tsub"><a href="#getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</a><span class="dots"></span><span class="pg" data-pg="getting-drops-into-the-sheet-which-route">14</span></div>
+      <div class="tsub"><a href="#the-drops-library-moving-it-between-the-tool">The drops library — moving it between the tools</a><span class="dots"></span><span class="pg" data-pg="the-drops-library-moving-it-between-the-tool">14</span></div>
     </div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s5" title="Show the parts of this section"><span class="car">›</span></button><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">14</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s5" title="Show the parts of this section"><span class="car">›</span></button><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">15</span></div>
     <div class="tsubs" id="subs-s5" hidden>
-      <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">14</span></div>
-      <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">15</span></div>
-      <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">15</span></div>
-      <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">15</span></div>
-      <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">15</span></div>
+      <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">15</span></div>
+      <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">16</span></div>
+      <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">16</span></div>
+      <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">16</span></div>
+      <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">17</span></div>
     </div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s6" title="Show the parts of this section"><span class="car">›</span></button><a href="#s6">6 · THE TIMING AND PHRASE MATH</a><span class="dots"></span><span class="pg" data-pg="s6">16</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s6" title="Show the parts of this section"><span class="car">›</span></button><a href="#s6">6 · THE TIMING AND PHRASE MATH</a><span class="dots"></span><span class="pg" data-pg="s6">17</span></div>
     <div class="tsubs" id="subs-s6" hidden>
-      <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">16</span></div>
-      <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">16</span></div>
-      <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">16</span></div>
-      <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">17</span></div>
-      <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">17</span></div>
+      <div class="tsub"><a href="#crossfade">Crossfade</a><span class="dots"></span><span class="pg" data-pg="crossfade">17</span></div>
+      <div class="tsub"><a href="#song-relative-vs-ride-clock-drops">Song-relative vs ride-clock drops</a><span class="dots"></span><span class="pg" data-pg="song-relative-vs-ride-clock-drops">18</span></div>
+      <div class="tsub"><a href="#fractional-drift">Fractional drift</a><span class="dots"></span><span class="pg" data-pg="fractional-drift">18</span></div>
+      <div class="tsub"><a href="#bars-and-phrase-boundaries">Bars and phrase boundaries</a><span class="dots"></span><span class="pg" data-pg="bars-and-phrase-boundaries">18</span></div>
+      <div class="tsub"><a href="#the-phrase-map-boundaries-on-the-ride-clock">The phrase map — boundaries on the ride clock</a><span class="dots"></span><span class="pg" data-pg="the-phrase-map-boundaries-on-the-ride-clock">19</span></div>
     </div>
   </div>
   <div class="tgrp flat">
-    <div class="tsec"><span class="tcar sp"></span><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">18</span></div>
+    <div class="tsec"><span class="tcar sp"></span><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">19</span></div>
   </div>
   <div class="tgrp flat">
-    <div class="tsec"><span class="tcar sp"></span><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">19</span></div>
+    <div class="tsec"><span class="tcar sp"></span><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">20</span></div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">20</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s9" title="Show the parts of this section"><span class="car">›</span></button><a href="#s9">9 · THE APP ONLINE — INSTALLING, UPDATING, ROLLING BACK</a><span class="dots"></span><span class="pg" data-pg="s9">22</span></div>
     <div class="tsubs" id="subs-s9" hidden>
-      <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">21</span></div>
-      <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">21</span></div>
-      <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">21</span></div>
-      <div class="tsub"><a href="#rollback-bundles">The rollback bundle</a><span class="dots"></span><span class="pg" data-pg="rollback-bundles">22</span></div>
-      <div class="tsub"><a href="#why-the-version-line-only-has-to-differ">Why the version line only has to differ</a><span class="dots"></span><span class="pg" data-pg="why-the-version-line-only-has-to-differ">22</span></div>
-      <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">22</span></div>
+      <div class="tsub"><a href="#the-files-in-the-repository-are-the-only-sou">The files in the repository are the only source of truth</a><span class="dots"></span><span class="pg" data-pg="the-files-in-the-repository-are-the-only-sou">22</span></div>
+      <div class="tsub"><a href="#publishing-a-change">Publishing a change</a><span class="dots"></span><span class="pg" data-pg="publishing-a-change">23</span></div>
+      <div class="tsub"><a href="#rolling-back">Rolling back</a><span class="dots"></span><span class="pg" data-pg="rolling-back">23</span></div>
+      <div class="tsub"><a href="#rollback-bundles">The rollback bundle</a><span class="dots"></span><span class="pg" data-pg="rollback-bundles">23</span></div>
+      <div class="tsub"><a href="#why-the-version-line-only-has-to-differ">Why the version line only has to differ</a><span class="dots"></span><span class="pg" data-pg="why-the-version-line-only-has-to-differ">24</span></div>
+      <div class="tsub"><a href="#privacy">Privacy</a><span class="dots"></span><span class="pg" data-pg="privacy">24</span></div>
     </div>
   </div>
   <div class="tgrp">
-    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s10" title="Show the parts of this section"><span class="car">›</span></button><a href="#s10">10 · POWER &amp; TESTING</a><span class="dots"></span><span class="pg" data-pg="s10">24</span></div>
+    <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s10" title="Show the parts of this section"><span class="car">›</span></button><a href="#s10">10 · POWER &amp; TESTING</a><span class="dots"></span><span class="pg" data-pg="s10">25</span></div>
     <div class="tsubs" id="subs-s10" hidden>
-      <div class="tsub"><a href="#ftp-test">The 5-Minute FTP Test</a><span class="dots"></span><span class="pg" data-pg="ftp-test">24</span></div>
-      <div class="tsub"><a href="#rpe-watts-cards">RPE + Watts — the two cards</a><span class="dots"></span><span class="pg" data-pg="rpe-watts-cards">24</span></div>
-      <div class="tsub"><a href="#power-how-connects">How the three connect</a><span class="dots"></span><span class="pg" data-pg="power-how-connects">25</span></div>
+      <div class="tsub"><a href="#ftp-test">The 5-Minute FTP Test</a><span class="dots"></span><span class="pg" data-pg="ftp-test">25</span></div>
+      <div class="tsub"><a href="#rpe-watts-cards">RPE + Watts — the two cards</a><span class="dots"></span><span class="pg" data-pg="rpe-watts-cards">25</span></div>
+      <div class="tsub"><a href="#tss-planner">The TSS Planner</a><span class="dots"></span><span class="pg" data-pg="tss-planner">26</span></div>
+      <div class="tsub"><a href="#power-how-connects">How the three connect</a><span class="dots"></span><span class="pg" data-pg="power-how-connects">26</span></div>
     </div>
   </div>
 </div>
@@ -216,14 +218,15 @@ cool-down — hold clean clock time.</p>
 <div class="bar" id="s1">1 · THE PIECES</div>
 <table>
   <tr><td class="k">Song BPM Selector</td><td>Phone-first. Tap-tester, phrase strip, block matching, playlist, drop capture with colour coding, song length, drops library, transfer codes, backup.</td></tr>
-  <tr><td class="k">Build Sheet Template</td><td>Desktop-first. The 60-minute plan: reorderable sections, auto RPM, clock math, ride-clock drops, drill presets, Section Library, exports.</td></tr>
+  <tr><td class="k">Build Sheet Template</td><td>Desktop-first. The 60-minute plan: reorderable sections, auto RPM, clock math, ride-clock drops, drill presets, Section Library, exports — including <b>Export for MOWL</b>, the class as a MOWL import file.</td></tr>
+  <tr><td class="k">TSS Planner<span class="new">REV 47</span></td><td>Scores a class before anyone rides: TSS for the first 60 minutes against your band (65–75, cap 75), a subtotal per segment, ⚠ on any effort longer than its zone can be held, and a builder for hard-set ladders. Reads a whole class from a Build Sheet code (Section 10).</td></tr>
   <tr><td class="k">Build Sheet · no targets<span class="new">REV 34</span></td><td>No longer a separate file. It is now the <b>Hide targets</b> switch on the Build Sheet itself: the same sheet with the Power target and HR guide columns hidden and that width given to Song and Intervals. One sheet, one set of songs, drops and drills — nothing to keep in step and no second storage area to drift.</td></tr>
   <tr><td class="k">Drops Library Editor</td><td>Standalone. Opens a drops .json to view or edit outside the two tools: times in m:ss, drills alongside, merge two libraries, save back out, and <b>Export CSV</b> for a printable copy.<span class="new">REV 21</span></td></tr>
   <tr><td class="k">Spin Class Pro workbook</td><td>Excel backup and visuals: My Playlist + Intervals → Charts (segment pie, cadence bands, two load curves) and a two-sided fold-up Playlist Print.</td></tr>
   <tr><td class="k">Weekly Workflow</td><td>The one-page checklist of the six phases — in the hub’s <b>Documents</b> group, readable in the app with a link back, plus a print-ready PDF that opens in its own window.<span class="new">REV 21</span></td></tr>
   <tr><td class="k">Getting Started<span class="new">REV 37</span></td><td>A one-page sheet for handing the app to another instructor: the address, how to install it on a phone or a computer, what the three tools do, and the half-dozen things worth knowing on day one — chiefly that their data is local to their own device and starts empty. In the hub’s <b>Documents</b> group, with a print-ready PDF and a <b>Copy the link to share</b> button that puts the app’s address on the clipboard, ready to paste into a message. There is nothing to package or download: the web address <i>is</i> the app.</td></tr>
   <tr><td class="k">System Manual<span class="new">REV 25</span></td><td>This document, in the hub’s <b>Documents</b> group — readable in the app, stored for offline use, with a link back and a print-ready PDF beside it. The repository holds both the HTML and the PDF; change the HTML and re-render the PDF from it so the pair never disagree.</td></tr>
-  <tr><td class="k">External tools</td><td>Spotify, Chosic Playlist Analyzer, Spotlistr, MOWL Session Designer, Musixmatch / YouTube heatmap.</td></tr>
+  <tr><td class="k">External tools</td><td>Spotify, Exportify, Chosic Playlist Analyzer, Spotlistr, MOWL Session Designer and MOWL's workout import page, Musixmatch / YouTube heatmap.</td></tr>
 </table>
 <p class="note">The three HTML tools are no longer loose files. They are published together as an installable web app —
 one icon, working offline, with a hub screen linking the Selector, the Build Sheet and the Drops Library Editor. Because
@@ -351,7 +354,9 @@ defaults</b> always restores the factory eight, and the library and drills survi
   <tr><td class="k">Song / Intervals / Drops / Power / HR</td><td>Wrapping fields; long text grows the row rather than truncating.</td></tr>
   <tr><td class="k">Len</td><td>Song length (m:ss); auto-fills on import from a CSV, and from the Selector when the song carries one. Feeds all clock math. A row that has a song but no length is tinted amber until you fill it — on screen only, never on the printout.<span class="new">REV 19</span></td></tr>
   <tr><td class="k">BPM → Ride → RPM</td><td>Type the BPM, pick 1:1 or ½; RPM computes under the 110 cap. The beat-lock cannot be broken here.</td></tr>
-  <tr><td class="k">Pos</td><td>Seat / Stand / S-St.</td></tr>
+  <tr><td class="k">Pos</td><td>Seat / Stand / S-St. For S-St, an interval counts as Standing in Export for MOWL when its cue says so — “stand the final chorus”.</td></tr>
+  <tr><td class="k">Intervals as timed cues<span class="new">REV 47</span></td><td>Write the cue as time ranges inside the song: <code>0:00–1:16 Z2 steady base · 1:16–1:34 Z3 pickup 1 of 2 · …</code> — start–end in m:ss, the zone, a short label, entries separated by “·”. <b>Export for MOWL</b> turns each entry into a MOWL interval and the TSS Planner’s <b>Import code</b> scores it; free wording (“3 × climb efforts, one per chorus”) still prints but neither can read it. Give every change the rider has to make its own entry — two pickups are two entries, and a gear step is a change too, even inside one zone — because in MOWL the interval boundary is the cue.</td></tr>
+  <tr><td class="k">E · explicit<span class="new">REV 47</span></td><td>A red edge on the row and a red badge under the title: Spotify marks that version Explicit, and explicit versions are banned. Set by <b>Import Spotify export</b> from an Exportify CSV; it clears when a clean re-import arrives or when the title is edited. Screen only — it never prints.</td></tr>
   <tr><td class="k">Σ ride<span class="new">REV 43</span></td><td>Where that song's block <i>ends</i> on MOWL's timeline — which is where the next song starts, crossfade included. Read it against the Session Designer's song strip, row for row. The last song's figure is MOWL's total for the class; its audio keeps playing for another 10 s underneath whatever follows. Until s60-v49 this column reported where each song's audio ended instead, so every row read 10 s per transition adrift of the timeline.</td></tr>
   <tr><td class="k">◉ ride / ◉ 8-bar</td><td>Under the drops: each drop as an absolute class minute (drift-corrected), then the 8-bar phrase boundary it snaps to and the gap — "1:16 −2.2".</td></tr>
 </table>
@@ -415,7 +420,7 @@ ascending no matter what moves.</p>
   <tr><td class="k">Header tallies</td><td>"3 songs · Σ 13:36 · thru 24:07" — count, section length, cumulative ride time; +n? flags missing lengths.</td></tr>
   <tr><td class="k">Grand bar</td><td>The whole playlist against 60:00, crossfades included, green under / red over.</td></tr>
   <tr><td class="k">Print / Save as PDF</td><td>Clean printout; edit chrome hidden, colours and wrapped text kept, amber length tints suppressed.</td></tr>
-  <tr><td class="k">Import Spotify export</td><td>A Chosic/Exportify CSV or pasted text (Section 4).</td></tr>
+  <tr><td class="k">Import Spotify export</td><td>A Chosic/Exportify CSV or pasted text (Section 4). From Exportify it also reads Spotify’s Explicit flag: the confirm box lists any explicit tracks before anything is filled, and each one arrives flagged.<span class="new">REV 47</span></td></tr>
   <tr><td class="k">Import ← Selector</td><td>The Selector's playlist by feed or code; fills matching slots by block role. Lengths sent from the Selector are written in; where a slot changes to a different song and no length was sent, the old runtime is cleared rather than left attached to the wrong track, and the box is flagged amber.<span class="new">REV 19</span></td></tr>
   <tr><td class="k">Import drops only</td><td>Merges ONLY the Drop times, matching songs by title. Everything else untouched; it reports any titles it could not match.</td></tr>
   <tr><td class="k">Send → Selector</td><td>Packages the sheet's songs, BPMs, ride modes and drops as a Selector code.</td></tr>
@@ -423,6 +428,7 @@ ascending no matter what moves.</p>
   <tr><td class="k">Drops library</td><td>The shared song → drops (and drill) file. <b>Fill from library</b> inside it fills this sheet from what the device already knows; Add this sheet's drops banks the week. See Section 4.<span class="new">REV 21</span></td></tr>
   <tr><td class="k">Phrase map</td><td>Every song's 8/16/32-bar boundaries converted to the ride clock, so an interval in Session Designer can start and end on the music. Needs only BPM and Len — no drops required. A <b>match MOWL / real audio</b> switch decides whether drift is applied; a per-song offset field handles tracks with an intro. Copy as text puts the whole map on the clipboard.</td></tr>
   <tr><td class="k">Export for Excel</td><td>Copies the sheet as tab-separated rows for the workbook (Section 5).</td></tr>
+  <tr><td class="k">Export for MOWL<span class="new">REV 47</span></td><td>Saves the class as a MOWL workout import file (.json), named after the workout. Every timed cue becomes one MOWL interval (Section 4, <i>The MOWL import file</i>). A preview lists each song first and flags anything that needs a look — a song with no timed cues (it goes in as one interval), cues that stop short of the song or run past it (the last interval is stretched or trimmed to fit), an explicit track — and a song with no length blocks the download. The file’s total always equals the last Σ.</td></tr>
   <tr><td class="k">Backup / Restore</td><td>A dated .json of the whole sheet, Section Library, drill catalog and drift.</td></tr>
   <tr><td class="k">Save (header) + Section Library</td><td>Shelve a section as a named block; the bottom panel loads blocks into any section by Replace or Append, or deletes them.</td></tr>
   <tr><td class="k">Drift __ s/song</td><td>Fractional-seconds correction applied to ◉ ride times only (Section 6).</td></tr>
@@ -438,12 +444,12 @@ ascending no matter what moves.</p>
 </table>
 
 <div class="bar b4" id="s4">4 · HOW EVERYTHING CONNECTS</div>
-<p><b>Data flow:</b> Spotify → Exportify or Chosic CSV → Build Sheet → (printed PDF · Excel workbook · MOWL Session
-Designer), with the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
+<p><b>Data flow:</b> Spotify → Exportify (or Chosic) CSV → Build Sheet → (printed PDF · Excel workbook · MOWL import
+file → MOWL Session Designer), with the phone Selector feeding drops, BPMs and song lengths in both directions.</p>
 <table>
-  <tr><td class="k">Which export<span class="new">REV 43</span></td><td><b>Exportify is the one to use when the clock matters.</b> Its Duration (ms) column carries the exact length in milliseconds, which is what lets the sheet round the way MOWL does. Chosic's Duration is mm:ss with the fraction already thrown away, so the sheet has to add a second back blindly — right for almost every track, and one second over for a track whose true length is an exact whole second. Chosic still wins on Camelot and Explicit, so exporting both and using Chosic for the audit is reasonable.</td></tr>
+  <tr><td class="k">Which export<span class="new">REV 43</span></td><td><b>Exportify is the one to use when the clock matters.</b> Its Duration (ms) column carries the exact length in milliseconds, which is what lets the sheet round the way MOWL does. Chosic's Duration is mm:ss with the fraction already thrown away, so the sheet has to add a second back blindly — right for almost every track, and one second over for a track whose true length is an exact whole second. Chosic still wins on Camelot. Explicit no longer needs Chosic: Exportify carries it too, and the import flags it.<span class="new">REV 47</span></td></tr>
   <tr><td class="k">Chosic CSV carries</td><td>Song, Artist, BPM, Duration (mm:ss) — plus Camelot (key matching) and Explicit (clean audit).</td></tr>
-  <tr><td class="k">Exportify CSV carries<span class="new">REV 43</span></td><td>Track Name, Artist Name(s), Tempo (BPM) and Duration (ms) — exact lengths, no Camelot or Explicit.</td></tr>
+  <tr><td class="k">Exportify CSV carries<span class="new">REV 47</span></td><td>Track Name, Artist Name(s), Tempo (BPM), Duration (ms) — exact lengths — and Explicit (true / false). No Camelot.</td></tr>
   <tr><td class="k">Spotify-export import</td><td>Fills top-to-bottom in ride order, bridges included: titles, artists, BPMs, lengths. Over 110 BPM becomes ½ automatically. Playlist order = sheet order.</td></tr>
   <tr><td class="k">Lengths round UP<span class="new">REV 43</span></td><td>MOWL counts each track rounded up to the next whole second, so the sheet stores it that way: an Exportify duration of 189.363 s becomes <b>3:10</b>, and a Chosic <b>3:09</b> has a second added. That means the Len column reads one second longer than the same song in MOWL's own song list — that is not a mismatch, it is what makes the timeline agree. Verified against a 23-song class: rounding up and subtracting the crossfade gives 1:01:43, exactly MOWL's total. Rounding down gives 1:01:31 and rounding to nearest 1:01:39; neither fits.</td></tr>
   <tr><td class="k">Selector ↔ Sheet</td><td>Selector code → sheet fills by block role. Sheet's Send → Selector maps sections back to blocks (Segment 4 → Finisher; bridges and cool-down → Cool-Down) and carries drops and ride modes both ways. Song lengths travel Selector → Sheet.</td></tr>
@@ -451,7 +457,22 @@ Designer), with the phone Selector feeding drops, BPMs and song lengths in both 
   <tr><td class="k">Two import routes</td><td>CSV route = fast skeleton with BPMs/lengths. Selector route = complete data including drops, colour coding and any lengths you set. Pick ONE per week.</td></tr>
   <tr><td class="k">Seeing that it landed<span class="new">REV 29</span></td><td>When an import runs, the rows it wrote are tinted blue for a few seconds and the first of them is scrolled into view, so the result is visible wherever you were on the sheet. The toolbar line reports the counts for eight seconds. If an import changes nothing at all — the same file imported twice — it says so outright rather than looking like a dead button.</td></tr>
   <tr><td class="k">An import replaces the playlist<span class="new">REV 30</span></td><td>Importing a Spotify or Chosic export fills the sheet in ride order and then puts the sheet back to its normal shape: every slot past the last imported song is emptied, and any <b>spare rows</b> beyond a section’s factory count are removed outright — so a short playlist gives a short sheet, not a tail of blank rows. A section never drops below its factory row count (one row for a section you added yourself), so the ride structure survives. The prompt says how many slots will be cleared and how many rows removed before you commit, and Cancel leaves the sheet untouched. More songs than slots still extends the cool-down, as it always has — and the next smaller import shrinks it back.</td></tr>
-  <tr><td class="k">Sheet → MOWL<span class="new">REV 43</span></td><td>Σ gives each song's start on the Session Designer's song strip, and the last song's Σ is MOWL's total — checked song by song against a real session. From an Exportify CSV it lands on the second; from Chosic expect the odd song a second out, for the rounding reason above. Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+).</td></tr>
+  <tr><td class="k">Sheet → MOWL<span class="new">REV 43</span></td><td>Σ gives each song's start on the Session Designer's song strip, and the last song's Σ is MOWL's total — checked song by song against a real session. From an Exportify CSV it lands on the second; from Chosic expect the odd song a second out, for the rounding reason above. Set interval counts from the Intervals column, nudge boundaries to Drop times, set targets from Power (Z2 ≈ 56–75% FTP · Z3 ≈76–90% · SS ≈88–94% · Z4 ≈95–105% · Z5 ≈106%+). Or let the sheet do the splitting: <b>Export for MOWL</b> writes the whole interval map as one import file (below).</td></tr>
+</table>
+
+<h3 id="mowl-import-file">The MOWL import file<span class="new">REV 47</span></h3>
+<p>MOWL’s workout importer — built for instructors moving workouts across from iQniter — takes a whole class as a file, so
+the intervals arrive already split instead of one per song. Confirmed against MOWL in October 2026. MOWL normally opens it
+to instructors at a facility; ask its support for access.</p>
+<table>
+  <tr><td class="k">Making it</td><td>Build Sheet → <b>Export for MOWL</b>. Every timed cue in the Intervals column becomes one interval; the preview flags anything it had to guess.</td></tr>
+  <tr><td class="k">Uploading it</td><td><span class="url">login.mowl.com/profile/import</span> → choose the file → name the workout → Import. It lands in <b>My Workouts</b>.</td></tr>
+  <tr><td class="k">Then, in MOWL</td><td>Edit Workout → import music → Spotify → the playlist. Nudge the work intervals onto the real drops, and set RPM by hand if you use it.</td></tr>
+  <tr><td class="k">What it carries</td><td>Each interval’s duration, zone and position — Seated or Standing.</td></tr>
+  <tr><td class="k">What it does not</td><td><b>RPM</b> (MOWL confirmed it is not imported) and <b>Cue Cards</b> (tested: they do not come through). Both stay on the Build Sheet. This is why every change the rider makes needs its own interval — the boundary is the only cue MOWL shows.</td></tr>
+  <tr><td class="k">The format</td><td>Two tables, as Tabula exports them (“JSON (data)”): Stage — <code>Stage | Name | Duration | Intensity | Description</code>; Steps — <code>Step | Duration | %FTP | Position | Incline | Cadence | Cue Card</code>. Durations hh:mm:ss, Incline 0, Cadence blank.</td></tr>
+  <tr><td class="k">Why %FTP</td><td>Each zone goes in at its midpoint — 50 / 65 / 83 / 98 / 113 / 135 / 160% FTP — the middle of MOWL’s seven power zones, so every colour lands where it should. MOWL also reads %HRmax, but its heart-rate zones sit higher than common charts (measured: L1 to 68, L2 71–74, L3 77–80, L4 83–89, L5 92–95, L6 98), so %HRmax files come in a zone low.</td></tr>
+  <tr><td class="k">The clock</td><td>Each song rides its length minus the 10 s crossfade, the last song included, so the file’s total is the sheet’s last Σ — MOWL’s total.</td></tr>
 </table>
 
 <h3 id="getting-drops-into-the-sheet-which-route">Getting drops into the sheet — which route</h3>
@@ -620,7 +641,9 @@ phrasing really matters; read the downbeat there and type it into the offset fie
   <tr><td class="k">A BPM looks doubled or halved</td><td>Spotify-derived tempo data does this. Tap-test and edit the BPM.</td></tr>
   <tr><td class="k">Times don't match a database</td><td>Databases (and AI memory) get durations wrong; the CSV is the referee — Exportify for the exact figure, Chosic for a whole-second one.</td></tr>
   <tr><td class="k">Key/Camelot codes</td><td>Key detection runs well under 50% accurate on some services. Match within segments only; bridges are free reset points.</td></tr>
-  <tr><td class="k">Explicit versions</td><td>Spotify search and Spotlistr default to the ▪ version. Audit the Chosic Explicit column.</td></tr>
+  <tr><td class="k">Explicit versions<span class="new">REV 47</span></td><td>Spotify search, Spotlistr and Spotify’s own AI playlists can pick the ▪ (explicit) version. Import the Exportify CSV: explicit tracks are listed before the import and flagged red on the sheet. Swap in the clean edit in Spotify and re-import.</td></tr>
+  <tr><td class="k">MOWL import: colours a zone low<span class="new">REV 47</span></td><td>The file was written in %HRmax. Use Export for MOWL, which writes %FTP midpoints.</td></tr>
+  <tr><td class="k">MOWL import: a song is one long interval<span class="new">REV 47</span></td><td>Its Intervals cell has no timed cues — the export preview said so. Write the cue as time ranges and export again, or split it in Session Designer. The TSS Planner leaves such a song out of an imported plan for the same reason, and names it.</td></tr>
   <tr><td class="k">Smart Reorder</td><td>Premium, mobile-only. Useful within a block; it will sand off the deliberate tempo cliffs between blocks.</td></tr>
   <tr><td class="k">Intervals drift from the music</td><td>Section 6. Growing drift = fractional seconds (set Drift); constant steps = crossfade mismatch; irregular = Automix snuck on.</td></tr>
   <tr><td class="k">Boundaries look wrong</td><td>The track opens with an intro — set the downbeat offset for that song.</td></tr>
@@ -704,9 +727,9 @@ device you typed them on and never leave it. The app has no server and asks for 
 
 <p class="foot">
 Quick values: crossfade 10 s · drift 0.43 s/song · RPM cap 110 · FTP 158 W and Max HR 164 (both editable) · TSS ~65–75 · bar = 240 ÷ BPM ·
-current app version s60-v60.<br>
+current app version s60-v70.<br>
 The app: <span class="url">https://indoor-cycling.github.io/saturday60/</span> — index.html · selector.html ·
-buildsheet.html · drops.html · Saturday60_WeeklyWorkflow.html and .pdf · FTP_5min_Test.html · RPE_Watts_Card_Editable.html · RPE_Watts_Card_YMCA_Editable.html · app.js · sw.js ·
+buildsheet.html · drops.html · TSS_Planner.html · Saturday60_WeeklyWorkflow.html and .pdf · Saturday60_SystemManual.html and .pdf · Saturday60_GettingStarted.html and .pdf · FTP_5min_Test.html · RPE_Watts_Card_Editable.html · RPE_Watts_Card_YMCA_Editable.html · app.js · sw.js ·
 manifest.webmanifest · icons/ · README.md.
 Alongside it: Spin_Class_ProV4 workbook · SaturdaySixty_PlaylistPrint.bas · Saturday-60_Weekly-Workflow.pdf.
 When any tool changes, ask Claude for a manual revision to match.
@@ -758,125 +781,147 @@ as a nudge to retest the best with a short all-out effort. Re-test FTP every fou
 <p class="note">The M3’s Watts are displayed but not lab-calibrated the way the M3i’s are, so treat a rider’s Watts
 as a measure against themselves over time, not an exact number to compare bike to bike.</p>
 
+<h3 id="tss-planner">The TSS Planner<span class="new">REV 47</span></h3>
+<p>Scores a class before anyone rides it. TSS — Training Stress Score — is one number for how hard a ride is: an hour
+right at FTP is 100. The Planner adds it up interval by interval with
+<code>TSS = 100 × (minutes ÷ 60) × (zone midpoint ÷ FTP)²</code>, using each zone’s midpoint as its intensity.</p>
+<table>
+  <tr><td class="k">The band</td><td><b>Target low 65 · Cap 75</b> for the first 60 minutes, beside your FTP. All three save on the device; a device that saved older numbers keeps them until you type new ones.</td></tr>
+  <tr><td class="k">The four tiles</td><td>Total time · full-file TSS (cool-down included, as MOWL counts it) · first-60 TSS, the number the cap applies to · status — On target, Over cap or Below target. MOWL usually reads a point or two below this sum.</td></tr>
+  <tr><td class="k">Building a plan</td><td>Intervals grouped by segment, each with a zone and a duration; every segment shows its time and TSS. An effort longer than its zone can be held — Z5 5:00, Z6 3:00, Z7 0:30 — gets a ⚠.</td></tr>
+  <tr><td class="k">Zone midpoints</td><td>50 / 65 / 83 / 98 / 113 / 135 / 160% FTP by default, editable in the zone table.</td></tr>
+  <tr><td class="k">Hard-set builder</td><td>Pick a zone, a number of efforts and the total work; it builds a ladder whose efforts grow and whose rests shrink into the finish — equal rest after Z5, 2× after Z6, 3× after Z7 — and adds it to the plan.</td></tr>
+  <tr><td class="k">Import code</td><td>Paste a Build Sheet code (Send → Build Sheet) and every song’s timed cues become intervals, segment by segment; or paste a Planner code from another device. It always shows what it found and asks before replacing the plan. Songs without timed cues are left out and named.</td></tr>
+  <tr><td class="k">Copy plan code</td><td>The plan as a code for another device. It carries the intervals only — FTP and the band stay as each device has them.</td></tr>
+  <tr><td class="k">Reset to example</td><td>A sample 60:00 class scoring 73.1 — inside the band. It replaces the plan on that device.</td></tr>
+</table>
+
 <h3 id="power-how-connects">How the three connect</h3>
 <p>Find the number in the FTP Test, tap through to a card and it opens with the FTP already filled in; the two cards
 also link to each other. Nothing is uploaded — the FTP you type lives only for that visit, and the pages run offline
-once the app is installed.</p>
+once the app is installed. The TSS Planner keeps its own FTP box, saved on the device; set it to the same number.</p>
 
 <div class="bar b8 pagebreak" id="index">INDEX</div>
 <p style="margin:0 0 6px">Page numbers are the printed pages of this manual. On screen every entry is a link.</p>
 <div class="idx">
   <div class="ia">0–9</div>
   <div class="ie">110 RPM cap <span class="ip"><a href="#s0">2</a>, <a href="#per-song-rows">8</a></span></div>
-  <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">17</a></span></div>
+  <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">5</a>, <a href="#bars-and-phrase-boundaries">18</a></span></div>
   <div class="ia">A</div>
   <div class="ie">Add drill <span class="ip"><a href="#the-manage-drills-panel">9</a></span></div>
   <div class="ie">Add group <span class="ip"><a href="#the-manage-drills-panel">9</a></span></div>
   <div class="ie">Add key (drop colours) <span class="ip"><a href="#adding-your-own-keys">6</a></span></div>
-  <div class="ie">Android, installing on <span class="ip"><a href="#s9">20</a></span></div>
+  <div class="ie">Android, installing on <span class="ip"><a href="#s9">22</a></span></div>
   <div class="ia">B</div>
-  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#totals-and-buttons">10</a>, <a href="#s7">18</a></span></div>
+  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#totals-and-buttons">11</a>, <a href="#s7">19</a></span></div>
   <div class="ie">Bar calculator <span class="ip"><a href="#the-bar-calculator">3</a></span></div>
-  <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">17</a></span></div>
+  <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">18</a></span></div>
   <div class="ie">Beat-lock (1:1 and ½) <span class="ip"><a href="#s0">2</a>, <a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
-  <div class="ie">BPM looks doubled or halved <span class="ip"><a href="#the-tap-tester">3</a>, <a href="#s8">19</a></span></div>
+  <div class="ie">BPM looks doubled or halved <span class="ip"><a href="#the-tap-tester">4</a>, <a href="#s8">20</a></span></div>
   <div class="ie">Build Sheet <span class="ip"><a href="#s1">2</a>, <a href="#s3">7</a></span></div>
   <div class="ia">C</div>
-  <div class="ie">Correction factor (5-min, 15%) <span class="ip"><a href="#ftp-test">24</a></span></div>
-  <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">15</a></span></div>
-  <div class="ie">Camelot and key codes <span class="ip"><a href="#s4">11</a>, <a href="#s8">19</a></span></div>
-  <div class="ie">Chosic CSV <span class="ip"><a href="#s4">11</a></span></div>
-  <div class="ie">Clock, ride vs MOWL <span class="ip"><a href="#per-song-rows">8</a>, <a href="#fractional-drift">16</a></span></div>
-  <div class="ie">Colour-coding drops <span class="ip"><a href="#colour-coding-the-drops">5</a></span></div>
-  <div class="ie">Crossfade <span class="ip"><a href="#crossfade">16</a></span></div>
+  <div class="ie">Correction factor (5-min, 15%) <span class="ip"><a href="#ftp-test">25</a></span></div>
+  <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">16</a></span></div>
+  <div class="ie">Camelot and key codes <span class="ip"><a href="#s4">12</a>, <a href="#s8">20</a></span></div>
+  <div class="ie">Chosic CSV <span class="ip"><a href="#s4">12</a></span></div>
+  <div class="ie">Clock, ride vs MOWL <span class="ip"><a href="#per-song-rows">8</a>, <a href="#fractional-drift">18</a></span></div>
+  <div class="ie">Colour-coding drops <span class="ip"><a href="#colour-coding-the-drops">6</a></span></div>
+  <div class="ie">Crossfade <span class="ip"><a href="#crossfade">17</a></span></div>
   <div class="ia">D</div>
-  <div class="ie">Downbeat, first <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
-  <div class="ie">Drift, fractional <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#fractional-drift">16</a></span></div>
-  <div class="ie">Drill catalogue <span class="ip"><a href="#drill-presets-and-the-drill-catalog">8</a></span></div>
-  <div class="ie">Drills in Excel <span class="ip"><a href="#the-drill-catalogue-in-excel">9</a></span></div>
-  <div class="ie">Drop markers (◎) <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
-  <div class="ie">Drops library <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-drops-library-moving-it-between-the-tool">13</a></span></div>
-  <div class="ie">Drops Library Editor <span class="ip"><a href="#s1">2</a>, <a href="#the-drops-library-moving-it-between-the-tool">13</a></span></div>
+  <div class="ie">Downbeat, first <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
+  <div class="ie">Drift, fractional <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#fractional-drift">18</a></span></div>
+  <div class="ie">Drill catalogue <span class="ip"><a href="#drill-presets-and-the-drill-catalog">9</a></span></div>
+  <div class="ie">Drills in Excel <span class="ip"><a href="#the-drill-catalogue-in-excel">10</a></span></div>
+  <div class="ie">Drop markers (◎) <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
+  <div class="ie">Drops library <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#the-drops-library-moving-it-between-the-tool">14</a></span></div>
+  <div class="ie">Drops Library Editor <span class="ip"><a href="#s1">2</a>, <a href="#the-drops-library-moving-it-between-the-tool">14</a></span></div>
   <div class="ia">E</div>
-  <div class="ie">Excel workbook <span class="ip"><a href="#s5">14</a></span></div>
-  <div class="ie">Export for Excel <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Excel workbook <span class="ip"><a href="#s5">15</a></span></div>
+  <div class="ie">Explicit tracks <span class="ip"><a href="#per-song-rows">8</a>, <a href="#s4">12</a>, <a href="#s8">20</a></span></div>
+  <div class="ie">Export for Excel <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Export for MOWL <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#mowl-import-file">13</a></span></div>
   <div class="ia">F</div>
-  <div class="ie">Find Your Number <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
-  <div class="ie">FTP, 5-minute test <span class="ip"><a href="#ftp-test">24</a></span></div>
-  <div class="ie">Fill from library <span class="ip"><a href="#the-drops-library-moving-it-between-the-tool">13</a></span></div>
+  <div class="ie">Find Your Number <span class="ip"><a href="#rpe-watts-cards">25</a></span></div>
+  <div class="ie">FTP, 5-minute test <span class="ip"><a href="#ftp-test">25</a></span></div>
+  <div class="ie">Fill from library <span class="ip"><a href="#the-drops-library-moving-it-between-the-tool">14</a></span></div>
   <div class="ie">FTP <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ia">G</div>
-  <div class="ie">Gear × cadence cheat <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
+  <div class="ie">Gear × cadence cheat <span class="ip"><a href="#rpe-watts-cards">25</a></span></div>
   <div class="ie">Getting Started sheet <span class="ip"><a href="#s1">2</a></span></div>
-  <div class="ie">Group dropdown (Excel) <span class="ip"><a href="#the-drill-catalogue-in-excel">9</a></span></div>
+  <div class="ie">Group dropdown (Excel) <span class="ip"><a href="#the-drill-catalogue-in-excel">10</a></span></div>
   <div class="ia">H</div>
   <div class="ie">Heart rate, maximum <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
-  <div class="ie">Hiding the targets <span class="ip"><a href="#hiding-the-targets">11</a></span></div>
-  <div class="ie">Holding a phrase boundary <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
-  <div class="ie">Hub screen <span class="ip"><a href="#s9">20</a></span></div>
+  <div class="ie">Hiding the targets <span class="ip"><a href="#hiding-the-targets">12</a></span></div>
+  <div class="ie">Holding a phrase boundary <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
+  <div class="ie">Hub screen <span class="ip"><a href="#s9">22</a></span></div>
   <div class="ia">I</div>
-  <div class="ie">Import drops only <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
-  <div class="ie">Import Spotify export <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
-  <div class="ie">Import ← Selector <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
-  <div class="ie">Importing does nothing <span class="ip"><a href="#s8">19</a></span></div>
-  <div class="ie">Installing the app <span class="ip"><a href="#s9">20</a></span></div>
-  <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">15</a></span></div>
-  <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">20</a></span></div>
+  <div class="ie">Import drops only <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Import Spotify export <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#s4">12</a></span></div>
+  <div class="ie">Import ← Selector <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#s4">12</a></span></div>
+  <div class="ie">Import code (TSS Planner) <span class="ip"><a href="#tss-planner">26</a></span></div>
+  <div class="ie">Importing does nothing <span class="ip"><a href="#s8">20</a></span></div>
+  <div class="ie">Installing the app <span class="ip"><a href="#s9">22</a></span></div>
+  <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">16</a></span></div>
+  <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">22</a></span></div>
   <div class="ia">K</div>
-  <div class="ie">Key, drop colour <span class="ip"><a href="#colour-coding-the-drops">5</a></span></div>
+  <div class="ie">Key, drop colour <span class="ip"><a href="#colour-coding-the-drops">6</a></span></div>
   <div class="ia">L</div>
   <div class="ie">Length, song <span class="ip"><a href="#song-length">4</a>, <a href="#per-song-rows">8</a></span></div>
   <div class="ia">M</div>
-  <div class="ie">Macros (Excel) <span class="ip"><a href="#the-three-macros">15</a></span></div>
+  <div class="ie">Macros (Excel) <span class="ip"><a href="#the-three-macros">17</a></span></div>
   <div class="ie">Manage drills <span class="ip"><a href="#the-manage-drills-panel">9</a></span></div>
-  <div class="ie">MOWL Session Designer <span class="ip"><a href="#s4">11</a>, <a href="#getting-the-ride-in">14</a></span></div>
+  <div class="ie">MOWL import file <span class="ip"><a href="#mowl-import-file">13</a>, <a href="#s8">20</a></span></div>
+  <div class="ie">MOWL Session Designer <span class="ip"><a href="#s4">12</a>, <a href="#getting-the-ride-in">15</a></span></div>
   <div class="ia">O</div>
-  <div class="ie">Offline, working <span class="ip"><a href="#s7">18</a>, <a href="#s9">20</a></span></div>
+  <div class="ie">Offline, working <span class="ip"><a href="#s7">19</a>, <a href="#s9">22</a></span></div>
   <div class="ia">P</div>
-  <div class="ie">Power &amp; testing <span class="ip"><a href="#s10">24</a></span></div>
-  <div class="ie">Power zones (% of FTP) <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
-  <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">4</a>, <a href="#bars-and-phrase-boundaries">17</a></span></div>
-  <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">17</a></span></div>
+  <div class="ie">Power &amp; testing <span class="ip"><a href="#s10">25</a></span></div>
+  <div class="ie">Power zones (% of FTP) <span class="ip"><a href="#rpe-watts-cards">25</a></span></div>
+  <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">5</a>, <a href="#bars-and-phrase-boundaries">18</a></span></div>
+  <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">19</a></span></div>
   <div class="ie">Phrase strip <span class="ip"><a href="#the-gauge-and-the-phrase-strip">3</a></span></div>
   <div class="ie">Playlist builder <span class="ip"><a href="#playlist-builder">4</a></span></div>
-  <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">15</a></span></div>
+  <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">16</a></span></div>
   <div class="ie">Power targets <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
-  <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
-  <div class="ie">Privacy <span class="ip"><a href="#s7">18</a>, <a href="#privacy">22</a></span></div>
+  <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Privacy <span class="ip"><a href="#s7">19</a>, <a href="#privacy">24</a></span></div>
   <div class="ia">R</div>
-  <div class="ie">RPE + Watts cards <span class="ip"><a href="#rpe-watts-cards">24</a></span></div>
+  <div class="ie">RPE + Watts cards <span class="ip"><a href="#rpe-watts-cards">25</a></span></div>
   <div class="ie">Refresh targets <span class="ip"><a href="#ftp-and-max-hr">7</a></span></div>
   <div class="ie">Removing a song <span class="ip"><a href="#playlist-builder">4</a></span></div>
   <div class="ie">Renaming a section <span class="ip"><a href="#structure">7</a></span></div>
-  <div class="ie">Reordering songs <span class="ip"><a href="#reordering">10</a></span></div>
-  <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">21</a></span></div>
-  <div class="ie">Reset to defaults <span class="ip"><a href="#structure">7</a>, <a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Reordering songs <span class="ip"><a href="#reordering">11</a></span></div>
+  <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">22</a></span></div>
+  <div class="ie">Reset to defaults <span class="ip"><a href="#structure">7</a>, <a href="#totals-and-buttons">11</a></span></div>
   <div class="ie">Ride mode, per song <span class="ip"><a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
   <div class="ie">Rider zones <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">7</a></span></div>
-  <div class="ie">Rollback bundle <span class="ip"><a href="#rollback-bundles">22</a></span></div>
-  <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">21</a>, <a href="#rollback-bundles">22</a></span></div>
+  <div class="ie">Rollback bundle <span class="ip"><a href="#rollback-bundles">23</a></span></div>
+  <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">23</a>, <a href="#rollback-bundles">23</a></span></div>
   <div class="ia">S</div>
-  <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">18</a></span></div>
-  <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
+  <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#s7">19</a></span></div>
+  <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
   <div class="ie">Sections, structure of <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ie">Selector (Song BPM) <span class="ip"><a href="#s1">2</a>, <a href="#s2">3</a></span></div>
-  <div class="ie">Send → Selector <span class="ip"><a href="#totals-and-buttons">10</a></span></div>
-  <div class="ie">Snapping to the grid <span class="ip"><a href="#drop-markers-the-button">4</a></span></div>
+  <div class="ie">Send → Selector <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Snapping to the grid <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
   <div class="ie">Song length <span class="ip"><a href="#song-length">4</a></span></div>
-  <div class="ie">Spin Class Pro workbook <span class="ip"><a href="#s1">2</a>, <a href="#s5">14</a></span></div>
-  <div class="ie">Spotify export <span class="ip"><a href="#totals-and-buttons">10</a>, <a href="#s4">11</a></span></div>
-  <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">18</a></span></div>
+  <div class="ie">Spin Class Pro workbook <span class="ip"><a href="#s1">2</a>, <a href="#s5">15</a></span></div>
+  <div class="ie">Spotify export <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#s4">12</a></span></div>
+  <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">19</a></span></div>
   <div class="ie">Switching two sections <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ia">T</div>
-  <div class="ie">Tap-tester <span class="ip"><a href="#the-tap-tester">3</a></span></div>
-  <div class="ie">Targets, Power and HR <span class="ip"><a href="#ftp-and-max-hr">7</a>, <a href="#hiding-the-targets">11</a></span></div>
-  <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">6</a>, <a href="#s7">18</a></span></div>
-  <div class="ie">Troubleshooting <span class="ip"><a href="#s8">19</a></span></div>
+  <div class="ie">Tap-tester <span class="ip"><a href="#the-tap-tester">4</a></span></div>
+  <div class="ie">Targets, Power and HR <span class="ip"><a href="#ftp-and-max-hr">7</a>, <a href="#hiding-the-targets">12</a></span></div>
+  <div class="ie">Timed cues (Intervals) <span class="ip"><a href="#per-song-rows">8</a>, <a href="#mowl-import-file">13</a></span></div>
+  <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#s7">19</a></span></div>
+  <div class="ie">Troubleshooting <span class="ip"><a href="#s8">20</a></span></div>
+  <div class="ie">TSS band (65–75) <span class="ip"><a href="#tss-planner">26</a></span></div>
+  <div class="ie">TSS Planner <span class="ip"><a href="#s1">2</a>, <a href="#tss-planner">26</a></span></div>
   <div class="ia">U</div>
-  <div class="ie">Updating the app <span class="ip"><a href="#publishing-a-change">21</a></span></div>
+  <div class="ie">Updating the app <span class="ip"><a href="#publishing-a-change">23</a></span></div>
   <div class="ia">V</div>
-  <div class="ie">Version line, why it only has to differ <span class="ip"><a href="#why-the-version-line-only-has-to-differ">22</a></span></div>
-  <div class="ie">Version number <span class="ip"><a href="#s9">20</a></span></div>
+  <div class="ie">Version line, why it only has to differ <span class="ip"><a href="#why-the-version-line-only-has-to-differ">24</a></span></div>
+  <div class="ie">Version number <span class="ip"><a href="#s9">22</a></span></div>
   <div class="ia">W</div>
   <div class="ie">Weekly Workflow <span class="ip"><a href="#s1">2</a></span></div>
   <div class="ia">Z</div>

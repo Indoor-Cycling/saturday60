@@ -294,7 +294,7 @@
     <div id="libList"></div>
   </div>
 
-  <p class="rules"><b>Rules that never bend:</b> RPM is on-beat or half-beat only · 110 RPM hard ceiling on every interval · songs faster than 110 BPM ride half-beat or get capped · music leads, clock follows on work segments · warm-up, bridges &amp; cool-down keep clean clock time.<br>
+  <p class="rules"><b>Rules that never bend:</b> RPM is on-beat or half-beat only · 110 RPM hard ceiling on every interval · songs faster than 110 BPM ride half-beat or get capped · never stand above 85 RPM · music leads, clock follows on work segments · warm-up, bridges &amp; cool-down keep clean clock time.<br>
   <b>Session Designer:</b> build the Spotify playlist first in ride order (crossfade 10 s, gapless, Automix off), auto-import intervals per song, set counts from the Intervals column, nudge boundaries to the Drop times.</p>
 </div>
 
@@ -360,7 +360,7 @@
 <div class="imp-back" id="mowlBack">
   <div class="imp-card" style="max-width:600px">
     <h3>Export for MOWL</h3>
-    <p>Saves the class as a MOWL workout import file. Every timed cue in the Intervals column (<i>0:00–1:11 Z2 steady base · 1:11–1:34 Z3 pickup…</i>) becomes one MOWL interval: zone at its %FTP midpoint, Seated or Standing from the Pos column. Upload the file at <b>login.mowl.com/profile/import</b>, then link the playlist in Edit Workout. RPM and Cue Cards are not imported by MOWL.</p>
+    <p>Saves the class as a MOWL workout import file. Every timed cue in the Intervals column (<i>0:00–1:11 Z2 steady base · 1:11–1:34 Z3 pickup…</i>) becomes one MOWL interval: zone at its %FTP midpoint, Seated or Standing from the Pos column. The cool-down section goes in as one easy interval, which MOWL shows as the teal Cooldown; its cues stay on this sheet. Upload the file at <b>login.mowl.com/profile/import</b>, then link the playlist in Edit Workout. RPM and Cue Cards are not imported by MOWL. Segments are split in MOWL: drag a bridge interval below L1.</p>
     <div class="mw-field"><label for="mowlName">Workout name in MOWL</label><input id="mowlName" maxlength="60" autocomplete="off"></div>
     <div class="mw-sum" id="mowlSum"></div>
     <div class="mw-list" id="mowlList"></div>
@@ -448,17 +448,17 @@
 
   var DEFAULTS=[
     {id:'warmup',color:'var(--warm)',title:'WARM-UP — fixed clock',time:'0:00 – 10:00',
-     note:'Clean clock block. 2–3 songs, 95–110 BPM, ridden on the beat. Build resistance gently; two 30-second pickups in the final song.',
+     note:'Clean clock block. 2–4 songs, 75–90 BPM, ridden on the beat. Build resistance gently; two 30-second pickups in the final song.',
      rows:[
-       {role:'warmup',song:'',ph:'e.g. Paint The Town Red',bpm:'100',mode:'beat',pos:'Seat',intervals:'1 × steady base (whole song)',power:'Z1→Z2 · 80–110 W',hr:'< 110',drops:''},
-       {role:'warmup',song:'',ph:'e.g. Espresso',bpm:'104',mode:'beat',pos:'Seat',intervals:'2 × 0:30 pickups on chorus, rest base',power:'Z2 · 100–118 W',hr:'105–120',drops:''}
+       {role:'warmup',song:'',ph:'e.g. Keep Me Honest',bpm:'80',mode:'beat',pos:'Seat',intervals:'1 × steady base (whole song)',power:'Z1→Z2 · 80–110 W',hr:'< 110',drops:''},
+       {role:'warmup',song:'',ph:'e.g. Let’s Go',bpm:'90',mode:'beat',pos:'Seat',intervals:'2 × 0:30 pickups on chorus, rest base',power:'Z2 · 100–118 W',hr:'105–120',drops:''}
      ]},
     {id:'seg1',color:'var(--seg1)',title:'SEGMENT 1 — ROLLING OPENER (endurance · mixed, aerobic-heavy)',time:'10:00 – ~24:00',
      note:'≈14 min, 3–4 songs. Work efforts split on drops/choruses; segment ends when its last song ends. The aerobic engine of the ride.',
      rows:[
-       {role:'tempo',song:'',ph:'tempo opener',bpm:'105',mode:'beat',pos:'Seat',intervals:'1 × steady tempo, add gear each verse',power:'Z3 · 120–135 W',hr:'115–128',drops:''},
+       {role:'tempo',song:'',ph:'tempo opener',bpm:'130',mode:'half',pos:'Seat',intervals:'1 × steady tempo, add gear each verse',power:'Z3 · 120–135 W',hr:'115–128',drops:''},
        {role:'climb',song:'',ph:'climb · e.g. Titanium',bpm:'126',mode:'half',pos:'S-St',intervals:'3 × climb efforts, one per chorus; stand final chorus',power:'SS · 135–150 W',hr:'125–138',drops:''},
-       {role:'tempo',song:'',ph:'tempo flush',bpm:'105',mode:'beat',pos:'Seat',intervals:'1 × steady, ease gear off after 1st chorus',power:'Z2–Z3 · 110–130 W',hr:'115–125',drops:''}
+       {role:'tempo',song:'',ph:'tempo flush',bpm:'128',mode:'half',pos:'Seat',intervals:'1 × steady, ease gear off after 1st chorus',power:'Z2–Z3 · 110–130 W',hr:'115–125',drops:''}
      ]},
     {id:'br1',color:'var(--bridge)',title:'RECOVERY BRIDGE',time:'~24:00 – 26:00 (2:00 fixed)',
      note:'One mellow track, 80–100 BPM on the beat, light gear. Shake out, drink, reset. HR drifts toward Z1–Z2.',
@@ -488,7 +488,7 @@
      note:'The closing arc before the cool-down: rolling surges on the drops, nothing above the cap. Music decides the exact length — watch the Σ.',
      rows:[
        {role:'sprint',song:'',ph:'finisher opener',bpm:'104',mode:'beat',pos:'Seat',intervals:'2 × 0:20 surges on drops',power:'Z4 · 150–166 W',hr:'135–148',drops:''},
-       {role:'sprint',song:'',ph:'rolling push',bpm:'108',mode:'beat',pos:'S-St',intervals:'0:30 push on each chorus',power:'Z4–Z5 · 155–175 W',hr:'140–150',drops:''},
+       {role:'sprint',song:'',ph:'rolling push',bpm:'108',mode:'beat',pos:'Seat',intervals:'0:30 push on each chorus',power:'Z4–Z5 · 155–175 W',hr:'140–150',drops:''},
        {role:'climb',song:'',ph:'standing push',bpm:'122',mode:'half',pos:'Stand',intervals:'2 × 1:00 standing, chorus-timed',power:'Z4 · 150–166 W',hr:'138–150',drops:''},
        {role:'sprint',song:'',ph:'last surge',bpm:'106',mode:'beat',pos:'Seat',intervals:'Best effort on the LAST drop',power:'Z5 · max safe',hr:'peak',drops:''}
      ]},
@@ -1264,7 +1264,10 @@
      Confirmed against MOWL on 27 Oct 2026: %FTP at each zone's midpoint lands every
      interval in the right colour; RPM and Cue Cards are not imported.
      Timeline: each song rides its length minus the 10 s crossfade, the last song
-     included, so the file's total equals the sheet's last Σ (MOWL's total). */
+     included, so the file's total equals the sheet's last Σ (MOWL's total).
+     s60-v71: the cool-down section (id 'cool', when it ends the sheet) is written as ONE
+     Z1 interval. MOWL shows a workout's last easy interval as its teal Cooldown (tested
+     29 Oct 2026); the section's cues stay on the sheet. */
   var MOWL_MID=[0,50,65,83,98,113,135,160], MOWL_XF=10, MOWL_NAMEKEY='s60_mowl_name_v1';
   var MOWL_CUE=/(\d{1,2}:\d{2})\s*[–—-]\s*(\d{1,2}:\d{2})\s+Z([1-7])\b\s*([\s\S]*?)(?=\s*·\s*\d{1,2}:\d{2}\s*[–—-]\s*\d{1,2}:\d{2}\s+Z[1-7]\b|$)/g;
   function mwAscii(s){return String(s||'').replace(/[–—]/g,'-').replace(/×/g,'x').replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/…/g,'...').replace(/\s*·\s*/g,' - ').replace(/[^\x20-\x7e]/g,'').replace(/\s+/g,' ').trim();}
@@ -1320,13 +1323,22 @@
         }
         cues.forEach(function(c){
           steps.push({sec:c.sec, pct:MOWL_MID[c.z], z:c.z, pos:mwPos(row,c.label),
-                      cue:mwAscii(blk+' - '+name+(c.label?' - '+c.label:''))});
+                      cue:mwAscii(blk+' - '+name+(c.label?' - '+c.label:'')), sid:seg.id, blk:blk});
           info.n++;
         });
         total+=ride;
       });
     });
-    return {steps:steps, songs:songs, total:total, errors:errors};
+    // the cool-down (a trailing run of 'cool' steps) becomes one Z1 interval: MOWL's Cooldown
+    var cIdx=-1, cSec=0;
+    for(var ci=steps.length-1; ci>=0 && steps[ci].sid==='cool'; ci--){ cIdx=ci; cSec+=steps[ci].sec; }
+    var cooldown=0;
+    if(cIdx>=0){
+      steps.splice(cIdx, steps.length-cIdx, {sec:cSec, pct:MOWL_MID[1], z:1, pos:'Seated',
+        cue:mwAscii(steps[cIdx].blk+' - Cooldown, one interval (cues on the Build Sheet)'), sid:'cool', blk:steps[cIdx].blk});
+      cooldown=cSec;
+    }
+    return {steps:steps, songs:songs, total:total, errors:errors, cooldown:cooldown};
   }
   // Tabula-shaped JSON: an array of two lattice tables, each row a list of cells.
   function mowlJson(b,name){
@@ -1359,7 +1371,7 @@
     var flagged=b.songs.filter(function(s){return s.warn.length&&!s.err;}).length;
     if(!b.songs.length){ mowlSum.className='mw-sum bad'; mowlSum.textContent='The sheet has no songs yet.'; }
     else if(b.errors){ mowlSum.className='mw-sum bad'; mowlSum.textContent=b.errors+' song'+(b.errors>1?'s need':' needs')+' fixing before the file can be saved (marked below).'; }
-    else { mowlSum.className='mw-sum'; mowlSum.textContent=b.steps.length+' intervals · '+fmtLen(b.total)+' · '+b.songs.length+' songs'+(flagged?' · '+flagged+' flagged':' · all songs timed'); }
+    else { mowlSum.className='mw-sum'; mowlSum.textContent=b.steps.length+' intervals · '+fmtLen(b.total)+' · '+b.songs.length+' songs'+(b.cooldown?' · cool-down as one '+fmtLen(b.cooldown)+' Cooldown':'')+(flagged?' · '+flagged+' flagged':' · all songs timed'); }
     var html='';
     b.songs.forEach(function(s,i){
       if(s.sec) html+='<div class="mw-sec">'+esc(s.sec)+'</div>';

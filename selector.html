@@ -388,7 +388,7 @@
     <div class="add-hint" id="defHint" style="margin-top:8px;"></div>
     <ul class="panel-rules">
       <li>Every block's RPM is capped at the value above (default <b>110</b>) — songs may run faster; the legs never do.</li>
-      <li>Only <b>Climb</b> ships as half-beat by default; switch any block to half-beat for fast tracks.</li>
+      <li><b>Endurance / Tempo</b> and <b>Climb</b> ship as half-beat; switch any block's ride mode to suit its tracks.</li><li>Never stand above <b>85 RPM</b>: on a 1:1 song faster than 85 BPM, efforts stay seated.</li>
       <li>Crossfade <b>10 s</b>, gapless, Automix off.</li>
     </ul>
   </details>
@@ -455,11 +455,11 @@
   /* ---- Defaults: beat-locked. mode 'beat' = RPM=BPM, 'half' = RPM=BPM/2 ---- */
   var DEFAULTS = {
     blocks:{
-      warmup:   {lo:95,  hi:110, mode:"beat"},
-      endurance:{lo:100, hi:110, mode:"beat"},
+      warmup:   {lo:75,  hi:90,  mode:"beat"},
+      endurance:{lo:120, hi:150, mode:"half"},
       climb:    {lo:120, hi:130, mode:"half"},
-      sprints:  {lo:100, hi:110, mode:"beat"},
-      finisher: {lo:100, hi:110, mode:"beat"},
+      sprints:  {lo:80,  hi:110, mode:"beat"},
+      finisher: {lo:75,  hi:110, mode:"beat"},
       cooldown: {lo:80,  hi:100, mode:"beat"}
     },
     rpmCap:110
@@ -480,6 +480,27 @@
 
   /* ---- Settings (persisted) ---- */
   var SKEY='s60_settings_v2', DKEY='s60_mydefaults_v1';
+  /* s60-v71: Ralph's Oct 29 2026 bands became the factory values. Once per device, any block still
+     holding the OLD factory values (in the live settings or in saved defaults) moves to the new ones;
+     a band changed by hand is left alone. */
+  (function upgradeBands(){
+    var FLAG='s60_bands_2026_10_29';
+    try{ if(localStorage.getItem(FLAG)) return; }catch(e){ return; }
+    var OLD={warmup:{lo:95,hi:110,mode:'beat'},endurance:{lo:100,hi:110,mode:'beat'},
+             sprints:{lo:100,hi:110,mode:'beat'},finisher:{lo:100,hi:110,mode:'beat'}};
+    [SKEY,DKEY].forEach(function(key){
+      try{
+        var r=localStorage.getItem(key); if(!r) return;
+        var s=JSON.parse(r), changed=false;
+        if(s&&s.blocks) Object.keys(OLD).forEach(function(k){
+          var b=s.blocks[k], o=OLD[k];
+          if(b&&+b.lo===o.lo&&+b.hi===o.hi&&b.mode===o.mode){ s.blocks[k]=JSON.parse(JSON.stringify(DEFAULTS.blocks[k])); changed=true; }
+        });
+        if(changed) localStorage.setItem(key,JSON.stringify(s));
+      }catch(e){}
+    });
+    try{ localStorage.setItem(FLAG,'1'); }catch(e){}
+  })();
   var settings = loadSettings();
   function mergeOverFactory(s){
     var out=deepCopy(DEFAULTS);

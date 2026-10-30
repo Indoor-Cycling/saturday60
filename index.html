@@ -11,6 +11,11 @@
 
   After replacing any file, raise the version on the VERSION line near the top of sw.js so installed
   copies notice the change.
+
+  s60-v72: the three PDF buttons add the running version to their address
+  (Saturday60_SystemManual.pdf?v=s60-v72). A phone can keep a downloaded PDF
+  under its address and keep handing that copy back; a new address at every
+  update means it always fetches the current file. The file names don't change.
   ============================================================================
 -->
 <!DOCTYPE html>
@@ -282,9 +287,25 @@
     if(!window.S60 || !S60.runningVersion){ verEl.textContent = 'Version — (not installed yet)'; return; }
     S60.runningVersion(function(v){
       verEl.textContent = v ? 'Version ' + v : 'Version — (still starting up)';
+      stampPdfLinks(v);
     });
   }
   setTimeout(showVersion, 800);
+
+  /* s60-v72: each PDF button points at …pdf?v=<running version>. Phones can hold on to
+     a PDF they downloaded under its address (one kept the 21 Sep rev. 32 manual for
+     five weeks); a fresh address at every update makes them fetch the current file. */
+  function stampPdfLinks(v){
+    if(!v) return;
+    var links = document.querySelectorAll('a.dpdf');
+    for(var i = 0; i < links.length; i++){
+      var base = links[i].getAttribute('href').split('?')[0];
+      links[i].setAttribute('href', base + '?v=' + encodeURIComponent(v));
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    if(window.S60 && S60.runningVersion) S60.runningVersion(stampPdfLinks);
+  });
 
   checkBtn.addEventListener('click', function(){
     if(!window.S60 || !S60.checkForUpdate){ verEl.textContent = 'Version — (not installed yet)'; return; }

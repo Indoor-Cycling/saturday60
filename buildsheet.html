@@ -1231,6 +1231,24 @@
         default:       return 'Fast-Flat';
       }
     }
+    // s60-v73: G and H carry the song's Zone and RPE (they were Gear M3 / Gear M3i).
+    // Zones come from the timed cues (every "Z#" in the Intervals cell), else from Power.
+    // RPE follows the RPE card: Z1 1-2 · Z2 3-4 · Z3 5 · Z4 6-7 · Z5 8 · Z6 9 · Z7 10.
+    // Ranges use an en dash so Excel never reads "3-8" as a date.
+    function xlZoneRpe(row){
+      var zs=[], m, rx=/\bZ([1-7])\b/g, s=String(row.intervals||'');
+      while((m=rx.exec(s))) zs.push(+m[1]);
+      if(!zs.length){
+        s=String(row.power||''); rx.lastIndex=0;
+        while((m=rx.exec(s))) zs.push(+m[1]);
+        if(!zs.length && /\bSS\b/.test(s)) zs.push(4);
+      }
+      if(!zs.length) return ['',''];
+      var lo=Math.min.apply(null,zs), hi=Math.max.apply(null,zs);
+      var RLO=[0,1,3,5,6,8,9,10], RHI=[0,2,4,5,7,8,9,10];
+      var a=RLO[lo], b=RHI[hi];
+      return [lo===hi?'Z'+lo:'Z'+lo+'\u2013Z'+hi, a===b?String(a):a+'\u2013'+b];
+    }
     var lines=[], r=2;   // Excel row 2 is the first data row
     data.forEach(function(seg){
       seg.rows.forEach(function(row){
@@ -1239,7 +1257,7 @@
         var rpm = isNaN(bpm) ? '' : Math.min(row.mode==='half'?Math.round(bpm/2):bpm, CAP);
         var cue=(row.intervals||'').trim();
         if((row.drops||'').trim())cue += (cue?'  |  ':'')+'drops '+row.drops.trim();
-        // Paste block B:J — Song | Artist | Runtime | Elapsed | RPM | Gear M3 | Gear M3i | Segment | Cue.
+        // Paste block B:J — Song | Artist | Runtime | Elapsed | RPM | Zone | RPE | Segment | Cue.
         // Pointers (K) are yours and are never pasted over.
         var parts=t.split(' \u2014 ');
         var song=parts[0].trim();
@@ -1249,7 +1267,8 @@
         // sheet's own Sum column. N2 on My Playlist holds the crossfade.
         var eF='=IF(M'+r+'=0,,SUM($M$2:M'+r+')-SUMPRODUCT(--($M$2:M'+r+'>0))'
               +'*TIME(0,0,IF(ISNUMBER($N$2),$N$2,10)))';
-        lines.push([song, artist, padLen(row.len), eF, rpm, '', '', xlSegment(seg,row), cue].join('\t'));
+        var zr=xlZoneRpe(row);
+        lines.push([song, artist, padLen(row.len), eF, rpm, zr[0], zr[1], xlSegment(seg,row), cue].join('\t'));
         r++;
       });
     });

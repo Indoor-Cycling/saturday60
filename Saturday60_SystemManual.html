@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 48 · October 2026<br>
+workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 49 · October 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -162,7 +162,7 @@ The three HTML tools now run as one installed web app at <span class="url">https
     <div class="tsubs" id="subs-s5" hidden>
       <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">16</span></div>
       <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">16</span></div>
-      <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">16</span></div>
+      <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">17</span></div>
       <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">17</span></div>
       <div class="tsub"><a href="#the-three-macros">The three macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">17</span></div>
     </div>
@@ -178,7 +178,7 @@ The three HTML tools now run as one installed web app at <span class="url">https
     </div>
   </div>
   <div class="tgrp flat">
-    <div class="tsec"><span class="tcar sp"></span><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">19</span></div>
+    <div class="tsec"><span class="tcar sp"></span><a href="#s7">7 · DATA, DEVICES AND BACKUP</a><span class="dots"></span><span class="pg" data-pg="s7">20</span></div>
   </div>
   <div class="tgrp flat">
     <div class="tsec"><span class="tcar sp"></span><a href="#s8">8 · TROUBLESHOOTING</a><span class="dots"></span><span class="pg" data-pg="s8">20</span></div>
@@ -222,7 +222,7 @@ cool-down — hold clean clock time.</p>
   <tr><td class="k">TSS Planner<span class="new">REV 47</span></td><td>Scores a class before anyone rides: TSS for the first 60 minutes against your band (65–75, cap 75), a subtotal per segment, ⚠ on any effort longer than its zone can be held, and a builder for hard-set ladders. Reads a whole class from a Build Sheet code (Section 10).</td></tr>
   <tr><td class="k">Build Sheet · no targets<span class="new">REV 34</span></td><td>No longer a separate file. It is now the <b>Hide targets</b> switch on the Build Sheet itself: the same sheet with the Power target and HR guide columns hidden and that width given to Song and Intervals. One sheet, one set of songs, drops and drills — nothing to keep in step and no second storage area to drift.</td></tr>
   <tr><td class="k">Drops Library Editor</td><td>Standalone. Opens a drops .json to view or edit outside the two tools: times in m:ss, drills alongside, merge two libraries, save back out, and <b>Export CSV</b> for a printable copy.<span class="new">REV 21</span></td></tr>
-  <tr><td class="k">Spin Class Pro workbook</td><td>Excel backup and visuals: My Playlist + Intervals → Charts (segment pie, cadence bands, two load curves) and a two-sided fold-up Playlist Print.</td></tr>
+  <tr><td class="k">Spin Class Pro workbook</td><td>Excel backup and visuals: My Playlist + Intervals → Charts (segment pie, cadence bands, peak Zone and peak RPE per song) and a two-sided fold-up Playlist Print.</td></tr>
   <tr><td class="k">Weekly Workflow</td><td>The one-page checklist of the six phases — in the hub’s <b>Documents</b> group, readable in the app with a link back, plus a print-ready PDF that opens in its own window.<span class="new">REV 21</span></td></tr>
   <tr><td class="k">Getting Started<span class="new">REV 37</span></td><td>A one-page sheet for handing the app to another instructor: the address, how to install it on a phone or a computer, what the three tools do, and the half-dozen things worth knowing on day one — chiefly that their data is local to their own device and starts empty. In the hub’s <b>Documents</b> group, with a print-ready PDF and a <b>Copy the link to share</b> button that puts the app’s address on the clipboard, ready to paste into a message. There is nothing to package or download: the web address <i>is</i> the app.</td></tr>
   <tr><td class="k">System Manual<span class="new">REV 25</span></td><td>This document, in the hub’s <b>Documents</b> group — readable in the app, stored for offline use, with a link back and a print-ready PDF beside it. The repository holds both the HTML and the PDF; change the HTML and re-render the PDF from it so the pair never disagree.</td></tr>
@@ -517,7 +517,7 @@ the Elapsed formula is written quote-free.</p>
   <tr><td class="k">D · Runtime</td><td>Zero-padded mm:ss, right-aligned.</td></tr>
   <tr><td class="k">E · Elapsed Time<span class="new">REV 43</span></td><td>A live formula, pasted with the block; empty rows show blank. It subtracts the crossfade once per song, so it reads the same figure as the Build Sheet's Σ — where the next song starts on MOWL's timeline. The crossfade it uses is <b>N2</b> on My Playlist (default 10), labelled in N1; that is the only place to change it.</td></tr>
   <tr><td class="k">F · RPM</td><td>The beat-locked cadence.</td></tr>
-  <tr><td class="k">G · Gear (M3) / H · Gear (M3i)</td><td>Blanked on paste — re-pick from the 1–24 and 1–72 dropdowns.</td></tr>
+  <tr><td class="k">G · Zone / H · RPE<span class="new">REV 49</span></td><td>Filled by the export from each song’s timed cues: the zones the song uses (<code>Z2–Z5</code>, or <code>Z1</code> for a one-zone song) and the RPE that goes with them on the RPE card (<code>3–8</code>) — RPE 1–2 = Z1 · 3–4 = Z2 · 5 = Z3 · 6–7 = Z4 · 8 = Z5 · 9 = Z6 · 10 = Z7. A song with no timed cues takes its zones from the Power column. The ranges use an en dash so Excel never turns them into dates. These two columns replaced Gear (M3) and Gear (M3i) in s60-v73; the workbook and its .bas changed with them.</td></tr>
   <tr><td class="k">I · Segment</td><td>Warm-up · Fast-Flat · Seated/Standing-Climb (by position) · Sprint/Standing-Attack (by position) · Recovery (bridges) · Cool-down.</td></tr>
   <tr><td class="k">J · Cue Notes</td><td>Intervals text, then " | drops 1:05, 2:47" when the row has drop times. Colour coding is never written here.</td></tr>
   <tr><td class="k">K · Pointers</td><td>NEVER pasted over — yours for coaching phrases.</td></tr>
@@ -532,7 +532,7 @@ the sheet — that is the one place the two files have to agree exactly.</p>
 <b>Covered</b>. Leave a song blank and it uses its headline RPM.</p>
 <table>
   <tr><td class="k">One slot per cadence</td><td>Order and repetition don't matter — only total seconds at each RPM. A Tabata of 8 × (20s on / 10s off) is two slots: 160s at the work cadence, 80s at the recovery cadence.</td></tr>
-  <tr><td class="k">What it drives</td><td>Avg RPM feeds the M3 / M3i Load Curves, and each interval's seconds land in its own cadence band.</td></tr>
+  <tr><td class="k">What it drives</td><td>Avg RPM shows on My Playlist (column L), and each interval's seconds land in its own cadence band. The two curves on Charts plot each song's peak Zone and peak RPE from columns G and H.<span class="new">REV 49</span></td></tr>
   <tr><td class="k">Keyed to row position</td><td>Intervals belong to a row, not a title. New week, new songs — clear them (ClearPlaylist does).</td></tr>
 </table>
 
@@ -546,7 +546,7 @@ doubles data entry, and normalized power computed from interval blocks overstate
 
 <h3 id="playlist-print-two-sides">Playlist Print — two sides</h3>
 <table>
-  <tr><td class="k">Page 1</td><td>Ride detail, three lines per song: title (with Pointer), a stats strip — RPM, both gears, runtime, elapsed, segment — then the cue.</td></tr>
+  <tr><td class="k">Page 1</td><td>Ride detail, three lines per song: title (with Pointer), a stats strip — RPM, Zone, RPE, runtime, elapsed, segment — then the cue.<span class="new">REV 49</span></td></tr>
   <tr><td class="k">Page 2</td><td>Song and artist in larger type. Print double-sided, flip on the LONG edge, and the same songs land on the same half front and back.</td></tr>
   <tr><td class="k">Geometry</td><td>0.25in margin | 3.66in panel | 0.60in gutter | 3.66in panel | 0.25in margin. The 4.25in fold falls inside the empty gutter. Top/bottom 0.75in, header/footer 0.3in. Content sits just under the page so fit-to-page never shrinks it — a shrink would slide the fold off position.</td></tr>
   <tr><td class="k">Empty slots</td><td>Dropped entirely. 24 songs prints at about 13pt titles, 19 at about 16pt, 12 at the 26pt ceiling.</td></tr>
@@ -556,12 +556,12 @@ doubles data entry, and normalized power computed from interval blocks overstate
 <h3 id="the-three-macros">The three macros</h3>
 <table>
   <tr><td class="k">Install (once)</td><td>Save as .xlsm, enable the Developer tab, Visual Basic → remove any older SaturdaySixty module → File › Import File… → the .bas. Close and save.</td></tr>
-  <tr><td class="k">Weekly rhythm</td><td><b>ClearPlaylist</b> → paste at B2 → pick the gears → <b>FormatPlaylistPrint</b> → print.</td></tr>
+  <tr><td class="k">Weekly rhythm</td><td><b>ClearPlaylist</b> → paste at B2 → <b>FormatPlaylistPrint</b> → print. Zone and RPE arrive with the paste.<span class="new">REV 49</span></td></tr>
   <tr><td class="k">1 · ClearPlaylist</td><td>Wipes only last week: paste block (B2:J33), Pointers (K2:K33), intervals (Intervals C2:R33) — all keyed to row position. Formulas, charts, drills and the drops library untouched. Runs RepairFormulas silently.</td></tr>
   <tr><td class="k">2 · FormatPlaylistPrint</td><td>Counts songs, splits them evenly, drops empty slots, scales rows and fonts, builds both pages, resets page breaks, sets margins and print area.</td></tr>
   <tr><td class="k">3 · RepairFormulas</td><td>Rebuilds A, E, L, M on My Playlist and the Intervals formulas, and seeds the crossfade setting in N1/N2 if it is missing (never overwriting a figure you have set). Columns A, L and M sit OUTSIDE the paste block, so if a row loses them they never return on their own — while E is inside and gets rewritten by every paste. The result is an Elapsed formula with no input: no error, just a blank cell on that row.</td></tr>
   <tr><td class="k">Why the .bas is ASCII</td><td>The VBA editor imports as Windows-1252; a UTF-8 dash arrives as strange characters, so special characters are built with ChrW().</td></tr>
-  <tr><td class="k">Elapsed and the crossfade<span class="new">REV 43</span></td><td>Elapsed now subtracts the crossfade, so the workbook, the Build Sheet and MOWL all give the same figure. It did not before: its total ran 10 s per transition long — about 3:40 on a 23-song class. Both sides had to change, because the Build Sheet's <b>Export for Excel</b> writes column E and would otherwise put the old formula straight back over a repaired sheet. Update the .bas <i>and</i> the Build Sheet together, or the bug returns on the next paste. Charts and Intervals were never affected — they read Avg RPM, gears and per-song runtime, not Elapsed.</td></tr>
+  <tr><td class="k">Elapsed and the crossfade<span class="new">REV 43</span></td><td>Elapsed now subtracts the crossfade, so the workbook, the Build Sheet and MOWL all give the same figure. It did not before: its total ran 10 s per transition long — about 3:40 on a 23-song class. Both sides had to change, because the Build Sheet's <b>Export for Excel</b> writes column E and would otherwise put the old formula straight back over a repaired sheet. Update the .bas <i>and</i> the Build Sheet together, or the bug returns on the next paste. Charts and Intervals were never affected — they read Avg RPM, the G and H columns (gears then, Zone and RPE since s60-v73) and per-song runtime, not Elapsed.</td></tr>
 </table>
 
 <div class="bar b6" id="s6">6 · THE TIMING AND PHRASE MATH</div>
@@ -730,7 +730,7 @@ device you typed them on and never leave it. The app has no server and asks for 
 
 <p class="foot">
 Quick values: crossfade 10 s · drift 0.43 s/song · RPM cap 110 · FTP 158 W and Max HR 164 (both editable) · TSS ~65–75 · bar = 240 ÷ BPM ·
-current app version s60-v71.<br>
+current app version s60-v73.<br>
 The app: <span class="url">https://indoor-cycling.github.io/saturday60/</span> — index.html · selector.html ·
 buildsheet.html · drops.html · TSS_Planner.html · Saturday60_WeeklyWorkflow.html and .pdf · Saturday60_SystemManual.html and .pdf · Saturday60_GettingStarted.html and .pdf · FTP_5min_Test.html · RPE_Watts_Card_Editable.html · RPE_Watts_Card_YMCA_Editable.html · app.js · sw.js ·
 manifest.webmanifest · icons/ · README.md.
@@ -816,7 +816,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Add key (drop colours) <span class="ip"><a href="#adding-your-own-keys">6</a></span></div>
   <div class="ie">Android, installing on <span class="ip"><a href="#s9">22</a></span></div>
   <div class="ia">B</div>
-  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#totals-and-buttons">11</a>, <a href="#s7">19</a></span></div>
+  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#totals-and-buttons">11</a>, <a href="#s7">20</a></span></div>
   <div class="ie">Bands, factory values <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a></span></div>
   <div class="ie">Bar calculator <span class="ip"><a href="#the-bar-calculator">3</a></span></div>
   <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">3</a>, <a href="#bars-and-phrase-boundaries">19</a></span></div>
@@ -825,7 +825,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Build Sheet <span class="ip"><a href="#s1">2</a>, <a href="#s3">7</a></span></div>
   <div class="ia">C</div>
   <div class="ie">Correction factor (5-min, 15%) <span class="ip"><a href="#ftp-test">25</a></span></div>
-  <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">16</a></span></div>
+  <div class="ie">Cadence bands <span class="ip"><a href="#cadence-bands-not-power-zones">17</a></span></div>
   <div class="ie">Camelot and key codes <span class="ip"><a href="#s4">12</a>, <a href="#s8">20</a></span></div>
   <div class="ie">Chosic CSV <span class="ip"><a href="#s4">12</a></span></div>
   <div class="ie">Clock, ride vs MOWL <span class="ip"><a href="#per-song-rows">8</a>, <a href="#fractional-drift">18</a></span></div>
@@ -878,7 +878,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">MOWL import file <span class="ip"><a href="#mowl-import-file">13</a>, <a href="#s8">20</a></span></div>
   <div class="ie">MOWL Session Designer <span class="ip"><a href="#s4">12</a>, <a href="#getting-the-ride-in">16</a></span></div>
   <div class="ia">O</div>
-  <div class="ie">Offline, working <span class="ip"><a href="#s7">19</a>, <a href="#s9">22</a></span></div>
+  <div class="ie">Offline, working <span class="ip"><a href="#s7">20</a>, <a href="#s9">22</a></span></div>
   <div class="ia">P</div>
   <div class="ie">Power &amp; testing <span class="ip"><a href="#s10">25</a></span></div>
   <div class="ie">Power zones (% of FTP) <span class="ip"><a href="#rpe-watts-cards">25</a></span></div>
@@ -889,7 +889,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">17</a></span></div>
   <div class="ie">Power targets <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">8</a></span></div>
   <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
-  <div class="ie">Privacy <span class="ip"><a href="#s7">19</a>, <a href="#privacy">24</a></span></div>
+  <div class="ie">Privacy <span class="ip"><a href="#s7">20</a>, <a href="#privacy">24</a></span></div>
   <div class="ia">R</div>
   <div class="ie">RPE + Watts cards <span class="ip"><a href="#rpe-watts-cards">25</a></span></div>
   <div class="ie">Refresh targets <span class="ip"><a href="#ftp-and-max-hr">8</a></span></div>
@@ -903,7 +903,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Rollback bundle <span class="ip"><a href="#rollback-bundles">23</a></span></div>
   <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">23</a>, <a href="#rollback-bundles">23</a></span></div>
   <div class="ia">S</div>
-  <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#s7">19</a></span></div>
+  <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#s7">20</a></span></div>
   <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
   <div class="ie">Segments, in MOWL <span class="ip"><a href="#mowl-import-file">13</a></span></div>
   <div class="ie">Sections, structure of <span class="ip"><a href="#structure">7</a></span></div>
@@ -913,13 +913,13 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Song length <span class="ip"><a href="#song-length">4</a></span></div>
   <div class="ie">Spin Class Pro workbook <span class="ip"><a href="#s1">2</a>, <a href="#s5">15</a></span></div>
   <div class="ie">Spotify export <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#s4">12</a></span></div>
-  <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">19</a></span></div>
+  <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">20</a></span></div>
   <div class="ie">Switching two sections <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ia">T</div>
   <div class="ie">Tap-tester <span class="ip"><a href="#the-tap-tester">4</a></span></div>
   <div class="ie">Targets, Power and HR <span class="ip"><a href="#ftp-and-max-hr">8</a>, <a href="#hiding-the-targets">12</a></span></div>
   <div class="ie">Timed cues (Intervals) <span class="ip"><a href="#per-song-rows">8</a>, <a href="#mowl-import-file">13</a></span></div>
-  <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#s7">19</a></span></div>
+  <div class="ie">Transfer codes <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#s7">20</a></span></div>
   <div class="ie">Troubleshooting <span class="ip"><a href="#s8">20</a></span></div>
   <div class="ie">TSS band (65–75) <span class="ip"><a href="#tss-planner">26</a></span></div>
   <div class="ie">TSS Planner <span class="ip"><a href="#s1">2</a>, <a href="#tss-planner">26</a></span></div>
@@ -931,6 +931,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ia">W</div>
   <div class="ie">Weekly Workflow <span class="ip"><a href="#s1">2</a></span></div>
   <div class="ia">Z</div>
+  <div class="ie">Zone and RPE, in the workbook <span class="ip"><a href="#getting-the-ride-in">16</a></span></div>
   <div class="ie">Zone table <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">8</a></span></div>
 </div>
 

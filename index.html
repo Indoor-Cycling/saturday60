@@ -12,7 +12,11 @@
   After replacing any file, raise the version on the VERSION line near the top of sw.js so installed
   copies notice the change.
 
-  s60-v72: the three PDF buttons add the running version to their address
+  s60-v78: a fourth document, How to Ask Claude for a Class, joins the group
+  (Saturday60_HowToRequestAClass.html and .pdf), between the System Manual and
+  Getting Started.
+
+  s60-v72: the PDF buttons add the running version to their address
   (Saturday60_SystemManual.pdf?v=s60-v72). A phone can keep a downloaded PDF
   under its address and keep handing that copy back; a new address at every
   update means it always fetches the current file. The file names don't change.
@@ -69,7 +73,7 @@
   /* The catalogue is a part of the Build Sheet rather than a tool of its own,
      so it is named as one on the card instead of pretending otherwise. */
   .card .in{display:block;margin-top:5px;font-size:11px;color:var(--dim);font-weight:600;letter-spacing:.04em;}
-  /* The three documents as one short group. They were three full cards, which
+  /* The documents as one short group. They were three full cards, which
      pushed the tools and the install panel a screen further down on a phone. */
   .docs{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--doc);
         border-radius:13px;padding:12px 14px 11px;margin-bottom:10px;
@@ -191,6 +195,12 @@
       <span class="dd">Every tool, the timing maths, and what to do when something looks wrong</span>
     </a>
     <a class="dpdf" href="Saturday60_SystemManual.pdf" target="_blank" rel="noopener" title="Open the print-ready PDF in its own window">PDF</a>
+
+    <a class="doc" href="Saturday60_HowToRequestAClass.html">
+      <span class="dn">How to Ask Claude for a Class</span>
+      <span class="dd">The ways to request a class, every dial and its default, sample requests</span>
+    </a>
+    <a class="dpdf" href="Saturday60_HowToRequestAClass.pdf" target="_blank" rel="noopener" title="Open the print-ready PDF in its own window">PDF</a>
 
     <a class="doc" href="Saturday60_GettingStarted.html">
       <span class="dn">Getting Started</span>

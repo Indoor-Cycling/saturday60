@@ -274,7 +274,8 @@
     <button title="Save the class as a MOWL workout import file (.json): every timed interval cue becomes a MOWL interval" id="mowlBtn">Export for MOWL</button>
     <button title="Rescale the Power and HR cells that still hold the shipped wording to your FTP and Max HR. Anything you have typed yourself is left alone." id="tgtBtn">Refresh targets</button>
     <button title="Hide the Power target and HR guide columns and give that width to Song and Intervals. Nothing is deleted — the wording comes back when you show them again." id="noTgtBtn">Hide targets</button>
-    <button title="Discard this sheet and start again from the default Build Sheet" id="resetBtn">Reset to defaults</button>
+    <button title="Discard this sheet and start again from the default six-block Build Sheet: Warm-Up, Endurance / Tempo, Hill Climb, Sprints, Finisher, Cool-Down" id="resetBtn">Reset to six blocks</button>
+    <button title="Discard this sheet and start again from the eight-segment Build Sheet: the six blocks plus a recovery bridge after Endurance / Tempo and after the Hill Climb" id="reset8Btn">Reset to eight segments</button>
     <button title="Empty the song titles, lengths and drop times, keeping every other setting" id="clearSongsBtn">Clear songs &amp; drops only</button>
     <span class="drift-ctl">Drift <input id="driftIn" inputmode="decimal" title="Average fractional seconds each song runs past its whole-second length. Applied to ◉ ride times only; Σ stays matched to MOWL."> s/song
       <button class="mini" id="driftCalc" type="button" title="Set the drift: use the typical figure, or work it out from a real ride">Set…</button></span>
@@ -446,59 +447,81 @@
   var POS=['Seat','Stand','S-St'];
   var MODES=[['beat','1:1'],['half','½']];
 
+  /* s60-v77: the factory sheet is the six-block Saturday 60 of the printed class sheet
+     (Ralph, 4 Nov 2026). "Reset to eight segments" adds the two recovery bridges below.
+     Times are the slots in the ride; a ~ marks a window the music decides. */
   var DEFAULTS=[
     {id:'warmup',color:'var(--warm)',title:'WARM-UP — fixed clock',time:'0:00 – 10:00',
-     note:'Clean clock block. 2–4 songs, 75–90 BPM, ridden on the beat. Build resistance gently; two 30-second pickups in the final song.',
+     note:'Easy spin, wake the legs with a couple of pickups · RPE 2–3. 3 songs, 75–90 BPM ridden on the beat, all seated. Build Z1 → Z2 → Z3; accelerate on the choruses and finish on a lift.',
      rows:[
-       {role:'warmup',song:'',ph:'e.g. Keep Me Honest',bpm:'80',mode:'beat',pos:'Seat',intervals:'1 × steady base (whole song)',power:'Z1→Z2 · 80–110 W',hr:'< 110',drops:''},
-       {role:'warmup',song:'',ph:'e.g. Let’s Go',bpm:'90',mode:'beat',pos:'Seat',intervals:'2 × 0:30 pickups on chorus, rest base',power:'Z2 · 100–118 W',hr:'105–120',drops:''}
+       {role:'warmup',song:'',ph:'e.g. High Hopes',bpm:'82',mode:'beat',pos:'Seat',intervals:'easy spin, find the beat; accelerate on the choruses',power:'Z1→Z2 · 80–118 W',hr:'< 115',drops:''},
+       {role:'warmup',song:'',ph:'e.g. Hall of Fame',bpm:'85',mode:'beat',pos:'Seat',intervals:'2–3 × pickups on the choruses, base between',power:'Z2→Z3 · 88–142 W',hr:'100–125',drops:''},
+       {role:'warmup',song:'',ph:'e.g. Burn',bpm:'87',mode:'beat',pos:'Seat',intervals:'lifts on the choruses; finish high',power:'Z3→Z4 · 120–166 W',hr:'115–135',drops:''}
      ]},
-    {id:'seg1',color:'var(--seg1)',title:'SEGMENT 1 — ROLLING OPENER (endurance · mixed, aerobic-heavy)',time:'10:00 – ~24:00',
-     note:'≈14 min, 3–4 songs. Work efforts split on drops/choruses; segment ends when its last song ends. The aerobic engine of the ride.',
+    {id:'seg1',color:'var(--seg1)',title:'ENDURANCE / TEMPO BUILD — half-time',time:'10:00 – ~20:00',
+     note:'Steady, comfortably hard — settle into rhythm · RPE 4–5. 2–3 songs, 120–150 BPM ridden half-time (60–75 RPM): tempo verses, a gear on the pre-chorus, stand the choruses as steady standing climbs. End on a ladder up.',
      rows:[
-       {role:'tempo',song:'',ph:'tempo opener',bpm:'130',mode:'half',pos:'Seat',intervals:'1 × steady tempo, add gear each verse',power:'Z3 · 120–135 W',hr:'115–128',drops:''},
-       {role:'climb',song:'',ph:'climb · e.g. Titanium',bpm:'126',mode:'half',pos:'S-St',intervals:'3 × climb efforts, one per chorus; stand final chorus',power:'SS · 135–150 W',hr:'125–138',drops:''},
-       {role:'tempo',song:'',ph:'tempo flush',bpm:'128',mode:'half',pos:'Seat',intervals:'1 × steady, ease gear off after 1st chorus',power:'Z2–Z3 · 110–130 W',hr:'115–125',drops:''}
+       {role:'tempo',song:'',ph:'tempo opener · e.g. Maneater',bpm:'132',mode:'half',pos:'S-St',intervals:'tempo verses; stand the choruses',power:'Z2→Z4 · 88–166 W',hr:'110–145',drops:''},
+       {role:'tempo',song:'',ph:'tempo builder · e.g. HandClap',bpm:'140',mode:'half',pos:'S-St',intervals:'tempo verses; stand the choruses',power:'Z3→Z4 · 120–166 W',hr:'115–145',drops:''},
+       {role:'tempo',song:'',ph:'ladder up · e.g. Ex’s & Oh’s',bpm:'140',mode:'half',pos:'S-St',intervals:'stand the choruses; last chorus up a zone',power:'Z3→Z5 · 120–190 W',hr:'120–150',drops:''}
      ]},
-    {id:'br1',color:'var(--bridge)',title:'RECOVERY BRIDGE',time:'~24:00 – 26:00 (2:00 fixed)',
-     note:'One mellow track, 80–100 BPM on the beat, light gear. Shake out, drink, reset. HR drifts toward Z1–Z2.',
+    {id:'seg2',color:'var(--seg2)',title:'HILL CLIMB — block 2 · swaps weekly',time:'~20:00 – ~32:00',
+     note:'Heavy resistance, low cadence, watts climbing · RPE 6–7. 3 songs, 120–130 BPM ridden half-time (60–65 RPM). This week’s variant: Pyramid · Single Long Climb · Climb + Surge. A gear and a zone up on the choruses, stand the big drops; the top of the block can reach Z5.',
      rows:[
-       {role:'bridge',song:'',ph:'mellow bridge track',bpm:'90',mode:'beat',pos:'Seat',intervals:'1 × light spin (2:00)',power:'Z1 · < 87 W',hr:'falling',drops:''}
+       {role:'climb',song:'',ph:'base climb · e.g. Believer',bpm:'125',mode:'half',pos:'S-St',intervals:'base climb; a gear and a zone up on each chorus',power:'Z3→Z4 · 120–166 W',hr:'120–145',drops:''},
+       {role:'climb',song:'',ph:'climb · e.g. Wake Me Up',bpm:'124',mode:'half',pos:'S-St',intervals:'climb the choruses; stand the drops',power:'Z3→Z4 · 120–166 W',hr:'125–148',drops:''},
+       {role:'climb',song:'',ph:'the top · e.g. A Sky Full of Stars',bpm:'125',mode:'half',pos:'S-St',intervals:'the top: stand the big drop',power:'Z4→Z5 · 144–190 W',hr:'135–155',drops:''}
      ]},
-    {id:'seg2',color:'var(--seg2)',title:'SEGMENT 2 — THE GRINDER (climb · strength interleave)',time:'26:00 – ~40:00',
-     note:'≈14 min, 3–4 songs. Climb–sprint–climb inside one arc: the MOWL signature. Resistance steps up each chorus; sprint surges fire on the drops.',
+    {id:'seg3',color:'var(--seg3)',title:'SPRINTS — block 3 · swaps weekly',time:'~32:00 – ~42:00',
+     note:'Short max bursts — watts spike, then recover · RPE 8–9. 3 songs, 80–110 BPM ridden on the beat (cap 110), seated. Sprint Pyramid 0:15 · 0:30 · 0:45 · 0:30 · 0:15 on the choruses and drops, with at least equal easy spinning after each.',
      rows:[
-       {role:'climb',song:'',ph:'climb · e.g. Abracadabra',bpm:'126',mode:'half',pos:'Seat',intervals:'3 × gear step-ups, one per chorus',power:'SS · 135–150 W',hr:'125–138',drops:''},
-       {role:'sprint',song:'',ph:'sprint · e.g. Bangarang',bpm:'110',mode:'beat',pos:'Seat',intervals:'3–4 × 0:15–0:20 surges on drops, easy between',power:'Z5 bursts · 167 W +',hr:'to 148+',drops:''},
-       {role:'climb',song:'',ph:'long climb',bpm:'125',mode:'half',pos:'S-St',intervals:'2 × long climb efforts; STAND final chorus',power:'SS→Z4 · 140–158 W',hr:'131–145',drops:''}
+       {role:'sprint',song:'',ph:'sprints 1–2 · e.g. Rolling in the Deep',bpm:'105',mode:'beat',pos:'Seat',intervals:'sprint 1 (0:15) and sprint 2 (0:30) on the choruses',power:'Z2→Z5 · 88–190 W',hr:'to 150',drops:''},
+       {role:'sprint',song:'',ph:'sprints 3–4 · e.g. Higher Love',bpm:'104',mode:'beat',pos:'Seat',intervals:'sprint 3 (0:45) on the big drop, sprint 4 (0:30)',power:'Z2→Z5 · 88–190 W',hr:'to 155',drops:''},
+       {role:'sprint',song:'',ph:'sprint 5 · e.g. Valerie',bpm:'106',mode:'beat',pos:'Seat',intervals:'sprint 5 (0:15) on the last chorus',power:'Z2→Z5 · 88–190 W',hr:'peak',drops:''}
      ]},
-    {id:'br2',color:'var(--bridge)',title:'RECOVERY BRIDGE',time:'~40:00 – 42:00 (2:00 fixed)',
-     note:'Same recipe as Bridge 1. Full spin-down — Segment 3 needs fresh legs.',
+    {id:'seg4',color:'var(--seg4)',title:'MIXED TERRAIN FINISHER',time:'~42:00 – ~54:00',
+     note:'Rolling hills — climb and flat take turns, song by song · RPE 5–7. Climb songs 120–126 BPM ridden half-time; flat songs 75–110 BPM on the beat with seated surges. Finish at intensity.',
      rows:[
-       {role:'bridge',song:'',ph:'mellow bridge track',bpm:'90',mode:'beat',pos:'Seat',intervals:'1 × light spin (2:00)',power:'Z1 · < 87 W',hr:'falling',drops:''}
+       {role:'climb',song:'',ph:'climb · e.g. Don’t Start Now',bpm:'124',mode:'half',pos:'S-St',intervals:'climb the choruses; stand the last one',power:'Z3→Z4 · 120–166 W',hr:'125–145',drops:''},
+       {role:'sprint',song:'',ph:'flat · e.g. Yeah!',bpm:'105',mode:'beat',pos:'Seat',intervals:'flat on the beat; seated surges on the choruses',power:'Z2→Z5 · 88–190 W',hr:'120–150',drops:''},
+       {role:'climb',song:'',ph:'climb · e.g. Hey Brother',bpm:'125',mode:'half',pos:'S-St',intervals:'climb; STAND the final drop, finish high',power:'Z4→Z5 · 144–190 W',hr:'140–155',drops:''}
      ]},
-    {id:'seg3',color:'var(--seg3)',title:'SEGMENT 3 — THE CHALLENGE (high-intensity sprint)',time:'42:00 – ~50:00',
-     note:'≈8 min. Sprint-forward. Every effort fires on a drop.',
+    {id:'cool',color:'var(--cool)',title:'COOL-DOWN — fixed clock',time:'54:00 – 60:00',
+     note:'Bring it back down, light stretch on the bike · RPE 2–1. 2 songs stepping 100 → 80 BPM, ridden on the beat down the staircase. Gear off; stretch cue in the final minute.',
      rows:[
-       {role:'sprint',song:'',ph:'sprint pyramid track',bpm:'105',mode:'beat',pos:'Seat',intervals:'0:15 / 0:20 / 0:30 / 0:20 / 0:15 on successive drops',power:'Z5 · 167–190 W',hr:'to 150+',drops:''},
-       {role:'climb',song:'',ph:'punchy climb',bpm:'125',mode:'half',pos:'Stand',intervals:'2 × 1:00 standing climb, chorus-timed',power:'Z4 · 150–166 W',hr:'135–148',drops:''},
-       {role:'sprint',song:'',ph:'final sprint track',bpm:'108',mode:'beat',pos:'Seat',intervals:'Best effort on the LAST drop — empty the tank',power:'Z5+ · max safe',hr:'peak',drops:''}
-     ]},
-    {id:'seg4',color:'var(--seg4)',title:'SEGMENT 4 — FINISHER (victory lap)',time:'~50:00 – ~56:00',
-     note:'The closing arc before the cool-down: rolling surges on the drops, nothing above the cap. Music decides the exact length — watch the Σ.',
-     rows:[
-       {role:'sprint',song:'',ph:'finisher opener',bpm:'104',mode:'beat',pos:'Seat',intervals:'2 × 0:20 surges on drops',power:'Z4 · 150–166 W',hr:'135–148',drops:''},
-       {role:'sprint',song:'',ph:'rolling push',bpm:'108',mode:'beat',pos:'Seat',intervals:'0:30 push on each chorus',power:'Z4–Z5 · 155–175 W',hr:'140–150',drops:''},
-       {role:'climb',song:'',ph:'standing push',bpm:'122',mode:'half',pos:'Stand',intervals:'2 × 1:00 standing, chorus-timed',power:'Z4 · 150–166 W',hr:'138–150',drops:''},
-       {role:'sprint',song:'',ph:'last surge',bpm:'106',mode:'beat',pos:'Seat',intervals:'Best effort on the LAST drop',power:'Z5 · max safe',hr:'peak',drops:''}
-     ]},
-    {id:'cool',color:'var(--cool)',title:'COOL-DOWN — fixed clock',time:'56:00 – 60:00',
-     note:'Clean clock. Songs stepping 100 → 80 BPM, ridden on the beat down the staircase. Light gear; stretch cue in final minute.',
-     rows:[
-       {role:'cool',song:'',ph:'step-down track',bpm:'100',mode:'beat',pos:'Seat',intervals:'1 × easy spin, gear off',power:'Z1–Z2 · < 100 W',hr:'falling',drops:''},
-       {role:'cool',song:'',ph:'landing track',bpm:'80',mode:'beat',pos:'Seat',intervals:'1 × recovery spin + stretch cue',power:'Z1 · < 87 W',hr:'< 110',drops:''}
+       {role:'cool',song:'',ph:'step-down track · e.g. Hey, Soul Sister',bpm:'97',mode:'beat',pos:'Seat',intervals:'1 × easy spin, gear off',power:'Z1–Z2 · < 100 W',hr:'falling',drops:''},
+       {role:'cool',song:'',ph:'landing track · e.g. Sunflower',bpm:'90',mode:'beat',pos:'Seat',intervals:'1 × recovery spin + stretch cue',power:'Z1 · < 87 W',hr:'< 110',drops:''}
      ]}
   ];
+  // The two recovery bridges of an eight-segment class: one after Endurance / Tempo,
+  // one after the Hill Climb. Not in the default sheet; "Reset to eight segments" adds them.
+  var BRIDGES=[
+    {id:'br1',color:'var(--bridge)',title:'RECOVERY BRIDGE',time:'~18:00 – ~20:00',
+     note:'A short TV or game-show theme (or any easy track), 1:30–2:00. Gear off, free easy spin, drink. In MOWL this is the first purple split: drag it below L1.',
+     rows:[
+       {role:'bridge',song:'',ph:'TV theme · e.g. The Big Bang Theory',bpm:'',mode:'beat',pos:'Seat',intervals:'1 × easy spin, gear off, drink',power:'Z1 · < 87 W',hr:'falling',drops:''}
+     ]},
+    {id:'br2',color:'var(--bridge)',title:'RECOVERY BRIDGE',time:'~30:00 – ~32:00',
+     note:'Same recipe as Bridge 1 — full spin-down; the sprints need fresh legs. The second purple split in MOWL.',
+     rows:[
+       {role:'bridge',song:'',ph:'TV theme · e.g. Succession',bpm:'',mode:'beat',pos:'Seat',intervals:'1 × easy spin, fresh legs for the sprints',power:'Z1 · < 87 W',hr:'falling',drops:''}
+     ]}
+  ];
+  // Every stock section the file knows, for refreshing titles and notes, roles and row counts.
+  var ALLDEFS=DEFAULTS.concat(BRIDGES);
+  // The eight-segment sheet: the six blocks, a bridge after Endurance / Tempo and after the
+  // Hill Climb, and the block windows moved to make room for them inside the hour.
+  var EIGHT_TIMES={seg1:'10:00 – ~18:00',seg2:'~20:00 – ~30:00',seg3:'~32:00 – ~42:00'};
+  function eightSheet(){
+    var out=[];
+    deep(DEFAULTS).forEach(function(s){
+      if(EIGHT_TIMES[s.id])s.time=EIGHT_TIMES[s.id];
+      out.push(s);
+      if(s.id==='seg1')out.push(deep(BRIDGES[0]));
+      if(s.id==='seg2')out.push(deep(BRIDGES[1]));
+    });
+    return out;
+  }
 
   function deep(o){return JSON.parse(JSON.stringify(o));}
   var data=load();
@@ -541,7 +564,7 @@
   // Backfill role tags onto rows saved before roles existed
   (function(){
     var defsById={};
-    DEFAULTS.forEach(function(d){defsById[d.id]=d;});
+    ALLDEFS.forEach(function(d){defsById[d.id]=d;});
     // Stock titles, notes and colours are refreshed from this file's own
     // definitions on every load, so template wording improvements reach a sheet
     // that is already saved. A section the rider has renamed or switched carries
@@ -552,7 +575,7 @@
       if(d&&!seg.custom){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
     });
     var defRoles={};
-    DEFAULTS.forEach(function(seg){defRoles[seg.id]=seg.rows.map(function(r){return r.role;});});
+    ALLDEFS.forEach(function(seg){defRoles[seg.id]=seg.rows.map(function(r){return r.role;});});
     data.forEach(function(seg){
       var dr=defRoles[seg.id]||[];
       seg.rows.forEach(function(row,i){
@@ -813,7 +836,7 @@
      and once a cell is yours it stays yours. */
   var TGT_FTP0=158, TGT_HR0=164;
   var STOCK_PW={}, STOCK_HR={};
-  DEFAULTS.forEach(function(seg){seg.rows.forEach(function(r){
+  ALLDEFS.forEach(function(seg){seg.rows.forEach(function(r){
     if(r.power)STOCK_PW[r.power]=1;
     if(r.hr)STOCK_HR[r.hr]=1;
   });});
@@ -1175,7 +1198,7 @@
       if(!confirm('Restore this Build Sheet'+when+'?\n\nThis replaces the ENTIRE sheet on this device. '+
                   'The Section Library and drill catalog are merged, not wiped.'))return;
       data=p.data;
-      var defsById={}; DEFAULTS.forEach(function(d){defsById[d.id]=d;});
+      var defsById={}; ALLDEFS.forEach(function(d){defsById[d.id]=d;});
       data.forEach(function(seg){
         var d=defsById[seg.id];
         if(d&&!seg.custom){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
@@ -1468,7 +1491,7 @@
     if(!confirm('Replace this device\u2019s entire sheet with the one in the code? This cannot be undone.'))return;
     data=p.data;
     // same hygiene as load: refresh titles/notes/colors, backfill roles/lens
-    var defsById={}; DEFAULTS.forEach(function(d){defsById[d.id]=d;});
+    var defsById={}; ALLDEFS.forEach(function(d){defsById[d.id]=d;});
     data.forEach(function(seg){
       var d=defsById[seg.id];
       if(d&&!seg.custom){seg.title=d.title; seg.note=d.note; seg.color=d.color;}
@@ -1908,9 +1931,9 @@
   });
   window.addEventListener('beforeprint',fitHeaders);
 
-  var SHORT={warmup:'W-Up',seg1:'Seg 1',br1:'Br 1',seg2:'Seg 2',br2:'Br 2',seg3:'Seg 3',seg4:'Seg 4',cool:'Cool'};
+  var SHORT={warmup:'W-Up',seg1:'Endurance',br1:'Br 1',seg2:'Climb',br2:'Br 2',seg3:'Sprints',seg4:'Finisher',cool:'Cool'};
   function stockTitle(seg,idx){
-    var d=DEFAULTS.filter(function(g){return g.id===seg.id;})[0];
+    var d=ALLDEFS.filter(function(g){return g.id===seg.id;})[0];
     return d?d.title:('SECTION '+(idx+1));
   }
   function shortName(seg,idx){
@@ -2398,7 +2421,7 @@ var S60XLSX = (function () {
       });
     });
     function destRole(si){
-      var def=DEFAULTS.filter(function(g){return g.id===data[si].id;})[0];
+      var def=ALLDEFS.filter(function(g){return g.id===data[si].id;})[0];
       return (def&&def.rows.length)?def.rows[def.rows.length-1].role:null;
     }
     sheet.querySelectorAll('[data-up]').forEach(function(btn){
@@ -2502,7 +2525,7 @@ var S60XLSX = (function () {
       el.addEventListener('blur',function(){
         if(!(el.value||'').trim()){                 // an empty header helps nobody
           data[si].title=stockTitle(data[si],si);
-          if(DEFAULTS.some(function(g){return g.id===data[si].id;})) delete data[si].custom;
+          if(ALLDEFS.some(function(g){return g.id===data[si].id;})) delete data[si].custom;
           save();
         }
         render(); updateSums();
@@ -2520,7 +2543,7 @@ var S60XLSX = (function () {
         var si=+sel.getAttribute('data-secswap'), v=sel.value;
         sel.value='';
         if(v==='__stock__'){
-          var d=DEFAULTS.filter(function(g){return g.id===data[si].id;})[0];
+          var d=ALLDEFS.filter(function(g){return g.id===data[si].id;})[0];
           if(d){ data[si].title=d.title; data[si].note=d.note; data[si].color=d.color; delete data[si].custom; }
           save(); render(); updateSums(); sheetStatus('Stock title restored ✓');
           return;
@@ -2571,7 +2594,7 @@ var S60XLSX = (function () {
         var seg=data[si];
         var n=seg.rows.filter(function(r){return (r.song&&r.song.trim())||r.len;}).length;
         var msg='Remove "'+shortName(seg,si)+'"'+(n?' and its '+n+' song'+(n===1?'':'s'):'')+'?'+
-          (n?'\n\nTip: tap Save on its header first if you might want it back — Reset to defaults also restores the factory sheet at any time.':'');
+          (n?'\n\nTip: tap Save on its header first if you might want it back — Reset to six blocks (or eight segments) also restores a factory sheet at any time.':'');
         if(!confirm(msg))return;
         data.splice(si,1);
         save(); render();
@@ -2732,7 +2755,7 @@ var S60XLSX = (function () {
        is a leftover from a longer week and is removed, not just blanked — so a
        short playlist gives a short sheet instead of a tail of empty rows. */
     var defCounts={};
-    DEFAULTS.forEach(function(d){defCounts[d.id]=d.rows.length;});
+    ALLDEFS.forEach(function(d){defCounts[d.id]=d.rows.length;});
 
     var offset=0, plan=[], toRemove=0, filledPast=0;
     data.forEach(function(seg){
@@ -2932,8 +2955,13 @@ var S60XLSX = (function () {
   });
 
   document.getElementById('resetBtn').addEventListener('click',function(){
-    if(confirm('Reset the whole template to the default Build Sheet? Your typed songs and drops will be lost.')){
-      data=deep(DEFAULTS); save(); render();
+    if(confirm('Reset the whole sheet to the six-block Build Sheet (Warm-Up, Endurance / Tempo, Hill Climb, Sprints, Finisher, Cool-Down)? Your typed songs and drops will be lost.')){
+      data=deep(DEFAULTS); save(); render(); updateSums();
+    }
+  });
+  document.getElementById('reset8Btn').addEventListener('click',function(){
+    if(confirm('Reset the whole sheet to the eight-segment Build Sheet: the six blocks plus a recovery bridge after Endurance / Tempo and after the Hill Climb? Your typed songs and drops will be lost.')){
+      data=eightSheet(); save(); render(); updateSums();
     }
   });
   document.getElementById('clearSongsBtn').addEventListener('click',function(){

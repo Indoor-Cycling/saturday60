@@ -79,7 +79,7 @@ The System Manual covers this in Section 9.
 
 | File | What it is |
 |---|---|
-| `index.html` | The hub — the screen you land on, linking the three tools, the drill catalogue, the power and testing pages, and the three documents |
+| `index.html` | The hub — the screen you land on, linking the three tools, the drill catalogue, the power and testing pages, and the four documents |
 | `selector.html` | Song BPM Selector (phone-first) |
 | `buildsheet.html` | MOWL-style Build Sheet (desktop-first) |
 | `drops.html` | Drops Library Editor |
@@ -91,11 +91,12 @@ The System Manual covers this in Section 9.
 | `sw.js` | Service worker — stores the app for offline use. **Version lives here** |
 | `Saturday60_WeeklyWorkflow.html` / `.pdf` | The one-page weekly checklist |
 | `Saturday60_SystemManual.html` / `.pdf` | The full system manual |
+| `Saturday60_HowToRequestAClass.html` / `.pdf` | How to ask Claude for a class — the ways in, the dials and their defaults, sample requests |
 | `Saturday60_GettingStarted.html` / `.pdf` | One-page hand-off sheet for someone new to the app |
 | `manifest.webmanifest` | Name, icon and colours the phone installs with |
 | `icons/` | App icons |
 
-Both documents are linked from the hub and stored for offline reading. When you
+The documents are linked from the hub and stored for offline reading. When you
 change one, re-render its PDF from the HTML so the pair never disagree, and
 upload both.
 

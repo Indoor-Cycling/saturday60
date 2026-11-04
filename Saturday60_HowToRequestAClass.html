@@ -1,0 +1,267 @@
+<!--
+  ============================================================================
+  THE SATURDAY 60 — How to Ask Claude for a Class (screen + print)
+  THIS FILE IS THE LIVE VERSION. It is served from
+  https://indoor-cycling.github.io/saturday60/
+
+  Added in s60-v78. Keep it in step with Saturday60_Rulebook.md (the rulebook
+  wins where they differ). Change this HTML, then re-render the PDF from it so
+  the pair never disagree, and raise the VERSION line in sw.js.
+  ============================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Saturday 60 — How to Ask Claude for a Class</title>
+<style>
+  @page { size: letter; margin: 0.55in 0.6in 0.5in; }
+  :root{
+    --ink:#1a1d23; --grey:#6b7380; --line:#c9ced6; --soft:#f3f5f7;
+    --p1:#2f80c2; --p2:#1e8e5a; --p3:#c07a10; --p4:#a63a8f; --p5:#c0392b; --p6:#4a5568;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;color:var(--ink);background:#fff;
+       font-family:Helvetica,Arial,"Segoe UI",system-ui,sans-serif;
+       font-size:8.7pt;line-height:1.28;}
+  h1{font-size:19pt;margin:0 0 3px;font-weight:700;letter-spacing:-.01em;}
+  .sub{color:var(--p1);font-size:8.6pt;line-height:1.38;margin:0 0 4px;}
+  .bar{color:#fff;font-weight:700;font-size:9.2pt;letter-spacing:.03em;
+       padding:4px 10px;margin:9px 0 0;background:var(--p1);
+       break-after:avoid;page-break-after:avoid;}
+  .b2{background:var(--p2);} .b3{background:var(--p3);} .b4{background:var(--p4);}
+  .b5{background:var(--p5);} .b6{background:var(--p6);}
+  .lead{margin:4px 0 2px;color:var(--grey);font-size:8.2pt;}
+  table{width:100%;border-collapse:collapse;margin:0;}
+  tr{break-inside:avoid;page-break-inside:avoid;}
+  th{font-size:7.6pt;text-transform:uppercase;letter-spacing:.06em;color:var(--grey);
+     text-align:left;font-weight:700;padding:4px 8px 3px 0;border-bottom:1.5px solid var(--line);}
+  td{padding:3.4px 8px 3.4px 0;vertical-align:top;border-bottom:1px solid #e6e9ed;}
+  tr:last-child td{border-bottom:none;}
+  td.n{width:20px;text-align:center;font-weight:700;padding-left:4px;}
+  td.k{font-weight:700;white-space:nowrap;}
+  td.d{color:#3d4552;}
+  q{quotes:"\201C" "\201D";color:#0b4f86;}
+  .say q{display:inline;}
+  .eg{margin:0;padding:0;list-style:none;}
+  .eg li{padding:4px 0 4px 12px;border-bottom:1px solid #e6e9ed;position:relative;break-inside:avoid;}
+  .eg li:last-child{border-bottom:none;}
+  .eg li:before{content:"›";position:absolute;left:0;color:var(--p1);font-weight:700;}
+  .eg .why{color:var(--grey);font-size:7.9pt;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;break-inside:avoid;page-break-inside:avoid;}
+  .box{background:var(--soft);border-left:3px solid var(--p1);padding:5px 9px;margin:6px 0 0;
+       break-inside:avoid;}
+  .mono{font-family:"SF Mono",Menlo,Consolas,monospace;font-size:8pt;}
+  .foot{color:var(--grey);font-size:7.6pt;line-height:1.4;margin-top:9px;
+        border-top:1px solid var(--line);padding-top:6px;}
+  .keep{break-inside:avoid;page-break-inside:avoid;}
+  .pb{break-before:page;page-break-before:always;}
+  .nav{margin:0 0 8px;font-size:9.5pt;}
+  .nav a{color:var(--p1);text-decoration:none;font-weight:700;}
+  .nav a:hover{text-decoration:underline;}
+  @media screen{ body{padding:18px 20px;max-width:7.7in;margin:0 auto;} }
+  @media screen and (max-width:640px){
+    body{padding:14px 16px;font-size:10.5pt;line-height:1.36;}
+    h1{font-size:17pt;}
+    .sub,.lead{font-size:10pt;}
+    .bar{font-size:10pt;}
+    th{font-size:8.5pt;}
+    .two{grid-template-columns:1fr;}
+    td.k{white-space:normal;}
+    .eg .why{font-size:9pt;}
+    .foot{font-size:9pt;}
+  }
+  @media print{ .nav{display:none;} body{padding:0;} }
+</style>
+</head>
+<body>
+
+<p class="nav"><a href="index.html">‹ Saturday 60</a></p>
+<h1>THE SATURDAY 60 — How to Ask Claude for a Class</h1>
+<p class="sub">Plain words work. Name what matters this week, and everything you leave out falls back to the defaults
+in the right-hand column of section 3. Say <b>“this week”</b> for a one-off and <b>“from now on”</b> to change the
+rulebook. The rules that always ride along: RPM beat-locked (1:1 or ½) · 110 RPM ceiling · never stand above 85 RPM ·
+no explicit versions · a gear change only with a zone change · PLAYLIST FIRST — MUSIC LEADS</p>
+
+<!-- 1 ------------------------------------------------------------------ -->
+<div class="bar">1 — START A CLASS: FIVE WAYS IN</div>
+<table>
+  <tr><th></th><th style="width:22%">The way in</th><th style="width:41%">Say it like this</th><th>What happens</th></tr>
+  <tr><td class="n">1</td><td class="k">You pick the songs<br><span style="font-weight:400;color:var(--grey)">(the standing default)</span></td>
+      <td><q>Here’s my playlist for November 21st, six blocks: [Spotify link]</q> — or paste the titles in ride order, or attach an Exportify CSV.</td>
+      <td class="d">Claude maps your songs in your order and tells you if any song sits outside its block’s BPM band or is an explicit version.</td></tr>
+  <tr><td class="n">2</td><td class="k">Claude picks everything</td>
+      <td><q>You pick everything for the November 21st class. Eight segments.</q></td>
+      <td class="d">Claude chooses the songs, puts them in a playlist in your Spotify, maps every song, scores the TSS.</td></tr>
+  <tr><td class="n">3</td><td class="k">Fill in the rest</td>
+      <td><q>I want Uptown Funk in the Sprints and Africa in the Warm-Up — fill in the rest.</q></td>
+      <td class="d">Your songs stay where you put them; Claude picks the others around them.</td></tr>
+  <tr><td class="n">4</td><td class="k">Remap or fix a class</td>
+      <td><q>Remap Nov 14 as six blocks.</q> · <q>Re-time Nov 21 — the Exportify CSV is attached.</q></td>
+      <td class="d">Claude rebuilds from the saved plan and keeps everything you didn’t mention.</td></tr>
+  <tr><td class="n">5</td><td class="k">Copy a MOWL workout</td>
+      <td><q>Rebuild this workout from these screenshots.</q> (MOWL’s <b>Details by segments</b> tables)</td>
+      <td class="d">An interval-for-interval copy as a MOWL import file. ACC and RPM don’t import; re-mark them in Session Designer.</td></tr>
+</table>
+
+<!-- 2 ------------------------------------------------------------------ -->
+<div class="bar b2">2 — ALWAYS SAY THESE TWO: THE DATE AND THE LAYOUT</div>
+<table>
+  <tr><td class="n">1</td><td class="k" style="width:21%">The date</td>
+      <td><q>for Saturday, November 21st</q> — it names the Spotify playlist (“November 21st Spin 60 mins”) and the MOWL workout.
+      Leave it out and Claude asks.</td></tr>
+  <tr><td class="n">2</td><td class="k">The layout</td>
+      <td><q>six blocks</q> — Warm-Up 10 · Endurance / Tempo 10 · Hill Climb 12 · Sprints 10 · Mixed Terrain Finisher 12 · Cool-Down 6.<br>
+      <q>eight segments</q> — the same six blocks plus <b>Bridge 1</b> (~18:00–20:00) and <b>Bridge 2</b> (~30:00–32:00); the blocks
+      around them shorten so the class still ends at 60:00.<br>
+      Leave it out and Claude asks. The Build Sheet opens on six blocks; <b>Reset to eight segments</b> adds the bridges.</td></tr>
+</table>
+
+<!-- 3 ------------------------------------------------------------------ -->
+<div class="bar b3">3 — THE DIALS: WHAT YOU CAN CHANGE FOR ONE CLASS</div>
+<table>
+  <thead><tr><th style="width:15%">Dial</th><th style="width:50%">Say it like this</th><th>Default — if you don’t say</th></tr></thead>
+  <tr><td class="k">TSS<br><span style="font-weight:400;color:var(--grey)">how hard</span></td>
+      <td><q>TSS around 70</q> · <q>easy week, TSS about 60</q> · <q>push it to the 75 cap</q> ·
+          <q>let it go to 80 this week</q> (Claude will point out that it’s over your cap)</td>
+      <td class="d">65–75, cap 75, counted over the first 60 minutes. Claude reports the number; MOWL usually reads a point or two lower.</td></tr>
+  <tr><td class="k">Texture<br><span style="font-weight:400;color:var(--grey)">how it feels</span></td>
+      <td><q>keep it to the sheet’s RPE</q> (softer, about 64 TSS) · <q>no Z5 outside the Sprints</q> ·
+          <q>add a Z6 sprint set</q> · <q>more standing</q> · <q>all seated</q> · <q>top the climb at RPE 8</q></td>
+      <td class="d">The texture of your own MOWL classes: Z5 ceiling, ~30-second pieces, one big Z5 block, every segment ends high.</td></tr>
+  <tr><td class="k">Total length</td>
+      <td><q>make it 45 minutes</q> · <q>a 75-minute class</q> · <q>end it at 58:00</q></td>
+      <td class="d">60:00 with the cool-down inside it. Shorter: the blocks shrink in proportion and so does the TSS band
+          (45 min ≈ 49–56) unless you name a target. Longer: the first 60 still lands in 65–75, and you get both numbers.</td></tr>
+  <tr><td class="k">Cool-down</td>
+      <td><q>a 10-minute cool-down</q> · <q>two slow songs to cool down</q> ·
+          <q>let the cool-down run past 60 like my own classes</q> (the file runs ~62–65 min)</td>
+      <td class="d">6 minutes, 54:00–60:00, one easy interval that MOWL shows as its teal Cooldown.</td></tr>
+  <tr><td class="k">Era</td>
+      <td><q>year 2000 forward</q> · <q>1975 to 1995</q> · <q>only the 80s</q> · <q>the last five years</q></td>
+      <td class="d">Any era.</td></tr>
+  <tr><td class="k">Genre</td>
+      <td><q>classic rock</q> · <q>Motown and soul</q> · <q>country</q> · <q>dance remixes</q> · <q>no rap</q> · <q>half pop, half rock</q></td>
+      <td class="d">A mix, mostly pop, rock and dance.</td></tr>
+  <tr><td class="k">Theme</td>
+      <td><q>Halloween</q> · <q>Thanksgiving</q> · <q>Veterans Day</q> · <q>one-hit wonders</q> · <q>movie songs</q> ·
+          <q>a color in every title</q></td>
+      <td class="d">No theme.</td></tr>
+  <tr><td class="k">Song source</td>
+      <td><q>from my Liked Songs</q> (attach a fresh Exportify CSV if it has changed) · <q>from this playlist: [link]</q> ·
+          <q>anything on Spotify</q></td>
+      <td class="d">Anything on Spotify.</td></tr>
+  <tr><td class="k">Must / must not</td>
+      <td><q>include Hey Ya</q> · <q>open with Mr. Blue Sky</q> · <q>nothing from Nov 7 or Nov 14</q> · <q>no Taylor Swift</q> ·
+          <q>one song per artist</q></td>
+      <td class="d">Nothing forced or barred except explicit versions (a clean edit of the same song is fine).</td></tr>
+  <tr><td class="k">Song count</td>
+      <td><q>short dance remixes like my own classes</q> (about 22–24 songs) · <q>fewer, longer songs</q></td>
+      <td class="d">About 16–18 songs.</td></tr>
+  <tr><td class="k">Hill Climb<br><span style="font-weight:400;color:var(--grey)">Block 2</span></td>
+      <td><q>Pyramid</q> · <q>Single Long Climb</q> · <q>Climb + Surge</q></td>
+      <td class="d">Claude picks the variant that suits the songs and names it.</td></tr>
+  <tr><td class="k">Sprints<br><span style="font-weight:400;color:var(--grey)">Block 3</span></td>
+      <td><q>Sprint Pyramid</q> (15-30-45-30-15) · <q>more sprints, shorter</q> · <q>longer rests this week</q></td>
+      <td class="d">The Sprint Pyramid, mapped onto the songs.</td></tr>
+  <tr><td class="k">Finisher</td>
+      <td><q>all climbs</q> · <q>end on a sprint</q> · <q>climb, flat, climb, flat</q></td>
+      <td class="d">Climb songs (½ time, 120–126) and flat songs (on the beat, 75–110) take turns, by whole song.</td></tr>
+  <tr><td class="k">Bridges<br><span style="font-weight:400;color:var(--grey)">eight only</span></td>
+      <td><q>movie themes on the bridges</q> · <q>80s TV themes</q> · <q>Cheers and Jeopardy</q> · <q>no bridges</q> (= six blocks)</td>
+      <td class="d">TV or game-show themes, 1:30–2:00 each, free easy spin. Each one is where you split the workout in MOWL.</td></tr>
+  <tr><td class="k">What comes back</td>
+      <td><q>just the song list first — I’ll approve before you map</q> · <q>skip the Spotify playlist</q> ·
+          <q>no MOWL file, it’s for the Y</q></td>
+      <td class="d">Everything: the Spotify playlist, the Build Sheet code, the MOWL import file, the TSS, a where-the-work-lands
+          table, and flags for anything the timings couldn’t pin down.</td></tr>
+</table>
+
+<!-- 4 ------------------------------------------------------------------ -->
+<div class="bar b4">4 — CHANGING A CLASS AFTER IT’S BUILT</div>
+<table>
+  <tr><th></th><th style="width:22%">The change</th><th>Say it like this</th></tr>
+  <tr><td class="n">1</td><td class="k">Swap a song</td>
+      <td><q>Swap Burn for something in the same BPM band</q> · <q>Replace song 7 with Believer</q></td></tr>
+  <tr><td class="n">2</td><td class="k">Move a song</td>
+      <td><q>Move Valerie to the Finisher</q> · <q>Put Hey Brother before Higher Love</q></td></tr>
+  <tr><td class="n">3</td><td class="k">Easier or harder</td>
+      <td><q>Bring the TSS down to 68</q> · <q>A harder climb, same total</q> · <q>An easier warm-up</q> — when it’s over the cap,
+      the warm-up, builds and recoveries ease first; the big finishes are cut last.</td></tr>
+  <tr><td class="n">4</td><td class="k">Fix a drop</td>
+      <td><q>Rolling in the Deep: chorus 1 starts at 1:15.6, bar 33.1</q> — your bar readings beat the lyric timings.</td></tr>
+  <tr><td class="n">5</td><td class="k">Re-time to the real tracks</td>
+      <td>Attach an Exportify CSV of the playlist: exact lengths and Explicit flags. Needed whenever a version or length differs.</td></tr>
+  <tr><td class="n">6</td><td class="k">Change the layout</td>
+      <td><q>Rebuild Nov 21 as eight segments</q> · <q>Drop the bridges</q></td></tr>
+  <tr><td class="n">7</td><td class="k">Change the bridge music</td>
+      <td><q>Swap the Cheers bridge for the Jeopardy think music</q></td></tr>
+  <tr><td class="n">8</td><td class="k">Apply a new rule to an old class</td>
+      <td><q>Redo Nov 14 under the gear rule</q></td></tr>
+  <tr><td class="n">9</td><td class="k">One cue’s wording</td>
+      <td>Quicker to do yourself: edit the words after the zone in that song’s Intervals cell on the Build Sheet.</td></tr>
+</table>
+
+<div class="box"><b>How to point at things.</b>
+Blocks by name — Warm-Up, Endurance / Tempo, Bridge 1, Hill Climb, Bridge 2, Sprints, Finisher, Cool-Down.
+Songs by title or by the Build Sheet’s <b>#</b> column (“song 7”). Effort as a zone (Z1–Z7) or an RPE (1–10; the RPE card maps
+1–2 = Z1, 3–4 = Z2, 5 = Z3, 6–7 = Z4, 8 = Z5, 9 = Z6, 10 = Z7). Times either <b>in the song</b> (“0:59 into Rolling in the Deep”)
+or on the <b>ride clock</b> (“32:57” — the MOWL time on the Cue Print and the Build Sheet’s Σ). Say which one.</div>
+
+<!-- 5 ------------------------------------------------------------------ -->
+<div class="keep"><div class="bar b5">5 — WHAT CLAUDE NEEDS FROM YOU, AND WHAT YOU DO AFTER</div>
+<div class="two">
+<table>
+  <tr><th colspan="2">Before</th></tr>
+  <tr><td class="n">1</td><td>The date and the layout (Claude asks for whichever is missing).</td></tr>
+  <tr><td class="n">2</td><td>Your songs — or <q>you pick</q>.</td></tr>
+  <tr><td class="n">3</td><td>For the Spotify playlist: the Claude desktop app open on your computer, signed in to open.spotify.com
+      in its built-in browser. Claude adds the tracks in order and reads the playlist back to check them.</td></tr>
+  <tr><td class="n">4</td><td>An Exportify CSV when Claude asks for one (exact lengths, Explicit flags).</td></tr>
+</table>
+<table>
+  <tr><th colspan="2">After</th></tr>
+  <tr><td class="n">1</td><td>Spotify: make the playlist <b>Public</b> and <b>download it</b> for offline.</td></tr>
+  <tr><td class="n">2</td><td>Build Sheet: <b>Backup</b>, then <b>Import ← Build Sheet</b> and paste the code.</td></tr>
+  <tr><td class="n">3</td><td>MOWL: upload the file at <span class="mono">login.mowl.com/profile/import</span>, link the music,
+      nudge the work intervals onto the drops, split at the bridges.</td></tr>
+  <tr><td class="n">4</td><td>Excel: <b>Export for Excel</b> → paste at B2 on My Playlist → <b>FormatPlaylistPrint</b>
+      (Playlist Print + Cue Print).</td></tr>
+</table>
+</div></div>
+
+<!-- 6 ------------------------------------------------------------------ -->
+<div class="bar b6">6 — THIS WEEK, OR FROM NOW ON</div>
+<table>
+  <tr><td class="k" style="width:21%">Just this class</td>
+      <td>Anything said with a date or <q>this week</q> changes only that class.</td></tr>
+  <tr><td class="k">Every class after</td>
+      <td><q>From now on…</q> · <q>Going forward…</q> · <q>Until I say otherwise…</q> — Claude changes the rulebook and tells you what it changed.</td></tr>
+  <tr><td class="k">Fixed until you say so</td>
+      <td>RPM beat-locked (1:1 or ½) · 110 RPM ceiling · never stand above 85 RPM · no explicit versions · a gear change only with a zone
+      change · hold limits Z5 5:00, Z6 3:00, Z7 0:30 · the BPM band for each block · TSS cap 75.</td></tr>
+</table>
+
+<!-- 7 ------------------------------------------------------------------ -->
+<div class="bar">7 — SAMPLE REQUESTS — COPY ONE AND CHANGE THE BLANKS</div>
+<ul class="eg">
+  <li><q>Build the November 21st class, eight segments. You pick everything: 1980 to 1999, classic rock and new wave, TSS around 72,
+      Single Long Climb this week.</q></li>
+  <li><q>Here’s my playlist for December 5th, six blocks: [link]. Exportify CSV attached. Map it.</q></li>
+  <li><q>Thanksgiving class, November 28th. Six blocks, you pick, food songs, no country. Easy week — keep it to the sheet’s RPE,
+      TSS about 62.</q></li>
+  <li><q>Fill in the rest for December 12th: Uptown Funk in the Sprints, Africa in the Warm-Up. Eight segments, movie themes on the
+      bridges, 2010 forward.</q></li>
+  <li><q>Just the song list first for December 19th: eight segments, Christmas songs from 2000 forward. I’ll approve before you map.</q></li>
+  <li><q>A 45-minute class for the Y from my Liked Songs (CSV attached). Six blocks. No MOWL file and no Spotify playlist.</q></li>
+  <li><q>November 21st: swap song 9 for something faster in the same band and bring the TSS down to 70. Keep the rest.</q></li>
+  <li><q>Rebuild this workout from these screenshots as a MOWL file.</q></li>
+  <li><q>From now on, use movie themes on the bridges instead of TV shows.</q> <span class="why">— a rulebook change, not a one-off</span></li>
+</ul>
+
+<div class="foot">The Saturday 60 · How to ask Claude for a class · updated November 4, 2026 · matches the rulebook and app s60-v78. In the hub’s Documents group.
+The full rules live in <b>Saturday60_Rulebook.md</b> in the Saturday 60 Project; this sheet is the short version of how to ask.</div>
+
+</body>
+</html>

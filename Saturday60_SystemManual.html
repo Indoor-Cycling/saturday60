@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 55 · November 2026<br>
+workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 56 · November 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -362,7 +362,7 @@ survive it.</p>
   <tr><td class="k">Len</td><td>Song length (m:ss); auto-fills on import from a CSV, and from the Selector when the song carries one. Feeds all clock math. A row that has a song but no length is tinted amber until you fill it — on screen only, never on the printout.<span class="new">REV 19</span></td></tr>
   <tr><td class="k">BPM → Ride → RPM</td><td>Type the BPM, pick 1:1 or ½; RPM computes under the 110 cap. The beat-lock cannot be broken here.</td></tr>
   <tr><td class="k">Pos</td><td>Seat / Stand / S-St. For S-St, an interval counts as Standing in Export for MOWL when its cue says so — “stand the final chorus”.</td></tr>
-  <tr><td class="k">Intervals as timed cues<span class="new">REV 47</span></td><td>Write the cue as time ranges inside the song: <code>0:00–1:16 Z2 steady base · 1:16–1:34 Z3 pickup 1 of 2 · …</code> — start–end in m:ss, the zone, a short label, entries separated by “·”. <b>Export for MOWL</b> turns each entry into a MOWL interval and the TSS Planner’s <b>Import code</b> scores it; free wording (“3 × climb efforts, one per chorus”) still prints but neither can read it. Give every change the rider has to make its own entry — two pickups are two entries, but a gear step that keeps the rider in the same zone is not an entry of its own (Ralph, 1 Nov 2026): it rides in the entry before it, with the gear cue in that note. A gear step that changes the zone is an entry; so are standing up, sitting down and accelerations, because MOWL shows them.<span class="new">REV 53</span></td></tr>
+  <tr><td class="k">Intervals as timed cues<span class="new">REV 47</span></td><td>Write the cue as time ranges inside the song: <code>0:00–1:16 Z2 steady base · 1:16–1:34 Z3 pickup 1 of 2 · …</code> — start–end in m:ss, the zone, a short label, entries separated by “·”. <b>Export for MOWL</b> turns each entry into a MOWL interval and the TSS Planner’s <b>Import code</b> scores it; free wording (“3 × climb efforts, one per chorus”) still prints but neither can read it. Give every change the rider has to make its own entry — two pickups are two entries, but a gear step that keeps the rider in the same zone is not an entry of its own (Ralph, 1 Nov 2026): it rides in the entry before it, with the gear cue in that note. A gear step that changes the zone is an entry; so are standing up, sitting down and accelerations, because MOWL shows them.<span class="new">REV 53</span> <b>No entry under 0:15</b> (Ralph, 5 Nov 2026): a moment shorter than that — a 10-second pre-chorus, a 7-second outro — borrows time from the entry beside it, the boundary moved to the nearest line or bar, so every MOWL interval runs at least 15 seconds; the cool-down is exempt, since MOWL shows it as one interval. And the last block ends on a <b>fast flat</b>: the Finisher’s last song rides flat on the beat, seated, with a Z5 surge to the end.<span class="new">REV 56</span></td></tr>
   <tr><td class="k">E · explicit<span class="new">REV 47</span></td><td>A red edge on the row and a red badge under the title: Spotify marks that version Explicit, and explicit versions are banned. Set by <b>Import Spotify export</b> from an Exportify CSV; it clears when a clean re-import arrives or when the title is edited. Screen only — it never prints.</td></tr>
   <tr><td class="k">Σ ride<span class="new">REV 43</span></td><td>Where that song's block <i>ends</i> on MOWL's timeline — which is where the next song starts, crossfade included. Read it against the Session Designer's song strip, row for row. The last song's figure is MOWL's total for the class; its audio keeps playing for another 10 s underneath whatever follows. Until s60-v49 this column reported where each song's audio ended instead, so every row read 10 s per transition adrift of the timeline.</td></tr>
   <tr><td class="k">◉ ride / ◉ 8-bar</td><td>Under the drops: each drop as an absolute class minute (drift-corrected), then the 8-bar phrase boundary it snaps to and the gap — "1:16 −2.2".</td></tr>
@@ -739,7 +739,7 @@ device you typed them on and never leave it. The app has no server and asks for 
 
 <p class="foot">
 Quick values: crossfade 10 s · drift 0.43 s/song · RPM cap 110 · FTP 158 W and Max HR 164 (both editable) · TSS ~65–75 · bar = 240 ÷ BPM ·
-current app version s60-v79.<br>
+current app version s60-v80.<br>
 The app: <span class="url">https://indoor-cycling.github.io/saturday60/</span> — index.html · selector.html ·
 buildsheet.html · drops.html · TSS_Planner.html · Saturday60_WeeklyWorkflow.html and .pdf · Saturday60_SystemManual.html and .pdf · Saturday60_HowToRequestAClass.html and .pdf · Saturday60_GettingStarted.html and .pdf · FTP_5min_Test.html · RPE_Watts_Card_Editable.html · RPE_Watts_Card_YMCA_Editable.html · app.js · sw.js ·
 manifest.webmanifest · icons/ · README.md.
@@ -817,6 +817,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
 <p style="margin:0 0 6px">Page numbers are the printed pages of this manual. On screen every entry is a link.</p>
 <div class="idx">
   <div class="ia">0–9</div>
+  <div class="ie">0:15 minimum interval <span class="ip"><a href="#per-song-rows">9</a></span></div>
   <div class="ie">110 RPM cap <span class="ip"><a href="#s0">2</a>, <a href="#per-song-rows">9</a></span></div>
   <div class="ie">8-bar grid <span class="ip"><a href="#drop-markers-the-button">5</a>, <a href="#bars-and-phrase-boundaries">20</a></span></div>
   <div class="ia">A</div>

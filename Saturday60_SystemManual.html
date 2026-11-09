@@ -108,7 +108,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 58 · November 2026<br>
+workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 59 · November 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -145,7 +145,7 @@ The three HTML tools now run as one installed web app at <span class="url">https
       <div class="tsub"><a href="#the-manage-drills-panel">The Manage drills panel</a><span class="dots"></span><span class="pg" data-pg="the-manage-drills-panel">10</span></div>
       <div class="tsub"><a href="#the-drill-catalogue-in-excel">The drill catalogue in Excel</a><span class="dots"></span><span class="pg" data-pg="the-drill-catalogue-in-excel">10</span></div>
       <div class="tsub"><a href="#reordering">Reordering</a><span class="dots"></span><span class="pg" data-pg="reordering">11</span></div>
-      <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">11</span></div>
+      <div class="tsub"><a href="#totals-and-buttons">Totals and buttons</a><span class="dots"></span><span class="pg" data-pg="totals-and-buttons">12</span></div>
       <div class="tsub"><a href="#hiding-the-targets">Hiding the targets</a><span class="dots"></span><span class="pg" data-pg="hiding-the-targets">13</span></div>
     </div>
   </div>
@@ -362,7 +362,7 @@ survive it.</p>
   <tr><td class="k">Len</td><td>Song length (m:ss); auto-fills on import from a CSV, and from the Selector when the song carries one. Feeds all clock math. A row that has a song but no length is tinted amber until you fill it — on screen only, never on the printout.<span class="new">REV 19</span></td></tr>
   <tr><td class="k">BPM → Ride → RPM</td><td>Type the BPM, pick 1:1 or ½; RPM computes under the 110 cap. The beat-lock cannot be broken here.</td></tr>
   <tr><td class="k">Pos</td><td>Seat / Stand / S-St. For S-St, an interval counts as Standing in Export for MOWL when its cue says so — “stand the final chorus”.</td></tr>
-  <tr><td class="k">Intervals as timed cues<span class="new">REV 47</span></td><td>Write the cue as time ranges inside the song: <code>0:00–1:16 Z2 steady base · 1:16–1:34 Z3 pickup 1 of 2 · …</code> — start–end in m:ss, the zone, a short label, entries separated by “·”. <b>Export for MOWL</b> turns each entry into a MOWL interval and the TSS Planner’s <b>Import code</b> scores it; free wording (“3 × climb efforts, one per chorus”) still prints but neither can read it. Give every change the rider has to make its own entry — two pickups are two entries, but a gear step that keeps the rider in the same zone is not an entry of its own (Ralph, 1 Nov 2026): it rides in the entry before it, with the gear cue in that note. A gear step that changes the zone is an entry; so are standing up, sitting down and accelerations, because MOWL shows them.<span class="new">REV 53</span> <b>No entry under 0:15</b> (Ralph, 5 Nov 2026): a moment shorter than that — a 10-second pre-chorus, a 7-second outro — borrows time from the entry beside it, the boundary moved to the nearest line or bar, so every MOWL interval runs at least 15 seconds; the cool-down is exempt, since MOWL shows it as one interval. And the last block ends on a <b>fast flat</b>: the Finisher’s last song rides flat on the beat, seated, with a Z5 surge to the end.<span class="new">REV 56</span> <b>Fewer zone changes is the default</b> (Ralph, 8 Nov 2026): the zone changes only at each song’s big moments — a chorus or drop, the turn for the finish — and holds in between, so a class runs about 60–70 MOWL intervals instead of 110–130; stand/sit and accelerations still get their own entries, and the sprint efforts and the rests after them stay as they are.<span class="new">REV 57</span> The warm-up keeps its <b>accelerations</b> (Ralph, 8 Nov 2026): about two seated pickups per song, one zone above the song’s base, on its choruses — the one place shorter pieces are the norm.<span class="new">REV 58</span></td></tr>
+  <tr><td class="k">Intervals as timed cues<span class="new">REV 47</span></td><td>Write the cue as time ranges inside the song: <code>0:00–1:16 Z2 steady base · 1:16–1:34 Z3 pickup 1 of 2 · …</code> — start–end in m:ss, the zone, a short label, entries separated by “·”. <b>Export for MOWL</b> turns each entry into a MOWL interval and the TSS Planner’s <b>Import code</b> scores it; free wording (“3 × climb efforts, one per chorus”) still prints but neither can read it. Give every change the rider has to make its own entry — two pickups are two entries, but a gear step that keeps the rider in the same zone is not an entry of its own (Ralph, 1 Nov 2026): it rides in the entry before it, with the gear cue in that note. A gear step that changes the zone is an entry; so are standing up, sitting down and accelerations, because MOWL shows them.<span class="new">REV 53</span> <b>No entry under 0:15</b> (Ralph, 5 Nov 2026): a moment shorter than that — a 10-second pre-chorus, a 7-second outro — borrows time from the entry beside it, the boundary moved to the nearest line or bar, so every MOWL interval runs at least 15 seconds; the cool-down is exempt, since MOWL shows it as one interval. And the last block ends on a <b>fast flat</b>: the Finisher’s last song rides flat on the beat, seated, with a Z5 surge to the end.<span class="new">REV 56</span> <b>Fewer zone changes is the default</b> (Ralph, 8 Nov 2026): the zone changes only at each song’s big moments — a chorus or drop, the turn for the finish — and holds in between, so a class runs about 60–70 MOWL intervals instead of 110–130; stand/sit and accelerations still get their own entries, and the sprint efforts and the rests after them stay as they are.<span class="new">REV 57</span> The warm-up keeps its <b>accelerations</b> (Ralph, 8 Nov 2026): about two seated pickups per song, one zone above the song’s base, on its choruses — the one place shorter pieces are the norm.<span class="new">REV 58</span> <b>Seated first</b> (Ralph, 9 Nov 2026): never stand up and go up a zone at the same moment. When a standing effort is a zone above what came before, the zone goes up seated first, in an entry of its own (at least 0:15, on the music — the bridge before a standing chorus, the chorus before a standing drop, or the drop’s first bars) — <code>sit Z4 → sit Z5, add a gear → stand Z5</code> — and that seated step counts toward the effort, so the rest after it grows to match. Once standing, the zones can keep climbing: a standing pyramid or ladder is fine (Ralph, 9 Nov 2026).<span class="new">REV 59</span></td></tr>
   <tr><td class="k">E · explicit<span class="new">REV 47</span></td><td>A red edge on the row and a red badge under the title: Spotify marks that version Explicit, and explicit versions are banned. Set by <b>Import Spotify export</b> from an Exportify CSV; it clears when a clean re-import arrives or when the title is edited. Screen only — it never prints.</td></tr>
   <tr><td class="k">Σ ride<span class="new">REV 43</span></td><td>Where that song's block <i>ends</i> on MOWL's timeline — which is where the next song starts, crossfade included. Read it against the Session Designer's song strip, row for row. The last song's figure is MOWL's total for the class; its audio keeps playing for another 10 s underneath whatever follows. Until s60-v49 this column reported where each song's audio ended instead, so every row read 10 s per transition adrift of the timeline.</td></tr>
   <tr><td class="k">◉ ride / ◉ 8-bar</td><td>Under the drops: each drop as an absolute class minute (drift-corrected), then the 8-bar phrase boundary it snaps to and the gap — "1:16 −2.2".</td></tr>
@@ -739,7 +739,7 @@ device you typed them on and never leave it. The app has no server and asks for 
 
 <p class="foot">
 Quick values: crossfade 10 s · drift 0.43 s/song · RPM cap 110 · FTP 158 W and Max HR 164 (both editable) · TSS ~75–85 · bar = 240 ÷ BPM ·
-current app version s60-v82.<br>
+current app version s60-v83.<br>
 The app: <span class="url">https://indoor-cycling.github.io/saturday60/</span> — index.html · selector.html ·
 buildsheet.html · drops.html · TSS_Planner.html · Saturday60_WeeklyWorkflow.html and .pdf · Saturday60_SystemManual.html and .pdf · Saturday60_HowToRequestAClass.html and .pdf · Saturday60_GettingStarted.html and .pdf · FTP_5min_Test.html · RPE_Watts_Card_Editable.html · RPE_Watts_Card_YMCA_Editable.html · app.js · sw.js ·
 manifest.webmanifest · icons/ · README.md.
@@ -827,7 +827,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Android, installing on <span class="ip"><a href="#s9">24</a></span></div>
   <div class="ie">Asking Claude for a class <span class="ip"><a href="#s1">2</a></span></div>
   <div class="ia">B</div>
-  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#totals-and-buttons">11</a>, <a href="#s7">21</a></span></div>
+  <div class="ie">Backup and Restore <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#totals-and-buttons">12</a>, <a href="#s7">21</a></span></div>
   <div class="ie">Bands, factory values <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a></span></div>
   <div class="ie">Bar calculator <span class="ip"><a href="#the-bar-calculator">4</a></span></div>
   <div class="ie">Bars, how long they run <span class="ip"><a href="#the-bar-calculator">4</a>, <a href="#bars-and-phrase-boundaries">21</a></span></div>
@@ -847,17 +847,17 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Cue Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">18</a></span></div>
   <div class="ia">D</div>
   <div class="ie">Downbeat, first <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
-  <div class="ie">Drift, fractional <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#fractional-drift">20</a></span></div>
+  <div class="ie">Drift, fractional <span class="ip"><a href="#totals-and-buttons">12</a>, <a href="#fractional-drift">20</a></span></div>
   <div class="ie">Drill catalogue <span class="ip"><a href="#drill-presets-and-the-drill-catalog">10</a></span></div>
   <div class="ie">Drills in Excel <span class="ip"><a href="#the-drill-catalogue-in-excel">10</a></span></div>
   <div class="ie">Drop markers (◎) <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
-  <div class="ie">Drops library <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#the-drops-library-moving-it-between-the-tool">15</a></span></div>
+  <div class="ie">Drops library <span class="ip"><a href="#totals-and-buttons">12</a>, <a href="#the-drops-library-moving-it-between-the-tool">15</a></span></div>
   <div class="ie">Drops Library Editor <span class="ip"><a href="#s1">2</a>, <a href="#the-drops-library-moving-it-between-the-tool">15</a></span></div>
   <div class="ia">E</div>
   <div class="ie">Excel workbook <span class="ip"><a href="#s5">16</a></span></div>
   <div class="ie">Explicit tracks <span class="ip"><a href="#per-song-rows">9</a>, <a href="#s4">13</a>, <a href="#s8">22</a></span></div>
-  <div class="ie">Export for Excel <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
-  <div class="ie">Export for MOWL <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#mowl-import-file">14</a></span></div>
+  <div class="ie">Export for Excel <span class="ip"><a href="#totals-and-buttons">12</a></span></div>
+  <div class="ie">Export for MOWL <span class="ip"><a href="#totals-and-buttons">12</a>, <a href="#mowl-import-file">14</a></span></div>
   <div class="ia">F</div>
   <div class="ie">Find Your Number <span class="ip"><a href="#rpe-watts-cards">27</a></span></div>
   <div class="ie">FTP, 5-minute test <span class="ip"><a href="#ftp-test">27</a></span></div>
@@ -874,9 +874,9 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Holding a phrase boundary <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
   <div class="ie">Hub screen <span class="ip"><a href="#s9">24</a></span></div>
   <div class="ia">I</div>
-  <div class="ie">Import drops only <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
-  <div class="ie">Import Spotify export <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#s4">13</a></span></div>
-  <div class="ie">Import ← Selector <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#s4">13</a></span></div>
+  <div class="ie">Import drops only <span class="ip"><a href="#totals-and-buttons">12</a></span></div>
+  <div class="ie">Import Spotify export <span class="ip"><a href="#totals-and-buttons">12</a>, <a href="#s4">13</a></span></div>
+  <div class="ie">Import ← Selector <span class="ip"><a href="#totals-and-buttons">12</a>, <a href="#s4">13</a></span></div>
   <div class="ie">Import code (TSS Planner) <span class="ip"><a href="#tss-planner">28</a></span></div>
   <div class="ie">Importing does nothing <span class="ip"><a href="#s8">22</a></span></div>
   <div class="ie">Installing the app <span class="ip"><a href="#s9">24</a></span></div>
@@ -897,13 +897,13 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Power &amp; testing <span class="ip"><a href="#s10">27</a></span></div>
   <div class="ie">Power zones (% of FTP) <span class="ip"><a href="#rpe-watts-cards">27</a></span></div>
   <div class="ie">Phrase boundaries <span class="ip"><a href="#drop-markers-the-button">5</a>, <a href="#bars-and-phrase-boundaries">21</a></span></div>
-  <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">21</a></span></div>
+  <div class="ie">Phrase map <span class="ip"><a href="#totals-and-buttons">12</a>, <a href="#the-phrase-map-boundaries-on-the-ride-clock">21</a></span></div>
   <div class="ie">Phrase strip <span class="ip"><a href="#the-gauge-and-the-phrase-strip">3</a></span></div>
   <div class="ie">Plain order (Cue Print, under 5 panels) <span class="ip"><a href="#playlist-print-two-sides">18</a></span></div>
   <div class="ie">Playlist builder <span class="ip"><a href="#playlist-builder">4</a></span></div>
   <div class="ie">Playlist Print (Excel) <span class="ip"><a href="#playlist-print-two-sides">18</a></span></div>
   <div class="ie">Power targets <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">8</a></span></div>
-  <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Printing the sheet <span class="ip"><a href="#totals-and-buttons">12</a></span></div>
   <div class="ie">Privacy <span class="ip"><a href="#s7">21</a>, <a href="#privacy">26</a></span></div>
   <div class="ia">R</div>
   <div class="ie">RPE + Watts cards <span class="ip"><a href="#rpe-watts-cards">27</a></span></div>
@@ -913,22 +913,23 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Reordering songs <span class="ip"><a href="#reordering">11</a></span></div>
   <div class="ie">Request guide (asking Claude for a class) <span class="ip"><a href="#s1">2</a></span></div>
   <div class="ie">Repository is the source of truth <span class="ip"><a href="#the-files-in-the-repository-are-the-only-sou">25</a></span></div>
-  <div class="ie">Reset (six blocks / eight segments) <span class="ip"><a href="#structure">7</a>, <a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Reset (six blocks / eight segments) <span class="ip"><a href="#structure">7</a>, <a href="#totals-and-buttons">12</a></span></div>
   <div class="ie">Ride mode, per song <span class="ip"><a href="#per-song-ride-mode-the-1-1-button">4</a></span></div>
   <div class="ie">Rider zones <span class="ip"><a href="#s0">2</a>, <a href="#ftp-and-max-hr">8</a></span></div>
   <div class="ie">Rollback bundle <span class="ip"><a href="#rollback-bundles">25</a></span></div>
   <div class="ie">Rolling a change back <span class="ip"><a href="#rolling-back">25</a>, <a href="#rollback-bundles">25</a></span></div>
   <div class="ia">S</div>
   <div class="ie">Saved files, where they go <span class="ip"><a href="#bands-defaults-transfer-and-backup">7</a>, <a href="#s7">21</a></span></div>
-  <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Seated first (standing rule) <span class="ip"><a href="#per-song-rows">9</a></span></div>
+  <div class="ie">Section Library <span class="ip"><a href="#totals-and-buttons">12</a></span></div>
   <div class="ie">Segments, in MOWL <span class="ip"><a href="#mowl-import-file">14</a></span></div>
   <div class="ie">Sections, structure of <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ie">Selector (Song BPM) <span class="ip"><a href="#s1">2</a>, <a href="#s2">3</a></span></div>
-  <div class="ie">Send → Selector <span class="ip"><a href="#totals-and-buttons">11</a></span></div>
+  <div class="ie">Send → Selector <span class="ip"><a href="#totals-and-buttons">12</a></span></div>
   <div class="ie">Snapping to the grid <span class="ip"><a href="#drop-markers-the-button">5</a></span></div>
   <div class="ie">Song length <span class="ip"><a href="#song-length">4</a></span></div>
   <div class="ie">Spin Class Pro workbook <span class="ip"><a href="#s1">2</a>, <a href="#s5">16</a></span></div>
-  <div class="ie">Spotify export <span class="ip"><a href="#totals-and-buttons">11</a>, <a href="#s4">13</a></span></div>
+  <div class="ie">Spotify export <span class="ip"><a href="#totals-and-buttons">12</a>, <a href="#s4">13</a></span></div>
   <div class="ie">Storage, where data lives <span class="ip"><a href="#s7">21</a></span></div>
   <div class="ie">Switching two sections <span class="ip"><a href="#structure">7</a></span></div>
   <div class="ia">T</div>

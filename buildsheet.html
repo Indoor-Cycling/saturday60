@@ -1010,6 +1010,16 @@
   var DLKEY='s60_drops_lib_v1';
   var dlFile=document.getElementById('dlFile');
 
+  // Drop times that are only the row's interval boundaries (every class code fills them that way since
+  // 10 Nov 2026, so the drops library keeps them with the intervals). They repeat the cue times, so
+  // Export for Excel leaves them out of Cue Notes; drop times of your own still go in.
+  function dropsAreBoundaries(row){
+    var d=dropsToSecs(row.drops); if(!d.length)return false;
+    var b=[], re=/(\d+:\d{2})\s*[\u2013\-]\s*(\d+:\d{2})/g, m;
+    while((m=re.exec(row.intervals||''))){ b.push(parseLen(m[1])); b.push(parseLen(m[2])); }
+    if(!b.length)return false;
+    return d.every(function(x){ return b.some(function(y){ return Math.abs(x-y)<=1; }); });
+  }
   function dropsToSecs(txt){
     var out=[];
     String(txt||'').split(/[,;]+/).forEach(function(tok){
@@ -1279,7 +1289,7 @@
         var bpm=parseInt(row.bpm,10);
         var rpm = isNaN(bpm) ? '' : Math.min(row.mode==='half'?Math.round(bpm/2):bpm, CAP);
         var cue=(row.intervals||'').trim();
-        if((row.drops||'').trim())cue += (cue?'  |  ':'')+'drops '+row.drops.trim();
+        if((row.drops||'').trim() && !dropsAreBoundaries(row))cue += (cue?'  |  ':'')+'drops '+row.drops.trim();
         // Paste block B:J — Song | Artist | Runtime | Elapsed | RPM | Zone | RPE | Segment | Cue.
         // Pointers (K) are yours and are never pasted over.
         var parts=t.split(' \u2014 ');

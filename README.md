@@ -85,9 +85,10 @@ The System Manual covers this in Section 9.
 | `drops.html` | Drops Library Editor |
 | `TSS_Planner.html` | TSS Planner — scores a class against the 75–85 band; imports a Build Sheet code |
 | `FTP_5min_Test.html` | 5-Minute FTP Test (guided timer and calculator) |
-| `RPE_Watts_Card_Editable.html` | RPE + Watts card for the M3i at home (gears /72) |
+| `RPE_Watts_Card_Editable.html` | RPE + Watts card for the Keiser M3i Studio Plus (gears /72) |
 | `RPE_Watts_Card_YMCA_Editable.html` | RPE + Watts card for the YMCA M3s (gears /24) |
 | `app.js` | Shared shell: offline worker, back bar, save-destination prompts |
+| `site.js` | Loaded first by every page: the visitor counter's settings and one-time settings moves |
 | `sw.js` | Service worker — stores the app for offline use. **Version lives here** |
 | `Saturday60_WeeklyWorkflow.html` / `.pdf` | The one-page weekly checklist |
 | `Saturday60_SystemManual.html` / `.pdf` | The full system manual |

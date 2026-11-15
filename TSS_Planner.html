@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="site.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#17171F">
 <title>TSS Planner — Saturday 60</title>
@@ -103,7 +104,7 @@
   <p class="sub">Score the whole class and every set before anyone rides. Build intervals by zone and duration; the TSS is worked out from your FTP and each zone's midpoint — the same method as the article.</p>
 
   <div class="settings">
-    <div class="fld"><label for="ftp">FTP</label><input id="ftp" type="number" min="60" max="500" value="158" inputmode="numeric"><span class="u">watts</span></div>
+    <div class="fld"><label for="ftp">FTP</label><input id="ftp" type="number" min="60" max="500" value="200" inputmode="numeric"><span class="u">watts</span></div>
     <div class="fld"><label for="tlo">Target low</label><input id="tlo" type="number" min="0" max="200" value="75" inputmode="numeric"><span class="u">TSS / first 60 min</span></div>
     <div class="fld"><label for="thi">Cap (target high)</label><input id="thi" type="number" min="0" max="200" value="85" inputmode="numeric"><span class="u">TSS / first 60 min</span></div>
     <div class="fld" style="margin-left:auto"><span class="u" style="color:#b9bbc4">Everything saves on this device</span></div>
@@ -278,7 +279,7 @@ function load(){
   var rr=LS('tss.rows');
   if(rr){try{rows=JSON.parse(rr)||[];}catch(e){rows=[];}}
   if(!rr) rows=EXAMPLE.map(function(e){return {seg:e[0],label:e[1],zone:e[2],sec:e[3]};});
-  // s60-v81: Ralph's band moved from 65-75 to 75-85 (8 Nov 2026). A device still on the old factory pair moves once.
+  // s60-v81: the band moved from 65-75 to 75-85 (8 Nov 2026). A device still on the old factory pair moves once.
   if(!LS('tss.band81')){ if(LS('tss.tlo')==='65'&&LS('tss.thi')==='75'){LS('tss.tlo','75');LS('tss.thi','85');} LS('tss.band81','1'); }
   ['ftp','tlo','thi'].forEach(function(id){var v=LS('tss.'+id);if(v!==null&&v!=='')document.getElementById(id).value=v;});
 }

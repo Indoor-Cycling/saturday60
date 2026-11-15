@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script src="site.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RPE + Watts Card — Editable</title>
 <script src="app.js" defer></script>
@@ -78,13 +79,18 @@
   <div class="controls">
     <div class="fld">
       <label for="ftp">Your FTP</label>
-      <input id="ftp" type="number" min="60" max="500" value="158" inputmode="numeric">
+      <input id="ftp" type="number" min="60" max="500" value="200" inputmode="numeric">
       <span class="unit">watts · 20-min test × 0.95</span>
     </div>
     <div class="fld">
       <label for="pb">Your PB</label>
-      <input id="pb" type="number" min="100" max="700" value="280" inputmode="numeric">
+      <input id="pb" type="number" min="100" max="700" value="350" inputmode="numeric">
       <span class="unit">watts · tops out Z7</span>
+    </div>
+    <div class="fld">
+      <label for="name">Rider (optional)</label>
+      <input id="name" class="name" type="text" placeholder="name" maxlength="18" style="width:150px;font-size:15px;">
+      <span class="unit">prints on the front</span>
     </div>
     <div class="btns">
       <button class="btn reset" id="reset">Reset</button>
@@ -98,14 +104,14 @@
     <div class="card">
       <div class="heat"></div>
       <div class="pad">
-        <div class="chead"><span class="t">RPE + WATTS</span><span class="tag">FOR RALPH</span></div>
+        <div class="chead"><span class="t">RPE + WATTS</span><span class="tag" id="tag1">M3i · /72</span></div>
         <div class="csub">Your effort number paired with your watts</div>
-        <div class="cmeta" id="meta1">FTP 158 · PB 280 · retest to rescale</div>
+        <div class="cmeta" id="meta1">FTP 200 · PB 350 · retest to rescale</div>
         <div class="rule"></div>
         <table id="front"></table>
         <div class="cfoot">
           <div class="f1">On the M3i, chase the watts. On gym bikes, ride the RPE.</div>
-          <div class="f2" id="ff2">Watts from FTP 158 — retest every 4–6 weeks.</div>
+          <div class="f2" id="ff2">Watts from FTP 200 — retest every 4–6 weeks.</div>
         </div>
       </div>
     </div>
@@ -170,6 +176,8 @@ function render(){
   const Z=zones(ftp,pb);
   document.getElementById('meta1').textContent='FTP '+ftp+' · PB '+pb+' · retest to rescale';
   document.getElementById('ff2').textContent='Watts from FTP '+ftp+' — retest every 4–6 weeks.';
+  const nm=document.getElementById('name').value.trim();
+  document.getElementById('tag1').textContent = nm ? 'FOR '+nm.toUpperCase() : 'M3i · /72';
   // FRONT
   let h='<tr class="colh"><td></td><td>FEEL / ZONE</td><td class="cell-r">WATTS · %FTP</td></tr>';
   FRONT.forEach(([n,word,zi,ci])=>{
@@ -192,14 +200,16 @@ function render(){
 function _ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){return null;}}
 document.getElementById('ftp').addEventListener('input',function(){_ls('rpe.m3i.ftp',this.value);render();});
 document.getElementById('pb').addEventListener('input',function(){_ls('rpe.m3i.pb',this.value);render();});
+document.getElementById('name').addEventListener('input',function(){_ls('rpe.m3i.name',this.value);render();});
 document.getElementById('reset').addEventListener('click',()=>{
-  try{localStorage.removeItem('rpe.m3i.ftp');localStorage.removeItem('rpe.m3i.pb');}catch(e){}
-  document.getElementById('ftp').value=158; document.getElementById('pb').value=280; render();
+  try{localStorage.removeItem('rpe.m3i.ftp');localStorage.removeItem('rpe.m3i.pb');localStorage.removeItem('rpe.m3i.name');}catch(e){}
+  document.getElementById('ftp').value=200; document.getElementById('pb').value=350; document.getElementById('name').value=''; render();
 });
 document.getElementById('print').addEventListener('click',()=>window.print());
 (function(){
   var sf=_ls('rpe.m3i.ftp'); if(sf!==null&&sf!=='') document.getElementById('ftp').value=sf;
   var sp=_ls('rpe.m3i.pb');  if(sp!==null&&sp!=='') document.getElementById('pb').value=sp;
+  var sn=_ls('rpe.m3i.name'); if(sn!==null) document.getElementById('name').value=sn;
   var q=new URLSearchParams(location.search);
   var f=parseInt(q.get('ftp'),10); if(f>=60&&f<=500){document.getElementById('ftp').value=f;_ls('rpe.m3i.ftp',f);}
   var p=parseInt(q.get('pb'),10);  if(p>=100&&p<=700){document.getElementById('pb').value=p;_ls('rpe.m3i.pb',p);}

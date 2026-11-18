@@ -109,7 +109,7 @@
 <p class="nav"><a href="index.html">‹ Saturday 60</a></p>
 <h1>THE SATURDAY 60 — System Manual</h1>
 <p class="sub">The Song BPM Selector, the MOWL-Style Build Sheet, the Drops Library Editor, the Spin Class Pro
-workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 61 · November 2026<br>
+workbook, the 5-Minute FTP Test, RPE + Watts cards and TSS Planner, and the Spotify → Exportify → MOWL pipeline · rev. 62 · November 2026<br>
 The three HTML tools now run as one installed web app at <span class="url">https://indoor-cycling.github.io/saturday60/</span></p>
 
 <div class="bar" id="contents">CONTENTS</div>
@@ -162,7 +162,7 @@ The three HTML tools now run as one installed web app at <span class="url">https
     <div class="tsec"><button class="tcar" type="button" aria-expanded="false" aria-controls="subs-s5" title="Show the parts of this section"><span class="car">›</span></button><a href="#s5">5 · THE SPIN CLASS PRO WORKBOOK</a><span class="dots"></span><span class="pg" data-pg="s5">17</span></div>
     <div class="tsubs" id="subs-s5" hidden>
       <div class="tsub"><a href="#getting-the-ride-in">Getting the ride in</a><span class="dots"></span><span class="pg" data-pg="getting-the-ride-in">17</span></div>
-      <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">17</span></div>
+      <div class="tsub"><a href="#the-intervals-sheet">The Intervals sheet</a><span class="dots"></span><span class="pg" data-pg="the-intervals-sheet">18</span></div>
       <div class="tsub"><a href="#cadence-bands-not-power-zones">Cadence bands — not power zones</a><span class="dots"></span><span class="pg" data-pg="cadence-bands-not-power-zones">18</span></div>
       <div class="tsub"><a href="#playlist-print-two-sides">Playlist Print — two sides</a><span class="dots"></span><span class="pg" data-pg="playlist-print-two-sides">18</span></div>
       <div class="tsub"><a href="#the-three-macros">The four macros</a><span class="dots"></span><span class="pg" data-pg="the-three-macros">19</span></div>
@@ -475,10 +475,10 @@ to instructors at a facility; ask its support for access.</p>
 <table>
   <tr><td class="k">Making it</td><td>Build Sheet → <b>Export for MOWL</b>. Every timed cue in the Intervals column becomes one interval; the preview flags anything it had to guess.</td></tr>
   <tr><td class="k">Uploading it</td><td><span class="url">login.mowl.com/profile/import</span> → choose the file → name the workout → Import. It lands in <b>My Workouts</b>.</td></tr>
-  <tr><td class="k">Then, in MOWL</td><td>Edit Workout → import music → Spotify → the playlist. Nudge the work intervals onto the real drops, and set RPM by hand if you use it.</td></tr>
-  <tr><td class="k">What it carries</td><td>Each interval’s duration, zone and position — Seated or Standing.</td></tr>
-  <tr><td class="k">What it does not</td><td><b>RPM</b> (MOWL confirmed it is not imported) and <b>Cue Cards</b> (tested: they do not come through). Both stay on the Build Sheet. This is why every change the rider makes needs its own interval — the boundary is the only cue MOWL shows.</td></tr>
-  <tr><td class="k">The format</td><td>Two tables, as Tabula exports them (“JSON (data)”): Stage — <code>Stage | Name | Duration | Intensity | Description</code>; Steps — <code>Step | Duration | %FTP | Position | Incline | Cadence | Cue Card</code>. Durations hh:mm:ss, Incline 0, Cadence blank.</td></tr>
+  <tr><td class="k">Then, in MOWL</td><td>Edit Workout → import music → Spotify → the playlist. Nudge the work intervals onto the real drops. Each interval already has its song’s RPM; change it by hand where you want a range or ACC.<span class="new">REV 62</span></td></tr>
+  <tr><td class="k">What it carries</td><td>Each interval’s duration, zone, position — Seated or Standing — and <b>RPM</b> (s60-v86): the song’s ride cadence, its BPM on the beat or half on half-time, capped at 110 (“64 RPM”). The cool-down interval takes its first song’s. MOWL’s own help says the import carries “all intervals, RPM, position and intensity”.<span class="new">REV 62</span></td></tr>
+  <tr><td class="k">What it does not</td><td><b>Cue Cards</b> (tested: they do not come through), ACC and RPM ranges — one number per interval is what the file holds. An earlier revision said RPM did not import; it does (17 Nov 2026). Cue words stay on the Build Sheet, which is why every change the rider makes needs its own interval — the boundary is the only cue MOWL shows.<span class="new">REV 62</span></td></tr>
+  <tr><td class="k">The format</td><td>Two tables, as Tabula exports them (“JSON (data)”): Stage — <code>Stage | Name | Duration | Intensity | Description</code>; Steps — <code>Step | Duration | %FTP | Position | Incline | Cadence | Cue Card</code>. Durations hh:mm:ss, Incline 0, Cadence “64 RPM”. The Stage description carries the modeled TSS (first 60 min).<span class="new">REV 62</span></td></tr>
   <tr><td class="k">Why %FTP</td><td>Each zone goes in at its midpoint — 50 / 65 / 83 / 98 / 113 / 135 / 160% FTP — the middle of MOWL’s seven power zones, so every colour lands where it should. MOWL also reads %HRmax, but its heart-rate zones sit higher than common charts (measured: L1 to 68, L2 71–74, L3 77–80, L4 83–89, L5 92–95, L6 98), so %HRmax files come in a zone low.</td></tr>
   <tr><td class="k">The clock</td><td>Each song rides its length minus the 10 s crossfade, the last song included, so the file’s total is the sheet’s last Σ — MOWL’s total.</td></tr>
   <tr><td class="k">The cool-down<span class="new">REV 48</span></td><td>The whole cool-down section goes in as <b>one</b> easy interval, and MOWL shows a workout’s last easy interval as its teal <b>Cooldown</b>. Its cues — gear off, recovery spin, stretch — stay on the Build Sheet.</td></tr>
@@ -751,7 +751,7 @@ address bar. Offline, nothing is counted.</p>
 
 <p class="foot">
 Quick values: crossfade 10 s · drift 0.43 s/song · RPM cap 110 · FTP and Max HR yours to set (a new device starts at 200 W and 180) · TSS ~75–85 · bar = 240 ÷ BPM ·
-current app version s60-v85.<br>
+current app version s60-v86.<br>
 The app: <span class="url">https://indoor-cycling.github.io/saturday60/</span> — index.html · selector.html ·
 buildsheet.html · drops.html · TSS_Planner.html · Saturday60_WeeklyWorkflow.html and .pdf · Saturday60_SystemManual.html and .pdf · Saturday60_HowToRequestAClass.html and .pdf · Saturday60_GettingStarted.html and .pdf · FTP_5min_Test.html · RPE_Watts_Card_Editable.html · RPE_Watts_Card_YMCA_Editable.html · app.js · site.js · sw.js ·
 manifest.webmanifest · icons/ · README.md.
@@ -893,7 +893,7 @@ once the app is installed. The TSS Planner keeps its own FTP box, saved on the d
   <div class="ie">Import code (TSS Planner) <span class="ip"><a href="#tss-planner">29</a></span></div>
   <div class="ie">Importing does nothing <span class="ip"><a href="#s8">23</a></span></div>
   <div class="ie">Installing the app <span class="ip"><a href="#s9">25</a></span></div>
-  <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">17</a></span></div>
+  <div class="ie">Intervals sheet (Excel) <span class="ip"><a href="#the-intervals-sheet">18</a></span></div>
   <div class="ie">iPhone, installing on <span class="ip"><a href="#s9">25</a></span></div>
   <div class="ia">K</div>
   <div class="ie">Key, drop colour <span class="ip"><a href="#colour-coding-the-drops">6</a></span></div>
